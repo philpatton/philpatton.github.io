@@ -2,15 +2,242 @@
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "About",
+    "title": "About me",
     "section": "",
-    "text": "About this site"
+    "text": "My name is Philip T. Patton (Phil). I’m a graduate research assistant with Lars Bejder at the Marine Mammal Research Program at the Hawaiʻi Institute of Marine Biology.\nI’m also a NOAA QUEST Fellow, meaning that also work with the Cetacean Research Program at the Pacific Islands Fisheries Science Center.\nCurrently, I research ways to improve population assessments of toothed whales that live in the Main Hawaiian Islands. This includes automating photo-identification of these animals, understanding how these automated tools interact with capture-recapture models, and estimating demographic parameters using cutting edge methods in capture recapture.\nI did my master’s research with Krishna Pacifici at North Carolina State University, where I studied ways to improve estimates of species distribution, particularly when species interact and when the data contains sampling errors.\nPlease feel free to email me, pattonp@hawaii.edu, if you would like to get in touch.",
+    "crumbs": [
+      "About me"
+    ]
   },
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "web",
+    "title": "Home",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+    "text": "Personal website for Philip T. Patton",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "occ.html",
+    "href": "occ.html",
+    "title": "Occupancy models in PyMC",
+    "section": "",
+    "text": "There are many valuable tools for fitting occupancy models. These tools are typically R libraries, such as unmarked, or programs called from R, such as JAGS or Stan. There are relatively fewer examples of how to fit these models in Python. While most ecologists, and arguably statisticians, use R, there are some benefits to using Python generally. For example, despite ecology being a lucrative industry, some of us might have to pivot to another field where Python may be more common. Besides, Python is widely used for machine learning, which is increasingly applied in ecology.\nIn this notebook, I demonstrate how to fit static site-occupancy models in PyMC, a Python library for doing Bayesian data analysis. PyMC has many virtues, including a user-friendly interface, and a direct linkage to the ArviZ library, which has functions for summarizing MCMC output.",
+    "crumbs": [
+      "Notebooks",
+      "Occupancy models in PyMC"
+    ]
+  },
+  {
+    "objectID": "occ.html#simulating-simple-occupancy-data-psicdot-pcdot",
+    "href": "occ.html#simulating-simple-occupancy-data-psicdot-pcdot",
+    "title": "Occupancy models in PyMC",
+    "section": "Simulating simple occupancy data: \\(\\psi(\\cdot) p(\\cdot)\\)",
+    "text": "Simulating simple occupancy data: \\(\\psi(\\cdot) p(\\cdot)\\)\nThe standard site-occupancy model models binary detection/non-detection data \\(y_{j,k}\\) for repeated surveys \\(k=1,2,\\dots,K\\) at sites \\(j=1,2,\\dots,J.\\) The species is present at the sites when \\(z_j=1,\\) and absent otherwise. We assume that our probability of detecting the species given that the site is occupied is \\(P(y_{j,k}|z_j=1)=p,\\) and zero when the site is unoccupied. The probability of occurrence, which is typically the parameter of interest, is \\(P(z_{j}=1)=\\psi.\\)\nTo start, I demonstrate how to simulate detection/non-detection data using numpy. In this first example, I simulate the simplest possible case, where \\(\\psi\\) is constant across all sites and \\(p\\) is constant across all sites and visits.\n\nimport numpy as np\nimport pymc as pm\nimport arviz as az\nimport pandas as pd\n\ndef scale(x):\n    return (x - np.nanmean(x)) / np.nanstd(x)\n\ndef invlogit(x):\n    return 1 / (1 + np.exp(-x))\n\ndef sim_y(p, z, site_count, visit_count):\n    \n    ones = np.ones((site_count, visit_count))\n    p_array = p * ones \n\n    flips = rng.binomial(1, p_array)\n    y = (flips.T * z_true).T\n    \n    return y \n\n## simulation\n\nSEED = 808\nrng = np.random.default_rng(seed=SEED)\n\n# sampling characteristics\nsite_count = 200\nvisit_count = 3\n\n## ecological model\n\n# true parameter values\npsi_true = 0.8\n\n# simulate occurrence state\nz_true = rng.binomial(1, psi_true, size=site_count)\n\n## detection model\n\n# true parameter values\np_true = 0.5\n\n# simulate detection\n# here, we avoid loops by using broadcasting and vectorization in numpy\ny = sim_y(p_true, z_true, site_count, visit_count)\n\n# vector with the number of detections at each site \ny_summarized = y.sum(axis=1)\n\n# detection data at the first five sites \ny[:5]\n\narray([[0, 1, 1],\n       [1, 0, 1],\n       [0, 0, 0],\n       [1, 0, 0],\n       [1, 0, 1]])",
+    "crumbs": [
+      "Notebooks",
+      "Occupancy models in PyMC"
+    ]
+  },
+  {
+    "objectID": "occ.html#estimating-parameters-with-pymc",
+    "href": "occ.html#estimating-parameters-with-pymc",
+    "title": "Occupancy models in PyMC",
+    "section": "Estimating parameters with PyMC",
+    "text": "Estimating parameters with PyMC\nNext, I use PyMC to train the occupancy model with the simulated data. First, similar to JAGS and Stan, the model must be specified using the PyMC syntax. This is done using a context manager in Python, essentially, a with statement. This creates a Model object.\n\nwith pm.Model() as constant:\n\n    # priors for the detetion and occurrence probabilities\\\n    psi = pm.Uniform('psi', 0, 1)\n    p = pm.Uniform('p', 0, 1)\n\n    # likelihood for the summarized data\n    pm.ZeroInflatedBinomial('y', p=p, psi=psi, n=visit_count, \n                            observed=y_summarized)\n\nIn JAGS, the prior for \\(p\\) would be specified as p ~ dunif(0, 1). The PyMC equivalent is p = pm.Uniform('p', 0, 1). This could, alternatively, be specified as p = pm.Uniform('detection probability', 0, 1).\nFor the likelihood, I use PyMC’s built-in ZeroInflatedBinomial distribution. We tell PyMC that this is an observed random variable by supplying data to the observed argument.\nPyMC has handy tools for visualizing the model.\n\npm.model_to_graphviz(constant)\n\n\n\n\nThe simplest possible occupancy model. Random variables appear as unshaded ellipses while data appears shaded. Notice the ‘200’, which states that there are 200 observations (sites) of this random variable.\n\n\n\n\nNow I can sample from the posterior. Again, I use the context manager, this time referring to the model by name. It’s typical to name the output with idata because, by default, PyMC returns an object of class InferenceData from the Arviz package. Arviz is similar to the coda package for R.\nwith constant:\n    constant_idata = pm.sample()\nAuto-assigning NUTS sampler...\nInitializing NUTS using jitter+adapt_diag...\nMultiprocess sampling (4 chains in 4 jobs)\nNUTS: [psi, p]\nSampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 2 seconds.\n\n\n\n    \n      \n      100.00% [8000/8000 00:01&lt;00:00 Sampling 4 chains, 0 divergences]\n    \n    \nPyMC will try to use the No-U-Turn Sampler (NUTS) whenever possible. As you can see, it samples the posterior quickly.\nI plot the output using the plot_trace function from the Arviz package, supplying the true values for \\(p\\) and \\(\\psi\\).\n\naz.plot_trace(\n    constant_idata,\n    lines=[(\"psi\", {}, [psi_true]), (\"p\", {}, [p_true])] \n);\n\n\n\n\nEstimated parameter values with the true values represented by vertical and horizontal lines.\n\n\n\n\nArviz also produces tabular summaries.\n\naz.summary(constant_idata)\n\n\n\n\n\n\n\n\nmean\nsd\nhdi_3%\nhdi_97%\nmcse_mean\nmcse_sd\ness_bulk\ness_tail\nr_hat\n\n\n\n\npsi\n0.800\n0.042\n0.721\n0.880\n0.001\n0.001\n2138.0\n2106.0\n1.0\n\n\np\n0.499\n0.029\n0.440\n0.551\n0.001\n0.000\n2168.0\n2515.0\n1.0",
+    "crumbs": [
+      "Notebooks",
+      "Occupancy models in PyMC"
+    ]
+  },
+  {
+    "objectID": "occ.html#adding-covariates",
+    "href": "occ.html#adding-covariates",
+    "title": "Occupancy models in PyMC",
+    "section": "Adding covariates",
+    "text": "Adding covariates\nNext, I add in some realism by simulating a site-level covariate \\(x\\) that affects the occurrence probability. I model this effect with a logit-linear model, i.e., \\(\\psi_j=\\text{logit}^{-1}(\\beta_0 + \\beta_1 x_j).\\)\n\n## ecological model\n\n# true parameter values\nbeta0_true = -1\nbeta1_true = 3\n\n# covariates \nx = scale(rng.uniform(size=site_count))\n\n# linear model\nmu_true = beta0_true + beta1_true * x\npsi_true = invlogit(mu_true)\n\n# simulate occurrence state\nz_true = rng.binomial(1, psi_true)\n\n## detection model\n\n# true parameter values\np_true = 0.75\n\n# simulate detection\ny = sim_y(p_true, z_true, site_count, visit_count)\n\n# vector with the number of detections at each site \ny_summarized = y.sum(axis=1)\n\n# detection data at the first five sites \ny[:5]\n\narray([[0, 0, 0],\n       [0, 0, 0],\n       [0, 0, 0],\n       [0, 0, 0],\n       [0, 0, 0]])\n\n\nAgain, I specify the model with PyMC. Like JAGS, the random variables can be manipulated, as in a linear model with \\(x_j.\\) These behave like numpy arrays, meaning that vectorized operations and broadcasting are available.\n\nwith pm.Model() as psix:\n\n    # occurrence process \n    # priors \n    beta0 = pm.Normal(\"beta0\", mu=0, sigma=2)\n    beta1 = pm.Normal(\"beta1\", mu=0, sigma=2)\n    \n    # linear model\n    mu = beta0 + beta1 * x\n    psi = pm.Deterministic(\"psi\", pm.math.invlogit(mu))\n\n    # detection process\n    # prior\n    p = pm.Uniform('p', 0, 1)\n\n    # likelihood for the summarized data\n    pm.ZeroInflatedBinomial('y', p=p, psi=psi, n=visit_count, \n                            observed=y_summarized)\n\npm.model_to_graphviz(psix)\n\nExecutableNotFound: failed to execute PosixPath('dot'), make sure the Graphviz executables are on your systems' PATH\n\n\n&lt;graphviz.graphs.Digraph at 0x17ab00210&gt;\n\n\nThese visualizations become handier as the models get more complex\n\nwith psix:\n    psix_idata = pm.sample()\n\nAuto-assigning NUTS sampler...\nInitializing NUTS using jitter+adapt_diag...\nMultiprocess sampling (4 chains in 4 jobs)\nNUTS: [beta0, beta1, p]\nSampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 3 seconds.\n\n\n\n\n\n\n\n    \n      \n      100.00% [8000/8000 00:02&lt;00:00 Sampling 4 chains, 0 divergences]\n    \n    \n\n\n\naz.plot_trace(\n    psix_idata,\n    var_names=['beta0', 'beta1', 'p'],\n    lines=[(\"beta0\", {}, [beta0_true]), (\"beta1\", {}, [beta1_true]), \n           ('p', {}, [p_true])]\n);\n\n\n\n\n\n\n\n\n\naz.summary(psix_idata, var_names=['beta0', 'beta1', 'p'])\n\n\n\n\n\n\n\n\nmean\nsd\nhdi_3%\nhdi_97%\nmcse_mean\nmcse_sd\ness_bulk\ness_tail\nr_hat\n\n\n\n\nbeta0\n-1.245\n0.264\n-1.752\n-0.751\n0.005\n0.003\n3151.0\n3086.0\n1.0\n\n\nbeta1\n2.862\n0.411\n2.130\n3.658\n0.008\n0.005\n2969.0\n2609.0\n1.0\n\n\np\n0.744\n0.032\n0.684\n0.805\n0.001\n0.000\n4044.0\n2860.0\n1.0",
+    "crumbs": [
+      "Notebooks",
+      "Occupancy models in PyMC"
+    ]
+  },
+  {
+    "objectID": "occ.html#varying-p",
+    "href": "occ.html#varying-p",
+    "title": "Occupancy models in PyMC",
+    "section": "Varying \\(p\\)",
+    "text": "Varying \\(p\\)\nFinally, I add in visit-level covariate \\(w_{j,k}\\) that affects detection.\n\n## ecological model\n\n# true parameter values\nbeta0_true = -1\nbeta1_true = 3\n\n# covariates \nx = scale(rng.uniform(size=site_count))\n\n# linear model\nmu_true = beta0_true + beta1_true * x\npsi_true = invlogit(mu_true)\n\n# simulate occurrence state\nz_true = rng.binomial(1, psi_true)\n\n# true parameter values\nalpha0_true = 1\nalpha1_true = -3\n\n# covariates\nw = rng.uniform(size=site_count * visit_count).reshape(site_count, visit_count)\nw = scale(w)\n\n# linear model\nnu_true = alpha0_true + alpha1_true * w\np_true = invlogit(nu_true)\n\n# simulate detection\ny = sim_y(p_true, z_true, site_count, visit_count)\n\ny[:5]\n\narray([[0, 0, 0],\n       [0, 0, 0],\n       [0, 1, 1],\n       [1, 1, 0],\n       [0, 0, 0]])\n\n\nOur PyMC code will need to be a little uglier now. I could write the model in terms of the latent occurrence state \\(z_j.\\) The NUTS sampler, however, does not jive with discrete latent states. As such, PyMC will assign it to a binary Gibbs sampler by default, which works, albeit painfully slowly.\nSince I am impatient, I instead use the marginalized version of the model, that is, a model that does not include the discrete latent states. To do this in PyMC, I use the CustomDist class. This requires, first, defining the log probability of the distribution, logp, given the data and it’s parameters. We can write logp using the likelihood of the occupancy model, \\[\nP(\\mathbf{y}_j)=\n\\begin{cases}\n    P(\\mathbf{y}_j | z_j = 1)\\; \\psi_j \\; + \\; (1 - \\psi_j),   & \\text{if } \\mathbf{y}_j = \\mathbf{0}\\\\\n    P(\\mathbf{y}_j | z_j = 1)\\; \\psi_j,  & \\text{otherwise}\n\\end{cases}\n\\] where \\(P(\\mathbf{y}_j | z_j = 1) = \\prod_j p_{j,k}^{y_{j,k}} (1-p_{j,k})^{(1-y_{j,k})}.\\) To do this in PyMC, I rely on the pm.math.switch function, which is similar to ifelse() in R or np.where().\n\n# likelihood for y data\ndef logp(x, p, psi):\n    '''Computes the log-likelihood for an occupancy model\n\n    Args: \n        x: (site_count x visit_count) array with binary detection data\n        p: (site_count x visit_count) array of probabilities\n        p: site_count vector of probabilities\n    '''\n    \n    bern = (p ** x) * ((1 - p) ** (1 - x))\n    bern_prod = pm.math.prod(bern, axis=1)\n    \n    res = pm.math.switch(\n        x.sum(axis=1) &gt; 0,\n        bern_prod * psi,\n        bern_prod * psi + (1 - psi)\n    )\n    \n    return pm.math.log(res)\n\nThen, I simply provide this function as an argument to the CustomDist class in our PyMC model.\n\nwith pm.Model() as marginal:\n\n    # occurrence process \n    # priors \n    beta0 = pm.Normal(\"beta0\", mu=0, sigma=2)\n    beta1 = pm.Normal(\"beta1\", mu=0, sigma=2)\n    \n    # linear model\n    mu = beta0 + beta1 * x\n    psi = pm.Deterministic(\"psi\", pm.math.invlogit(mu))\n\n    # detection process\n    # priors\n    alpha0 = pm.Normal('alpha0', mu=0, sigma=2)\n    alpha1 = pm.Normal('alpha1', mu=0, sigma=2)\n\n    # linear model\n    nu = alpha0 + alpha1 * w\n    p = pm.Deterministic('p', pm.math.invlogit(nu))\n\n    # likelihood\n    pm.CustomDist(\n        'y',\n        p,\n        psi,\n        logp=logp,\n        observed=y,\n    )\n\npm.model_to_graphviz(marginal)\n\nExecutableNotFound: failed to execute PosixPath('dot'), make sure the Graphviz executables are on your systems' PATH\n\n\n&lt;graphviz.graphs.Digraph at 0x168255990&gt;\n\n\n\nwith marginal:\n    marginal_idata = pm.sample()\n\nAuto-assigning NUTS sampler...\nInitializing NUTS using jitter+adapt_diag...\nMultiprocess sampling (4 chains in 4 jobs)\nNUTS: [beta0, beta1, alpha0, alpha1]\nSampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 4 seconds.\n\n\n\n\n\n\n\n    \n      \n      100.00% [8000/8000 00:03&lt;00:00 Sampling 4 chains, 0 divergences]\n    \n    \n\n\n\naz.plot_trace(\n    marginal_idata,\n    var_names=['beta0', 'beta1', 'alpha0', 'alpha1'],\n    lines=[(\"beta0\", {}, [beta0_true]), (\"beta1\", {}, [beta1_true]), \n           ('alpha0', {}, [alpha0_true]), ('alpha1', {}, [alpha1_true])]\n);\n\n\n\n\n\n\n\n\n\naz.summary(marginal_idata, var_names=['beta0', 'beta1', 'alpha0', 'alpha1'])\n\n\n\n\n\n\n\n\nmean\nsd\nhdi_3%\nhdi_97%\nmcse_mean\nmcse_sd\ness_bulk\ness_tail\nr_hat\n\n\n\n\nbeta0\n-0.747\n0.245\n-1.203\n-0.282\n0.004\n0.003\n3312.0\n2743.0\n1.0\n\n\nbeta1\n2.794\n0.396\n2.076\n3.540\n0.007\n0.005\n3468.0\n3222.0\n1.0\n\n\nalpha0\n1.403\n0.275\n0.889\n1.914\n0.005\n0.004\n2667.0\n2807.0\n1.0\n\n\nalpha1\n-3.091\n0.382\n-3.818\n-2.396\n0.007\n0.005\n2678.0\n2718.0\n1.0",
+    "crumbs": [
+      "Notebooks",
+      "Occupancy models in PyMC"
+    ]
+  },
+  {
+    "objectID": "occ.html#model-comparison",
+    "href": "occ.html#model-comparison",
+    "title": "Occupancy models in PyMC",
+    "section": "Model comparison",
+    "text": "Model comparison\nPyMC also has handy tools for model comparison. I demonstrate these by fitting a model to the warbler data with a constant probability of detection.\n\nY_sum = Y.sum(axis=1)\n\nwith pm.Model(coords=coords) as warbler_constantp:\n\n    # occurrence process priors \n    Beta = pm.Normal(\"Beta\", mu=0, sigma=2, dims=\"beta_coefs\")\n    \n    # linear model\n    mu = pm.math.dot(X, Beta)\n    psi = pm.Deterministic(\"psi\", pm.math.invlogit(mu))\n\n    # detection process priors\n    p = pm.Uniform('p', 0, 1)\n\n    # likelihood\n    pm.ZeroInflatedBinomial('y', p=p, psi=psi, n=J, observed=Y_sum)\n\npm.model_to_graphviz(warbler_constantp)\n\n\n\n\n\n\n\n\n\nwith warbler_constantp:\n    warbler_constantp_idata = pm.sample(4000)\n\nAuto-assigning NUTS sampler...\nInitializing NUTS using jitter+adapt_diag...\nMultiprocess sampling (4 chains in 4 jobs)\nNUTS: [Beta, p]\nSampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws total) took 5 seconds.\n\n\n\n\n\n\n\n    \n      \n      100.00% [20000/20000 00:05&lt;00:00 Sampling 4 chains, 0 divergences]\n    \n    \n\n\nNext, I caclculate the leave-one-out (loo) cross-validation score for each model (Vehtari, Gelman, and Gabry 2017). This involves first computing the log likelihood for each model.\n\nwith warbler:\n    pm.compute_log_likelihood(warbler_idata)\n\n\n\n\n\n\n    \n      \n      100.00% [16000/16000 00:00&lt;00:00]\n    \n    \n\n\n\nwarbler_loo = az.loo(warbler_idata)\n\nwarbler_loo\n\nComputed from 16000 posterior samples and 37 observations log-likelihood matrix.\n\n         Estimate       SE\nelpd_loo   -54.34     7.36\np_loo        6.14        -\n------\n\nPareto k diagnostic values:\n                         Count   Pct.\n(-Inf, 0.5]   (good)       37  100.0%\n (0.5, 0.7]   (ok)          0    0.0%\n   (0.7, 1]   (bad)         0    0.0%\n   (1, Inf)   (very bad)    0    0.0%\n\n\n\nwith warbler_constantp:\n    pm.compute_log_likelihood(warbler_constantp_idata)\n\n\n\n\n\n\n    \n      \n      100.00% [16000/16000 00:00&lt;00:00]\n    \n    \n\n\n\nwarbler_constantp_loo = az.loo(warbler_constantp_idata)\n\nwarbler_constantp_loo\n\nComputed from 16000 posterior samples and 37 observations log-likelihood matrix.\n\n         Estimate       SE\nelpd_loo   -39.31     5.09\np_loo        3.78        -\n------\n\nPareto k diagnostic values:\n                         Count   Pct.\n(-Inf, 0.5]   (good)       37  100.0%\n (0.5, 0.7]   (ok)          0    0.0%\n   (0.7, 1]   (bad)         0    0.0%\n   (1, Inf)   (very bad)    0    0.0%\n\n\nArviz has handy tools for comparing the results. First, I generate a tabular summary.\n\ndf_comp_loo = az.compare({r\"$p(visit,wheight)$\": warbler_idata, \n                          r\"$p(\\cdot)$\": warbler_constantp_idata})\ndf_comp_loo\n\n/Users/philtpatton/miniforge3/envs/mc/lib/python3.11/site-packages/arviz/stats/stats.py:307: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise in a future error of pandas. Value 'False' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.\n  df_comp.loc[val] = (\n/Users/philtpatton/miniforge3/envs/mc/lib/python3.11/site-packages/arviz/stats/stats.py:307: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise in a future error of pandas. Value 'log' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.\n  df_comp.loc[val] = (\n\n\n\n\n\n\n\n\n\nrank\nelpd_loo\np_loo\nelpd_diff\nweight\nse\ndse\nwarning\nscale\n\n\n\n\n$p(\\cdot)$\n0\n-39.314070\n3.781900\n0.000000\n1.000000e+00\n5.089487\n0.000000\nFalse\nlog\n\n\n$p(visit,wheight)$\n1\n-54.340463\n6.142049\n15.026393\n1.758593e-13\n7.362539\n4.185826\nFalse\nlog\n\n\n\n\n\n\n\nThis indicates that the \\(p(\\cdot)\\) model is favored over the \\(p(visit,wheight)\\) model.\nArviz also generates plots for these comparisons.\n\naz.plot_compare(df_comp_loo, insample_dev=False);\n\n/Users/philtpatton/miniforge3/envs/mc/lib/python3.11/site-packages/arviz/plots/backends/matplotlib/compareplot.py:87: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`\n  scale = comp_df[\"scale\"][0]",
+    "crumbs": [
+      "Notebooks",
+      "Occupancy models in PyMC"
+    ]
+  },
+  {
+    "objectID": "cv.html",
+    "href": "cv.html",
+    "title": "Curriculum Vitae",
+    "section": "",
+    "text": "Ph.D., Marine Biology, Hawaiʻi Institute of Marine Biology, 2025 (anticipated)\nM.S., Fisheries, Wildlife, and Conservation Biology, North Carolina State University, 2016\nB.S., Conservation Biology, SUNY College of Environmental Science and Forestry, 2013",
+    "crumbs": [
+      "CV"
+    ]
+  },
+  {
+    "objectID": "cv.html#education",
+    "href": "cv.html#education",
+    "title": "Curriculum Vitae",
+    "section": "",
+    "text": "Ph.D., Marine Biology, Hawaiʻi Institute of Marine Biology, 2025 (anticipated)\nM.S., Fisheries, Wildlife, and Conservation Biology, North Carolina State University, 2016\nB.S., Conservation Biology, SUNY College of Environmental Science and Forestry, 2013",
+    "crumbs": [
+      "CV"
+    ]
+  },
+  {
+    "objectID": "cv.html#research-experience",
+    "href": "cv.html#research-experience",
+    "title": "Curriculum Vitae",
+    "section": "Research Experience",
+    "text": "Research Experience\n\nNOAA QUEST Fellow, Pacific Islands Fisheries Science Center, NOAA Fisheries, 2021 - Present\nGraduate Research Assistant, Hawaiʻi Institute of Marine Biology, University of Hawaiʻi at Mānoa, 2021 - Present\nGraduate Research Assistant, Quantitative Ecology & Resource Management, University of Washington, 2016 - 2017\nGraduate Research Assistant, Applied Ecology, North Carolina State University, 2014 - 2016",
+    "crumbs": [
+      "CV"
+    ]
+  },
+  {
+    "objectID": "cv.html#professional-experience",
+    "href": "cv.html#professional-experience",
+    "title": "Curriculum Vitae",
+    "section": "Professional Experience",
+    "text": "Professional Experience\n\nData Analyst, Health Services, Deschutes County, 2020 - 2021\nData Analyst, Supply Chain AI & Machine Learning, Starbucks Coffee Company, 2019\nQuantitative Analyst, Seattle City Light, City of Seattle, 2017 - 2019",
+    "crumbs": [
+      "CV"
+    ]
+  },
+  {
+    "objectID": "cv.html#grants-awards-and-fellowships",
+    "href": "cv.html#grants-awards-and-fellowships",
+    "title": "Curriculum Vitae",
+    "section": "Grants, Awards, and Fellowships",
+    "text": "Grants, Awards, and Fellowships\n\nPeter Castro HIMB Graduate Student Support Fund - Travel, Hawaiʻi Institute of Marine Biology, 2023, $500\nLinda and Jim Collister Scholarship, Hawaiʻi Institute of Marine Biology, 2023, $1,000\nQuantitative Ecology and Socioeconomic Training Fellowship (QUEST), NOAA Fisheries, 2021 to present, $180,000\nAchievement Scholarship, University of Hawaiʻi at Mānoa, 2023, $500\nColonel Willys E. & Sandina L. Lord Endowed Scholarship, Hawaiʻi Institute of Marine Biology, 2022, $2,000\nStudent Travel Award, University of Washington, 2017, $500\nStudent and Postdoc Travel Award, University of Washington, 2017, $750\nTravel Award, University of Washington, 2017, $500\nGlobal Change Fellowship, USGS, 2015 to 2016, $12,000",
+    "crumbs": [
+      "CV"
+    ]
+  },
+  {
+    "objectID": "cv.html#papers",
+    "href": "cv.html#papers",
+    "title": "Curriculum Vitae",
+    "section": "Papers",
+    "text": "Papers\n\nPatton, P.T., Pacifici, K., Allen, J.B., Ashe, E., Athayde, A., Baird, R.W., Basran, C., Cabrera, E., Calambokidis, J., Cardoso, J., Carroll, E.L., Cesario, A., Cheeseman, T., Cheney, B.J., Corsi, E., Currie, J., Durban, J.W., Falcone, E.A., Fearnbach, H., Flynn, K., Franklin, T., Franklin, W., Vernazzani, B.G., Genov, T., Hill, M., Johnston, D.R., Keene, E.L., Mahaffy, S.D., McGuire, T.L., McPherson, L., Meyer, C., Michaud, R., Miliou, A., Oleson, E.M., Orbach, D.N., Pearson, H.C., Rasmussen, M.H., Rayment, W.J., Rinaldi, C., Rinaldi, R., Siciliano, S., Stack, S., Tintore, B., Torres, L.G., Towers, J.R., Trotter, C., Moore, R.T., Weir, C.R., Wellard, R., Wells, R., Yano, K.M., Zaeschmar, J.R. & Bejder, L. (TBD) Evaluating trade–offs between automation and bias in population assessments relying on photo-identification. (TBD) Evaluating trade-offs between automation and bias in population assessments relying on photo-identification. In prep\nPatton, P.T. Pacifici, K., Miller, D.A.W., & Collazo, J. (TBD) Partial pooling of data among species improves performance of occupancy models subject to two types of sampling error. In prep\nPatton, P.T. , Cheeseman, T., Abe, K., Yamaguchi, T., Reade, W., Southerland, K., Howard, A., Oleson, E.M., Allen, J.B., Ashe, E., Athayde, A., Baird, R.W., Basran, C., Cabrera, E., Calambokidis, J., Cardoso, J., Carroll, E.L., Cesario, A., Cheney, B.J., Corsi, E., Currie, J., Durban, J.W., Falcone, E.A., Fearnbach, H., Flynn, K., Franklin, T., Franklin, W., Vernazzani, B.G., Genov, T., Hill, M., Johnston, D.R., Keene, E.L., Mahaffy, S.D., McGuire, T.L., McPherson, L., Meyer, C., Michaud, R., Miliou, A., Orbach, D.N., Pearson, H.C., Rasmussen, M.H., Rayment, W.J., Rinaldi, C., Rinaldi, R., Siciliano, S., Stack, S., Tintore, B., Torres, L.G., Towers, J.R., Trotter, C., Moore, R.T., Weir, C.R., Wellard, R., Wells, R., Yano, K.M., Zaeschmar, J.R. & Bejder, L.(2023) A deep learning approach to photo–identification demonstrates high performance on two dozen cetacean species. Methods in Ecology and Evolution, 14, 2611–2625. featured on cover\nVivier, F., Wells, R.S., Hill, M.C., Yano, K.M., Bradford, A.L., Leunissen, E.M., Pacini, A., Booth, C.G., Rocho-Levine, J., Currie J.J., Patton, P.T., & Bejder, L. (2023) Quantifying the age-structure of free-ranging delphinid populations: testing the accuracy of Unoccupied Aerial System-photogrammetry. Ecology and Evolution, 13, e10082.\nPatton, P. T., Pacifici, K., & Collazo, J. A. (2022) Modeling and estimating co-occurrence between the invasive Shiny Cowbird and its Puerto Rican hosts. Biological Invasions, 24, 2951–2960",
+    "crumbs": [
+      "CV"
+    ]
+  },
+  {
+    "objectID": "cv.html#presentations",
+    "href": "cv.html#presentations",
+    "title": "Curriculum Vitae",
+    "section": "Presentations",
+    "text": "Presentations\n\nPatton, P.T. Some hierarchical and machine learning models for wildlife science. Invited talk at University of Natural Resources and Life Sciences, Vienna (BOKU). July 2023.\nPatton, P.T. et al. The effect of fully automated photo–identification on mark-recapture estimates. Paper presented at the EURING Analytical Meeting. Montpellier, France. April 2023\nPatton, P.T. Assessing populations of resident cetaceans. HIMB Scholarship Symposium. K=aneohe, Hawaii. April 2022.\nPatton, P. T. & Gardner, B. Misspecifying movement models in spatial capture recapture studies. Paper presented at The Ecological Society of America Conference. Portland, OR, USA. August 2017\nPatton, P. T. et al. Modeling and estimating co–occurrence between generalist brood parasites and host communities. Paper presented at the EURING Analytical Meeting. Barcelona, Spain. June 2017\nPatton, P. T. et al. Multi–species occupancy models that incorporate false positive and false negative sampling errors. Paper presented at The Wildlife Society Conference. Raleigh, NC, USA. October 2016\nPatton, P. T. et al. Joint host–parasite occurrence models can improve predictions and reveal ecological traps. Paper presented at the International Statistical Ecology Conference. Seattle, WA, USA. July 2016",
+    "crumbs": [
+      "CV"
+    ]
+  },
+  {
+    "objectID": "cv.html#teaching-experience",
+    "href": "cv.html#teaching-experience",
+    "title": "Curriculum Vitae",
+    "section": "Teaching Experience",
+    "text": "Teaching Experience\n\nTeaching Assistant, Principles of Wildlife Science (FW 453), North Carolina State, Spring 2016\nTeaching Assistant, Introduction to Probability and Statistics (APM 391), SUNY ESF, Fall 2012\nTutor, Calculus I (APM 105), Academic Support Services, SUNY ESF, 2011 to 2013",
+    "crumbs": [
+      "CV"
+    ]
+  },
+  {
+    "objectID": "cv.html#professional-development",
+    "href": "cv.html#professional-development",
+    "title": "Curriculum Vitae",
+    "section": "Professional Development",
+    "text": "Professional Development\n\nAn Introduction to Close-Kin Mark-Recapture, EURING Analytical Meeting\nC++ Virtual Training, NOAA Fisheries\nBayesian Model Selection and Decision Theory for Ecologists, International Statistical Ecology Conference\nFlexible Programming with NIMBLE, International Statistical Ecology Conference\nIntroduction to Structured Decision Making, National Conservation Training Center",
+    "crumbs": [
+      "CV"
+    ]
+  },
+  {
+    "objectID": "cv.html#professional-service",
+    "href": "cv.html#professional-service",
+    "title": "Curriculum Vitae",
+    "section": "Professional Service",
+    "text": "Professional Service\n\nReferee: Wildlife Society Bulletin, Marine Mammal Science\nMember: British Ecological Society, The Wildlife Society (biometrics working group), The Ecological Society of America (statistical ecology section)\nRepresentative to the Faculty, Marine Biology Graduate Program, University of Hawai`i at Mānoa\nRepresentative to the Graduate Student Organization, Marine Biology Graduate Program, University of Hawai`i at Mānoa",
+    "crumbs": [
+      "CV"
+    ]
+  },
+  {
+    "objectID": "occ.html#adding-covariates-psix-pcdot",
+    "href": "occ.html#adding-covariates-psix-pcdot",
+    "title": "Occupancy models in PyMC",
+    "section": "Adding covariates: \\(\\psi(x) p(\\cdot)\\)",
+    "text": "Adding covariates: \\(\\psi(x) p(\\cdot)\\)\nNext, I add in some realism by simulating a site-level covariate \\(x\\) that affects the occurrence probability. I model this effect with a logit-linear model, i.e., \\(\\psi_j=\\text{logit}^{-1}(\\beta_0 + \\beta_1 x_j).\\)\n\n## ecological model\n\n# true parameter values\nbeta0_true = -1\nbeta1_true = 3\n\n# covariates \nx = scale(rng.uniform(size=site_count))\n\n# linear model\nmu_true = beta0_true + beta1_true * x\npsi_true = invlogit(mu_true)\n\n# simulate occurrence state\nz_true = rng.binomial(1, psi_true)\n\n## detection model\n\n# true parameter values\np_true = 0.75\n\n# simulate detection\ny = sim_y(p_true, z_true, site_count, visit_count)\n\n# vector with the number of detections at each site \ny_summarized = y.sum(axis=1)\n\n# detection data at the first five sites \ny[:5]\n\narray([[0, 0, 0],\n       [0, 0, 0],\n       [0, 0, 0],\n       [0, 0, 0],\n       [0, 0, 0]])\n\n\nAgain, I specify the model with PyMC. Like JAGS, the random variables can be manipulated, as in a linear model with \\(x_j.\\) These behave like numpy arrays, meaning that vectorized operations and broadcasting are available.\n\nwith pm.Model() as psix:\n\n    # occurrence process \n    # priors \n    beta0 = pm.Normal(\"beta0\", mu=0, sigma=2)\n    beta1 = pm.Normal(\"beta1\", mu=0, sigma=2)\n    \n    # linear model\n    mu = beta0 + beta1 * x\n    psi = pm.Deterministic(\"psi\", pm.math.invlogit(mu))\n\n    # detection process\n    # prior\n    p = pm.Uniform('p', 0, 1)\n\n    # likelihood for the summarized data\n    pm.ZeroInflatedBinomial('y', p=p, psi=psi, n=visit_count, \n                            observed=y_summarized)\n\npm.model_to_graphviz(psix)\n\n\n\n\n\n\n\n\nThese visualizations become handier as the models get more complex\n\nwith psix:\n    psix_idata = pm.sample()\n\nAuto-assigning NUTS sampler...\nInitializing NUTS using jitter+adapt_diag...\nMultiprocess sampling (4 chains in 4 jobs)\nNUTS: [beta0, beta1, p]\nSampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 3 seconds.\n\n\n\n\n\n\n\n    \n      \n      100.00% [8000/8000 00:03&lt;00:00 Sampling 4 chains, 0 divergences]\n    \n    \n\n\n\naz.plot_trace(\n    psix_idata,\n    var_names=['beta0', 'beta1', 'p'],\n    lines=[(\"beta0\", {}, [beta0_true]), (\"beta1\", {}, [beta1_true]), \n           ('p', {}, [p_true])]\n);\n\n\n\n\n\n\n\n\n\naz.summary(psix_idata, var_names=['beta0', 'beta1', 'p'])\n\n\n\n\n\n\n\n\nmean\nsd\nhdi_3%\nhdi_97%\nmcse_mean\nmcse_sd\ness_bulk\ness_tail\nr_hat\n\n\n\n\nbeta0\n-1.236\n0.263\n-1.743\n-0.754\n0.005\n0.003\n3051.0\n2661.0\n1.0\n\n\nbeta1\n2.855\n0.404\n2.133\n3.631\n0.008\n0.005\n2942.0\n2804.0\n1.0\n\n\np\n0.744\n0.031\n0.686\n0.805\n0.001\n0.000\n3720.0\n2857.0\n1.0",
+    "crumbs": [
+      "Notebooks",
+      "Occupancy models in PyMC"
+    ]
+  },
+  {
+    "objectID": "occ.html#adding-covariates-psix-pw",
+    "href": "occ.html#adding-covariates-psix-pw",
+    "title": "Occupancy models in PyMC",
+    "section": "Adding covariates: \\(\\psi(x) p(w)\\)",
+    "text": "Adding covariates: \\(\\psi(x) p(w)\\)\nFinally, I add in visit-level covariate \\(w_{j,k}\\) that affects detection.\n\n## ecological model\n\n# true parameter values\nbeta0_true = -1\nbeta1_true = 3\n\n# covariates \nx = scale(rng.uniform(size=site_count))\n\n# linear model\nmu_true = beta0_true + beta1_true * x\npsi_true = invlogit(mu_true)\n\n# simulate occurrence state\nz_true = rng.binomial(1, psi_true)\n\n# true parameter values\nalpha0_true = 1\nalpha1_true = -3\n\n# covariates\nw = rng.uniform(size=site_count * visit_count).reshape(site_count, visit_count)\nw = scale(w)\n\n# linear model\nnu_true = alpha0_true + alpha1_true * w\np_true = invlogit(nu_true)\n\n# simulate detection\ny = sim_y(p_true, z_true, site_count, visit_count)\n\ny[:5]\n\narray([[0, 0, 0],\n       [0, 0, 0],\n       [0, 1, 1],\n       [1, 1, 0],\n       [0, 0, 0]])\n\n\nOur PyMC code will need to be a little uglier now. I could write the model in terms of the latent occurrence state \\(z_j.\\) The NUTS sampler, however, does not jive with discrete latent states. As such, PyMC will assign it to a binary Gibbs sampler by default, which works, albeit painfully slowly.\nSince I am impatient, I instead use the marginalized version of the model, that is, a model that does not include the discrete latent states. To do this in PyMC, I use the CustomDist class. This requires, first, defining the log probability of the distribution, logp, given the data and it’s parameters. We can write logp using the likelihood of the occupancy model, \\[\nP(\\mathbf{y}_j)=\n\\begin{cases}\n    P(\\mathbf{y}_j | z_j = 1)\\; \\psi_j \\; + \\; (1 - \\psi_j),   & \\text{if } \\mathbf{y}_j = \\mathbf{0}\\\\\n    P(\\mathbf{y}_j | z_j = 1)\\; \\psi_j,  & \\text{otherwise}\n\\end{cases}\n\\] where \\(P(\\mathbf{y}_j | z_j = 1) = \\prod_j p_{j,k}^{y_{j,k}} (1-p_{j,k})^{(1-y_{j,k})}.\\) To do this in PyMC, I rely on the pm.math.switch function, which is similar to ifelse() in R or np.where().\n\n# likelihood for y data\ndef logp(x, p, psi):\n    '''Computes the log-likelihood for an occupancy model\n\n    Args: \n        x: (site_count x visit_count) array with binary detection data\n        p: (site_count x visit_count) array of probabilities\n        p: site_count vector of probabilities\n    '''\n    \n    bern = (p ** x) * ((1 - p) ** (1 - x))\n    bern_prod = pm.math.prod(bern, axis=1)\n    \n    res = pm.math.switch(\n        x.sum(axis=1) &gt; 0,\n        bern_prod * psi,\n        bern_prod * psi + (1 - psi)\n    )\n    \n    return pm.math.log(res)\n\nThen, I simply provide this function as an argument to the CustomDist class in our PyMC model.\n\nwith pm.Model() as marginal:\n\n    # occurrence process \n    # priors \n    beta0 = pm.Normal(\"beta0\", mu=0, sigma=2)\n    beta1 = pm.Normal(\"beta1\", mu=0, sigma=2)\n    \n    # linear model\n    mu = beta0 + beta1 * x\n    psi = pm.Deterministic(\"psi\", pm.math.invlogit(mu))\n\n    # detection process\n    # priors\n    alpha0 = pm.Normal('alpha0', mu=0, sigma=2)\n    alpha1 = pm.Normal('alpha1', mu=0, sigma=2)\n\n    # linear model\n    nu = alpha0 + alpha1 * w\n    p = pm.Deterministic('p', pm.math.invlogit(nu))\n\n    # likelihood\n    pm.CustomDist(\n        'y',\n        p,\n        psi,\n        logp=logp,\n        observed=y,\n    )\n\npm.model_to_graphviz(marginal)\n\n\n\n\n\n\n\n\n\nwith marginal:\n    marginal_idata = pm.sample()\n\nAuto-assigning NUTS sampler...\nInitializing NUTS using jitter+adapt_diag...\nMultiprocess sampling (4 chains in 4 jobs)\nNUTS: [beta0, beta1, alpha0, alpha1]\nSampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 4 seconds.\n\n\n\n\n\n\n\n    \n      \n      100.00% [8000/8000 00:03&lt;00:00 Sampling 4 chains, 0 divergences]\n    \n    \n\n\n\naz.plot_trace(\n    marginal_idata,\n    var_names=['beta0', 'beta1', 'alpha0', 'alpha1'],\n    lines=[(\"beta0\", {}, [beta0_true]), (\"beta1\", {}, [beta1_true]), \n           ('alpha0', {}, [alpha0_true]), ('alpha1', {}, [alpha1_true])]\n);\n\n\n\n\n\n\n\n\n\naz.summary(marginal_idata, var_names=['beta0', 'beta1', 'alpha0', 'alpha1'])\n\n\n\n\n\n\n\n\nmean\nsd\nhdi_3%\nhdi_97%\nmcse_mean\nmcse_sd\ness_bulk\ness_tail\nr_hat\n\n\n\n\nbeta0\n-0.742\n0.239\n-1.206\n-0.312\n0.004\n0.003\n3726.0\n3164.0\n1.0\n\n\nbeta1\n2.792\n0.383\n2.091\n3.510\n0.006\n0.005\n3527.0\n2715.0\n1.0\n\n\nalpha0\n1.398\n0.277\n0.909\n1.950\n0.006\n0.004\n2228.0\n2401.0\n1.0\n\n\nalpha1\n-3.079\n0.398\n-3.787\n-2.309\n0.008\n0.006\n2479.0\n2586.0\n1.0",
+    "crumbs": [
+      "Notebooks",
+      "Occupancy models in PyMC"
+    ]
+  },
+  {
+    "objectID": "occ.html#simulating-simple-occupancy-data",
+    "href": "occ.html#simulating-simple-occupancy-data",
+    "title": "Occupancy models in PyMC",
+    "section": "Simulating simple occupancy data",
+    "text": "Simulating simple occupancy data\nThe standard site-occupancy model models binary detection/non-detection data \\(y_{j,k}\\) for repeated surveys \\(k=1,2,\\dots,K\\) at sites \\(j=1,2,\\dots,J.\\) The species is present at the sites when \\(z_j=1,\\) and absent otherwise. We assume that our probability of detecting the species given that the site is occupied is \\(P(y_{j,k}|z_j=1)=p,\\) and zero when the site is unoccupied. The probability of occurrence, which is typically the parameter of interest, is \\(P(z_{j}=1)=\\psi.\\)\nTo start, I demonstrate how to simulate detection/non-detection data using numpy. In this first example, I simulate the simplest possible case, where \\(\\psi\\) is constant across all sites and \\(p\\) is constant across all sites and visits. Using .\n\nimport numpy as np\nimport pymc as pm\nimport arviz as az\nimport pandas as pd\n\ndef scale(x):\n    return (x - np.nanmean(x)) / np.nanstd(x)\n\ndef invlogit(x):\n    return 1 / (1 + np.exp(-x))\n\ndef sim_y(p, z, site_count, visit_count):\n    \n    ones = np.ones((site_count, visit_count))\n    p_array = p * ones \n\n    flips = rng.binomial(1, p_array)\n    y = (flips.T * z_true).T\n    \n    return y \n\n## simulation\n\nSEED = 808\nrng = np.random.default_rng(seed=SEED)\n\n# sampling characteristics\nsite_count = 200\nvisit_count = 3\n\n## ecological model\n\n# true parameter values\npsi_true = 0.8\n\n# simulate occurrence state\nz_true = rng.binomial(1, psi_true, size=site_count)\n\n## detection model\n\n# true parameter values\np_true = 0.5\n\n# simulate detection\ny = sim_y(p_true, z_true, site_count, visit_count)\n\n# number of detections at each site \ny_summarized = y.sum(axis=1)\n\n# detection data at the first five sites \ny[:5]\n\narray([[0, 1, 1],\n       [1, 0, 1],\n       [0, 0, 0],\n       [1, 0, 0],\n       [1, 0, 1]])",
+    "crumbs": [
+      "Notebooks",
+      "Occupancy models in PyMC"
+    ]
+  },
+  {
+    "objectID": "occ.html#adding-site-covariates",
+    "href": "occ.html#adding-site-covariates",
+    "title": "Occupancy models in PyMC",
+    "section": "Adding site covariates",
+    "text": "Adding site covariates\nNext, I add in some realism by simulating a site-level covariate \\(x\\) that affects the occurrence probability. I model this effect with a logit-linear model, i.e., \\(\\psi_j=\\text{logit}^{-1}(\\beta_0 + \\beta_1 x_j).\\)\n\n## ecological model\n\n# true parameter values\nbeta0_true = -1\nbeta1_true = 3\n\n# covariates \nx = scale(rng.uniform(size=site_count))\n\n# linear model\nmu_true = beta0_true + beta1_true * x\npsi_true = invlogit(mu_true)\n\n# simulate occurrence state\nz_true = rng.binomial(1, psi_true)\n\n## detection model\n\n# true parameter values\np_true = 0.75\n\n# simulate detection\ny = sim_y(p_true, z_true, site_count, visit_count)\n\n# vector with the number of detections at each site \ny_summarized = y.sum(axis=1)\n\n# detection data at the first five sites \ny[:5]\n\narray([[0, 0, 0],\n       [0, 0, 0],\n       [0, 0, 0],\n       [0, 0, 0],\n       [0, 0, 0]])\n\n\nAgain, I specify the model with PyMC. Like JAGS, the random variables can be manipulated, as in a linear model with \\(x_j.\\) These behave like numpy arrays, meaning that vectorized operations and broadcasting are available.\n\nwith pm.Model() as psix:\n\n    # occurrence process \n    # priors \n    beta0 = pm.Normal(\"beta0\", mu=0, sigma=2)\n    beta1 = pm.Normal(\"beta1\", mu=0, sigma=2)\n    \n    # linear model\n    mu = beta0 + beta1 * x\n    psi = pm.Deterministic(\"psi\", pm.math.invlogit(mu))\n\n    # detection process\n    # prior\n    p = pm.Uniform('p', 0, 1)\n\n    # likelihood for the summarized data\n    pm.ZeroInflatedBinomial('y', p=p, psi=psi, n=visit_count, \n                            observed=y_summarized)\n\npm.model_to_graphviz(psix)\n\n\n\n\n\n\n\n\nThese visualizations become handier as the models get more complex\n\nwith psix:\n    psix_idata = pm.sample()\n\nAuto-assigning NUTS sampler...\nInitializing NUTS using jitter+adapt_diag...\nMultiprocess sampling (4 chains in 4 jobs)\nNUTS: [beta0, beta1, p]\nSampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 2 seconds.\n\n\n\n\n\n\n\n    \n      \n      100.00% [8000/8000 00:02&lt;00:00 Sampling 4 chains, 0 divergences]\n    \n    \n\n\n\naz.plot_trace(\n    psix_idata,\n    var_names=['beta0', 'beta1', 'p'],\n    lines=[(\"beta0\", {}, [beta0_true]), (\"beta1\", {}, [beta1_true]), \n           ('p', {}, [p_true])]\n);\n\n\n\n\n\n\n\n\n\naz.summary(psix_idata, var_names=['beta0', 'beta1', 'p'])\n\n\n\n\n\n\n\n\nmean\nsd\nhdi_3%\nhdi_97%\nmcse_mean\nmcse_sd\ness_bulk\ness_tail\nr_hat\n\n\n\n\nbeta0\n-1.249\n0.263\n-1.727\n-0.755\n0.005\n0.004\n2949.0\n2698.0\n1.0\n\n\nbeta1\n2.869\n0.413\n2.121\n3.650\n0.008\n0.006\n2759.0\n2240.0\n1.0\n\n\np\n0.744\n0.032\n0.689\n0.806\n0.001\n0.000\n3958.0\n3042.0\n1.0",
+    "crumbs": [
+      "Notebooks",
+      "Occupancy models in PyMC"
+    ]
+  },
+  {
+    "objectID": "occ.html#adding-visit-covariates",
+    "href": "occ.html#adding-visit-covariates",
+    "title": "Occupancy models in PyMC",
+    "section": "Adding visit covariates",
+    "text": "Adding visit covariates\nFinally, I add in visit-level covariate \\(w_{j,k}\\) that affects detection.\n\n## ecological model\n\n# true parameter values\nbeta0_true = -1\nbeta1_true = 3\n\n# covariates \nx = scale(rng.uniform(size=site_count))\n\n# linear model\nmu_true = beta0_true + beta1_true * x\npsi_true = invlogit(mu_true)\n\n# simulate occurrence state\nz_true = rng.binomial(1, psi_true)\n\n# true parameter values\nalpha0_true = 1\nalpha1_true = -3\n\n# covariates\nw = rng.uniform(size=site_count * visit_count).reshape(site_count, visit_count)\nw = scale(w)\n\n# linear model\nnu_true = alpha0_true + alpha1_true * w\np_true = invlogit(nu_true)\n\n# simulate detection\ny = sim_y(p_true, z_true, site_count, visit_count)\n\ny[:5]\n\narray([[0, 0, 0],\n       [0, 0, 0],\n       [0, 1, 1],\n       [1, 1, 0],\n       [0, 0, 0]])\n\n\nOur PyMC code will need to be a little uglier now. I could write the model in terms of the latent occurrence state \\(z_j.\\) The NUTS sampler, however, does not jive with discrete latent states. As such, PyMC will assign it to a binary Gibbs sampler by default, which works, albeit painfully slowly.\nSince I am impatient, I instead use the marginalized version of the model, that is, a model that does not include the discrete latent states. To do this in PyMC, I use the CustomDist class. This requires, first, defining the log probability of the distribution, logp, given the data and it’s parameters. We can write logp using the likelihood of the occupancy model, \\[\nP(\\mathbf{y}_j)=\n\\begin{cases}\n    P(\\mathbf{y}_j | z_j = 1)\\; \\psi_j \\; + \\; (1 - \\psi_j),   & \\text{if } \\mathbf{y}_j = \\mathbf{0}\\\\\n    P(\\mathbf{y}_j | z_j = 1)\\; \\psi_j,  & \\text{otherwise}\n\\end{cases}\n\\] where \\(P(\\mathbf{y}_j | z_j = 1) = \\prod_j p_{j,k}^{y_{j,k}} (1-p_{j,k})^{(1-y_{j,k})}.\\) To do this in PyMC, I rely on the pm.math.switch function, which is similar to ifelse() in R or np.where().\n\n# likelihood for y data\ndef logp(x, p, psi):\n    '''Computes the log-likelihood for an occupancy model\n\n    Args: \n        x: (site_count x visit_count) array with binary detection data\n        p: (site_count x visit_count) array of probabilities\n        p: site_count vector of probabilities\n    '''\n    \n    bern = (p ** x) * ((1 - p) ** (1 - x))\n    bern_prod = pm.math.prod(bern, axis=1)\n    \n    res = pm.math.switch(\n        x.sum(axis=1) &gt; 0,\n        bern_prod * psi,\n        bern_prod * psi + (1 - psi)\n    )\n    \n    return pm.math.log(res)\n\nThen, I simply provide this function as an argument to the CustomDist class in our PyMC model.\n\nwith pm.Model() as marginal:\n\n    # occurrence process \n    # priors \n    beta0 = pm.Normal(\"beta0\", mu=0, sigma=2)\n    beta1 = pm.Normal(\"beta1\", mu=0, sigma=2)\n    \n    # linear model\n    mu = beta0 + beta1 * x\n    psi = pm.Deterministic(\"psi\", pm.math.invlogit(mu))\n\n    # detection process\n    # priors\n    alpha0 = pm.Normal('alpha0', mu=0, sigma=2)\n    alpha1 = pm.Normal('alpha1', mu=0, sigma=2)\n\n    # linear model\n    nu = alpha0 + alpha1 * w\n    p = pm.Deterministic('p', pm.math.invlogit(nu))\n\n    # likelihood\n    pm.CustomDist(\n        'y',\n        p,\n        psi,\n        logp=logp,\n        observed=y,\n    )\n\npm.model_to_graphviz(marginal)\n\n\n\n\n\n\n\n\n\nwith marginal:\n    marginal_idata = pm.sample()\n\nAuto-assigning NUTS sampler...\nInitializing NUTS using jitter+adapt_diag...\nMultiprocess sampling (4 chains in 4 jobs)\nNUTS: [beta0, beta1, alpha0, alpha1]\nSampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 3 seconds.\n\n\n\n\n\n\n\n    \n      \n      100.00% [8000/8000 00:03&lt;00:00 Sampling 4 chains, 0 divergences]\n    \n    \n\n\n\naz.plot_trace(\n    marginal_idata,\n    var_names=['beta0', 'beta1', 'alpha0', 'alpha1'],\n    lines=[(\"beta0\", {}, [beta0_true]), (\"beta1\", {}, [beta1_true]), \n           ('alpha0', {}, [alpha0_true]), ('alpha1', {}, [alpha1_true])]\n);\n\n\n\n\n\n\n\n\n\naz.summary(marginal_idata, var_names=['beta0', 'beta1', 'alpha0', 'alpha1'])\n\n\n\n\n\n\n\n\nmean\nsd\nhdi_3%\nhdi_97%\nmcse_mean\nmcse_sd\ness_bulk\ness_tail\nr_hat\n\n\n\n\nbeta0\n-0.746\n0.237\n-1.198\n-0.309\n0.004\n0.003\n3537.0\n3171.0\n1.0\n\n\nbeta1\n2.797\n0.389\n2.116\n3.547\n0.007\n0.005\n2889.0\n2577.0\n1.0\n\n\nalpha0\n1.403\n0.275\n0.912\n1.919\n0.005\n0.004\n2630.0\n2522.0\n1.0\n\n\nalpha1\n-3.093\n0.389\n-3.804\n-2.364\n0.008\n0.005\n2688.0\n2580.0\n1.0",
+    "crumbs": [
+      "Notebooks",
+      "Occupancy models in PyMC"
+    ]
   }
 ]
