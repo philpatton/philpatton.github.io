@@ -1,0 +1,42 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Philip T. Patton"
+
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: cv.qmd
+        text: CV
+      - href: notebooks.qmd
+        text: Notebooks
+
+    tools:
+      - icon: twitter
+        href: https://twitter.com/philip_patton_
+      - icon: github
+        href: https://github.com/philpatton
+      - icon: book
+        href: https://scholar.google.com/citations?user=4TUtf04AAAAJ&hl=en&oi=ao
+
+  sidebar:
+    - title: "Notebooks"
+      style: "docked"
+      # background: light
+      contents:
+        - notebooks.qmd
+        - section: "PyMC"
+          contents:
+            - href: occ.ipynb
+              text: Occupancy
+            - href: closed_cmr.ipynb
+              text: Closed capture-recapture
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
