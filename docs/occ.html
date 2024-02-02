@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2023-01-18">
 <meta name="description" content="Static, single-species occupancy models in PyMC">
 
-<title>Philip T. Patton - Occupancy models in PyMC</title>
+<title>Philip T. Patton - Occupancy models</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -178,7 +178,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="./about.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -191,7 +191,10 @@ window.Quarto = {
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+          <div class="quarto-navbar-tools tools-wide">
+    <a href="https://twitter.com/philip_patton_" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
+    <a href="https://github.com/philpatton" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://scholar.google.com/citations?user=4TUtf04AAAAJ&amp;hl=en&amp;oi=ao" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-book"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -200,7 +203,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occ.html">Occupancy models in PyMC</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occ.html">PyMC</a></li><li class="breadcrumb-item"><a href="./occ.html">Occupancy models</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -218,12 +221,29 @@ window.Quarto = {
  <span class="menu-text">Notebooks</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">PyMC</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./occ.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Occupancy models in PyMC</span></a>
+ <span class="menu-text">Occupancy models</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./closed_cmr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Closed capture-recapture</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -250,9 +270,9 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occ.html">PyMC</a></li><li class="breadcrumb-item"><a href="./occ.html">Occupancy models</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Occupancy models in PyMC</h1>
+<h1 class="title">Occupancy models</h1>
 </div>
 
 <div>
@@ -302,7 +322,7 @@ window.Quarto = {
 <h1>Simulated examples</h1>
 <p>The standard site-occupancy model models binary detection/non-detection data <span class="math inline">\(y_{j,k}\)</span> for repeated surveys <span class="math inline">\(k=1,2,\dots,K\)</span> at sites <span class="math inline">\(j=1,2,\dots,J.\)</span> The species is present at the sites when <span class="math inline">\(z_j=1,\)</span> and absent otherwise. We assume that our probability of detecting the species given that the site is occupied is <span class="math inline">\(P(y_{j,k}|z_j=1)=p,\)</span> and zero when the site is unoccupied. The probability of occurrence, which is typically the parameter of interest, is <span class="math inline">\(P(z_{j}=1)=\psi.\)</span></p>
 <p>To start, I demonstrate how to simulate detection/non-detection data using numpy. In this first example, I simulate the simplest possible case, where <span class="math inline">\(\psi\)</span> is constant across all sites and <span class="math inline">\(p\)</span> is constant across all sites and visits. Using .</p>
-<div id="e689a673" class="cell" data-execution_count="1">
+<div id="ff003ae7" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
@@ -365,7 +385,7 @@ window.Quarto = {
 <section id="estimating-parameters-with-pymc" class="level2">
 <h2 class="anchored" data-anchor-id="estimating-parameters-with-pymc">Estimating parameters with PyMC</h2>
 <p>Next, I use PyMC to train the occupancy model with the simulated data. First, similar to JAGS and Stan, the model must be specified using the PyMC syntax. This is done using a <a href="https://peps.python.org/pep-0343/">context manager</a> in Python, essentially, a <code>with</code> statement. This creates a <code>Model</code> object.</p>
-<div id="ffdc5c37" class="cell" data-execution_count="2">
+<div id="8ca46f5b" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> constant:</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for the detetion and occurrence probabilities\</span></span>
@@ -379,7 +399,7 @@ window.Quarto = {
 <p>In JAGS, the prior for <span class="math inline">\(p\)</span> would be specified as <code>p ~ dunif(0, 1).</code> The PyMC equivalent is <code>p = pm.Uniform('p', 0, 1)</code>. This could, alternatively, be specified as <code>p = pm.Uniform('detection probability', 0, 1)</code>.</p>
 <p>For the likelihood, I use PyMC’s built-in <code>ZeroInflatedBinomial</code> distribution. We tell PyMC that this is an observed random variable by supplying data to the <code>observed</code> argument.</p>
 <p>PyMC has handy tools for visualizing the model.</p>
-<div id="0e306739" class="cell" data-execution_count="3">
+<div id="b2a13174" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(constant)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div class="quarto-figure quarto-figure-center">
@@ -397,7 +417,7 @@ window.Quarto = {
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [psi, p]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 1 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 2 seconds.</code></pre>
 
 <style>
     /* Turns off some styling */
@@ -417,12 +437,12 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:00&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:02&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 <p>PyMC will try to use the No-U-Turn Sampler (NUTS) whenever possible. As you can see, it samples the posterior quickly.</p>
 <p>I plot the output using the <code>plot_trace</code> function from the Arviz package, supplying the true values for <span class="math inline">\(p\)</span> and <span class="math inline">\(\psi\)</span>.</p>
-<div id="9e5c9143" class="cell" data-execution_count="5">
+<div id="3051b880" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    constant_idata,</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    lines<span class="op">=</span>[(<span class="st">"psi"</span>, {}, [psi_true]), (<span class="st">"p"</span>, {}, [p_true])] </span>
@@ -430,14 +450,14 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="occ_files/figure-html/cell-6-output-1.png" width="923" height="357" class="figure-img"></p>
+<p><img src="occ_files/figure-html/cell-6-output-1.png" width="912" height="357" class="figure-img"></p>
 <figcaption>Estimated parameter values with the true values represented by vertical and horizontal lines.</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <p>Arviz also produces tabular summaries.</p>
-<div id="b0e60733" class="cell" data-execution_count="6">
+<div id="248ba7b5" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>az.summary(constant_idata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <div>
@@ -461,26 +481,26 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">psi</td>
-<td>0.800</td>
-<td>0.044</td>
-<td>0.719</td>
+<td>0.801</td>
+<td>0.043</td>
+<td>0.722</td>
 <td>0.881</td>
 <td>0.001</td>
 <td>0.001</td>
-<td>2311.0</td>
-<td>1806.0</td>
+<td>2089.0</td>
+<td>1589.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">p</td>
 <td>0.498</td>
 <td>0.030</td>
-<td>0.444</td>
-<td>0.556</td>
+<td>0.439</td>
+<td>0.552</td>
 <td>0.001</td>
 <td>0.000</td>
-<td>2270.0</td>
-<td>2126.0</td>
+<td>2228.0</td>
+<td>2296.0</td>
 <td>1.0</td>
 </tr>
 </tbody>
@@ -493,7 +513,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <section id="adding-site-covariates" class="level2">
 <h2 class="anchored" data-anchor-id="adding-site-covariates">Adding site covariates</h2>
 <p>Next, I add in some realism by simulating a site-level covariate <span class="math inline">\(x\)</span> that affects the occurrence probability. I model this effect with a logit-linear model, i.e., <span class="math inline">\(\psi_j=\text{logit}^{-1}(\beta_0 + \beta_1 x_j).\)</span></p>
-<div id="70151d89" class="cell" data-execution_count="7">
+<div id="eb85edae" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">## ecological model</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># true parameter values</span></span>
@@ -531,8 +551,8 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
        [0, 0, 0]])</code></pre>
 </div>
 </div>
-<p>Again, I specify the model with PyMC. Like JAGS, the random variables can be manipulated, as in a linear model with <span class="math inline">\(x_j.\)</span> These behave like numpy arrays, meaning that vectorized operations and broadcasting are available.</p>
-<div id="db6974a3" class="cell" data-execution_count="8">
+<p>Again, I specify the model with PyMC. Like JAGS, the random variables can be manipulated, as in a linear model with <span class="math inline">\(x_j.\)</span> These behave like numpy arrays, meaning that vectorized operations and broadcasting are available. To monitor the output of these manipulations, use the <code>pm.Deterministic</code> class.</p>
+<div id="6956332a" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> psix:</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># occurrence process </span></span>
@@ -562,7 +582,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 </div>
 </div>
 <p>These visualizations become handier as the models get more complex</p>
-<div id="09a65b57" class="cell" data-execution_count="9">
+<div id="59b2a88f" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> psix:</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    psix_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -570,7 +590,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [beta0, beta1, p]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 1 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 3 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -594,12 +614,12 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:01&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:02&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
 </div>
-<div id="3f996d20" class="cell" data-execution_count="10">
+<div id="f74d54e0" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    psix_idata,</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    var_names<span class="op">=</span>[<span class="st">'beta0'</span>, <span class="st">'beta1'</span>, <span class="st">'p'</span>],</span>
@@ -614,7 +634,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 </div>
 </div>
 </div>
-<div id="057cd119" class="cell" data-execution_count="11">
+<div id="fe1050c1" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>az.summary(psix_idata, var_names<span class="op">=</span>[<span class="st">'beta0'</span>, <span class="st">'beta1'</span>, <span class="st">'p'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
 <div>
@@ -638,38 +658,38 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">beta0</td>
-<td>-1.246</td>
-<td>0.264</td>
-<td>-1.731</td>
-<td>-0.741</td>
+<td>-1.247</td>
+<td>0.259</td>
+<td>-1.730</td>
+<td>-0.751</td>
 <td>0.005</td>
-<td>0.004</td>
-<td>2672.0</td>
-<td>2793.0</td>
+<td>0.003</td>
+<td>3045.0</td>
+<td>2772.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">beta1</td>
-<td>2.858</td>
-<td>0.416</td>
-<td>2.103</td>
-<td>3.644</td>
+<td>2.852</td>
+<td>0.405</td>
+<td>2.125</td>
+<td>3.627</td>
 <td>0.008</td>
 <td>0.006</td>
-<td>2717.0</td>
-<td>2670.0</td>
+<td>2799.0</td>
+<td>2816.0</td>
 <td>1.0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">p</td>
-<td>0.745</td>
+<td>0.744</td>
 <td>0.032</td>
-<td>0.682</td>
-<td>0.801</td>
-<td>0.001</td>
+<td>0.687</td>
+<td>0.806</td>
 <td>0.000</td>
-<td>3907.0</td>
-<td>2849.0</td>
+<td>0.000</td>
+<td>4102.0</td>
+<td>2942.0</td>
 <td>1.0</td>
 </tr>
 </tbody>
@@ -682,7 +702,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <section id="adding-visit-covariates" class="level2">
 <h2 class="anchored" data-anchor-id="adding-visit-covariates">Adding visit covariates</h2>
 <p>Finally, I add in visit-level covariate <span class="math inline">\(w_{j,k}\)</span> that affects detection.</p>
-<div id="40f54568" class="cell" data-execution_count="12">
+<div id="8f62b541" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">## ecological model</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># true parameter values</span></span>
@@ -731,7 +751,7 @@ P(\mathbf{y}_j)=
     P(\mathbf{y}_j | z_j = 1)\; \psi_j,  &amp; \text{otherwise}
 \end{cases}
 \]</span> where <span class="math inline">\(P(\mathbf{y}_j | z_j = 1) = \prod_j p_{j,k}^{y_{j,k}} (1-p_{j,k})^{(1-y_{j,k})}.\)</span> To do this in PyMC, I rely on the <code>pm.math.switch</code> function, which is similar to <code>ifelse()</code> in R or <code>np.where()</code>.</p>
-<div id="5ae9664d" class="cell" data-execution_count="13">
+<div id="805e09b5" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># likelihood for y data</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logp(x, p, psi):</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Computes the log-likelihood for an occupancy model</span></span>
@@ -754,7 +774,7 @@ P(\mathbf{y}_j)=
 <span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pm.math.log(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then, I simply provide this function as an argument to the <code>CustomDist</code> class in our PyMC model.</p>
-<div id="437092c6" class="cell" data-execution_count="14">
+<div id="b40309f5" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> marginal:</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># occurrence process </span></span>
@@ -793,7 +813,7 @@ P(\mathbf{y}_j)=
 </div>
 </div>
 </div>
-<div id="513aa9cd" class="cell" data-execution_count="15">
+<div id="56377960" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> marginal:</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    marginal_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -801,7 +821,7 @@ P(\mathbf{y}_j)=
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [beta0, beta1, alpha0, alpha1]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 2 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 4 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -825,12 +845,12 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:01&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:03&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
 </div>
-<div id="f99c24f6" class="cell" data-execution_count="16">
+<div id="97ee1112" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    marginal_idata,</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    var_names<span class="op">=</span>[<span class="st">'beta0'</span>, <span class="st">'beta1'</span>, <span class="st">'alpha0'</span>, <span class="st">'alpha1'</span>],</span>
@@ -840,12 +860,12 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="occ_files/figure-html/cell-17-output-1.png" width="917" height="652" class="figure-img"></p>
+<p><img src="occ_files/figure-html/cell-17-output-1.png" width="912" height="652" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<div id="d300af9b" class="cell" data-execution_count="17">
+<div id="a25a49b2" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>az.summary(marginal_idata, var_names<span class="op">=</span>[<span class="st">'beta0'</span>, <span class="st">'beta1'</span>, <span class="st">'alpha0'</span>, <span class="st">'alpha1'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
 <div>
@@ -869,50 +889,50 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">beta0</td>
-<td>-0.748</td>
+<td>-0.746</td>
 <td>0.242</td>
-<td>-1.223</td>
-<td>-0.300</td>
+<td>-1.191</td>
+<td>-0.303</td>
 <td>0.004</td>
 <td>0.003</td>
-<td>3155.0</td>
-<td>3029.0</td>
+<td>3314.0</td>
+<td>2562.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">beta1</td>
-<td>2.801</td>
-<td>0.393</td>
-<td>2.089</td>
-<td>3.538</td>
+<td>2.807</td>
+<td>0.391</td>
+<td>2.058</td>
+<td>3.518</td>
 <td>0.007</td>
 <td>0.005</td>
-<td>3086.0</td>
-<td>2584.0</td>
+<td>3096.0</td>
+<td>2848.0</td>
 <td>1.0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">alpha0</td>
-<td>1.397</td>
-<td>0.270</td>
-<td>0.904</td>
-<td>1.911</td>
+<td>1.398</td>
+<td>0.265</td>
+<td>0.905</td>
+<td>1.891</td>
 <td>0.005</td>
 <td>0.004</td>
-<td>2661.0</td>
-<td>2489.0</td>
+<td>2836.0</td>
+<td>2719.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">alpha1</td>
-<td>-3.090</td>
-<td>0.382</td>
-<td>-3.820</td>
-<td>-2.401</td>
+<td>-3.081</td>
+<td>0.379</td>
+<td>-3.756</td>
+<td>-2.342</td>
 <td>0.007</td>
 <td>0.005</td>
-<td>2843.0</td>
-<td>2370.0</td>
+<td>2754.0</td>
+<td>2454.0</td>
 <td>1.0</td>
 </tr>
 </tbody>
@@ -926,7 +946,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <section id="real-data-example" class="level1">
 <h1>Real data example</h1>
 <p>Finally, I demonstrate the model using a real data example. These data come from <span class="citation" data-cites="henden2013">Henden et al. (<a href="#ref-henden2013" role="doc-biblioref">2013</a>)</span>, and were used as a demonstration in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 23. They represent detection/non-detection data of Willow Warblers from Finnmark, Norway. The <span class="math inline">\(J=27\)</span> sites were sampled <span class="math inline">\(K=3\)</span> times. Replicating the analysis in Box 23.7 in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, I use two covariates for site: site area and willow tree height. Further, I use two covariates for visit: an indicator for the visit and willow tree height.</p>
-<div id="338b352c" class="cell" data-execution_count="18">
+<div id="a886c1a0" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the data</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">'PlosOne-DataFinnmark.csv'</span>)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -953,7 +973,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> np.stack((visit_int, visit_indicator, visit_wheight), axis<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This example uses an extremely handy feature of PyMC: coordinates. This allows us to specify a prior for each <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> value in one line of code, using the <code>dims</code> argument in our prior distribution. The length of vector is implied by length of the list in <code>coords</code>.</p>
-<div id="73683d03" class="cell" data-execution_count="19">
+<div id="5ad509cc" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">"beta_coefs"</span>: [<span class="st">"Intercept"</span>, <span class="st">"Pland"</span>, <span class="st">'Wheight'</span>],</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"alpha_coefs"</span>: [<span class="st">"Intercept"</span>, <span class="st">"Visit"</span>, <span class="st">'Wheight'</span>]}</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -992,7 +1012,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 </div>
 </div>
 <p>Now the dimensionality of the prior distributions is clear, with (3) different priors specified for each random variable in the vectors <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.</p>
-<div id="990c77d2" class="cell" data-execution_count="20">
+<div id="c877b197" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> warbler:</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    warbler_idata <span class="op">=</span> pm.sample(<span class="dv">4000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -1000,7 +1020,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [Beta, Alpha]
-Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws total) took 3 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws total) took 7 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -1024,13 +1044,13 @@ Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws
 
     <div>
       <progress value="20000" class="" max="20000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [20000/20000 00:02&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [20000/20000 00:06&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
 </div>
 <p>I upped the number of draw iterations to 4,000 per chain, 16,000 total, since this dataset includes real-world messiness. Nevertheless, sampling the posterior took only 6 seconds!</p>
-<div id="4097134d" class="cell" data-execution_count="21">
+<div id="46c00b1f" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>az.summary(warbler_idata, var_names<span class="op">=</span>[<span class="st">'Alpha'</span>, <span class="st">'Beta'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
 <div>
@@ -1055,73 +1075,73 @@ Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws
 <tr class="odd">
 <td data-quarto-table-cell-role="th">Alpha[Intercept]</td>
 <td>-0.022</td>
-<td>0.374</td>
-<td>-0.703</td>
-<td>0.705</td>
+<td>0.372</td>
+<td>-0.687</td>
+<td>0.702</td>
 <td>0.004</td>
 <td>0.003</td>
-<td>10485.0</td>
-<td>11120.0</td>
+<td>10204.0</td>
+<td>11109.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">Alpha[Visit]</td>
-<td>0.468</td>
-<td>0.288</td>
-<td>-0.086</td>
-<td>0.996</td>
+<td>0.469</td>
+<td>0.283</td>
+<td>-0.048</td>
+<td>1.013</td>
 <td>0.002</td>
 <td>0.002</td>
-<td>13831.0</td>
-<td>10526.0</td>
+<td>13690.0</td>
+<td>11093.0</td>
 <td>1.0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">Alpha[Wheight]</td>
-<td>0.748</td>
-<td>0.436</td>
-<td>-0.081</td>
-<td>1.539</td>
+<td>0.745</td>
+<td>0.434</td>
+<td>-0.072</td>
+<td>1.560</td>
 <td>0.004</td>
 <td>0.003</td>
-<td>10876.0</td>
-<td>11608.0</td>
+<td>9694.0</td>
+<td>11057.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">Beta[Intercept]</td>
-<td>0.823</td>
-<td>0.824</td>
-<td>-0.530</td>
-<td>2.489</td>
+<td>0.819</td>
+<td>0.825</td>
+<td>-0.585</td>
+<td>2.436</td>
 <td>0.009</td>
 <td>0.007</td>
-<td>9555.0</td>
-<td>9450.0</td>
+<td>9294.0</td>
+<td>8875.0</td>
 <td>1.0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">Beta[Pland]</td>
-<td>2.273</td>
-<td>0.887</td>
-<td>0.673</td>
-<td>3.921</td>
+<td>2.265</td>
+<td>0.876</td>
+<td>0.733</td>
+<td>3.965</td>
 <td>0.009</td>
 <td>0.007</td>
-<td>9974.0</td>
-<td>8814.0</td>
+<td>10158.0</td>
+<td>7485.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">Beta[Wheight]</td>
-<td>0.952</td>
+<td>0.957</td>
 <td>0.687</td>
-<td>-0.359</td>
-<td>2.243</td>
+<td>-0.360</td>
+<td>2.247</td>
 <td>0.006</td>
-<td>0.004</td>
-<td>12770.0</td>
-<td>10905.0</td>
+<td>0.005</td>
+<td>11737.0</td>
+<td>10244.0</td>
 <td>1.0</td>
 </tr>
 </tbody>
@@ -1131,7 +1151,7 @@ Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws
 </div>
 </div>
 <p>I compare the parameter estimates to the ones estimated by <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 23.</p>
-<div id="e2ad60c7" class="cell" data-execution_count="22">
+<div id="e5bd96a2" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>alpha_hat_hooten <span class="op">=</span>  [<span class="fl">0.04</span>, <span class="fl">0.47</span>, <span class="fl">0.68</span>]</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>beta_hat_hooten <span class="op">=</span> [<span class="fl">0.56</span>, <span class="fl">1.92</span>, <span class="fl">0.93</span>]</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1144,14 +1164,14 @@ Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="occ_files/figure-html/cell-23-output-1.png" width="913" height="357" class="figure-img"></p>
+<p><img src="occ_files/figure-html/cell-23-output-1.png" width="912" height="357" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>There is a high level of agreement between the two methods. While their algorithm was designed for teaching and interpretability, it is noteworthy that the PyMC model is 10x faster.</p>
 <p>Arviz also produces forest plots for looking at effect sizes.</p>
-<div id="23354c87" class="cell" data-execution_count="23">
+<div id="6f30f935" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>az.plot_forest(warbler_idata, var_names<span class="op">=</span>[<span class="st">'Alpha'</span>, <span class="st">"Beta"</span>], </span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>               hdi_prob<span class="op">=</span><span class="fl">0.95</span>, ess<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -1165,7 +1185,7 @@ Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws
 <section id="model-comparison" class="level2">
 <h2 class="anchored" data-anchor-id="model-comparison">Model comparison</h2>
 <p>PyMC also has handy tools for model comparison. I demonstrate these by fitting a model to the warbler data with a constant probability of detection.</p>
-<div id="6e5862ab" class="cell" data-execution_count="24">
+<div id="6a2b02d7" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>Y_sum <span class="op">=</span> Y.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model(coords<span class="op">=</span>coords) <span class="im">as</span> warbler_constantp:</span>
@@ -1192,7 +1212,7 @@ Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws
 </div>
 </div>
 </div>
-<div id="84bd6a51" class="cell" data-execution_count="25">
+<div id="932fcb96" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> warbler_constantp:</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    warbler_constantp_idata <span class="op">=</span> pm.sample(<span class="dv">4000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -1200,7 +1220,7 @@ Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [Beta, p]
-Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws total) took 3 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws total) took 5 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -1224,13 +1244,13 @@ Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws
 
     <div>
       <progress value="20000" class="" max="20000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [20000/20000 00:02&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [20000/20000 00:05&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
 </div>
 <p>Next, I caclculate the leave-one-out (loo) cross-validation score for each model <span class="citation" data-cites="vehtari2017">(<a href="#ref-vehtari2017" role="doc-biblioref">Vehtari, Gelman, and Gabry 2017</a>)</span>. This involves first computing the log likelihood for each model.</p>
-<div id="4ef6658e" class="cell" data-execution_count="26">
+<div id="968f31dd" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> warbler:</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    pm.compute_log_likelihood(warbler_idata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -1260,7 +1280,7 @@ Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws
     
 </div>
 </div>
-<div id="c3099451" class="cell" data-execution_count="27">
+<div id="f183c32b" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>warbler_loo <span class="op">=</span> az.loo(warbler_idata)</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>warbler_loo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1268,8 +1288,8 @@ Sampling 4 chains for 1_000 tune and 4_000 draw iterations (4_000 + 16_000 draws
 <pre><code>Computed from 16000 posterior samples and 37 observations log-likelihood matrix.
 
          Estimate       SE
-elpd_loo   -54.42     7.37
-p_loo        6.21        -
+elpd_loo   -54.29     7.34
+p_loo        6.07        -
 ------
 
 Pareto k diagnostic values:
@@ -1280,7 +1300,7 @@ Pareto k diagnostic values:
    (1, Inf)   (very bad)    0    0.0%</code></pre>
 </div>
 </div>
-<div id="9eed86c1" class="cell" data-execution_count="28">
+<div id="5a3e682b" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> warbler_constantp:</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    pm.compute_log_likelihood(warbler_constantp_idata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -1310,7 +1330,7 @@ Pareto k diagnostic values:
     
 </div>
 </div>
-<div id="ccb8080f" class="cell" data-execution_count="29">
+<div id="f06b63ae" class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>warbler_constantp_loo <span class="op">=</span> az.loo(warbler_constantp_idata)</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>warbler_constantp_loo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1318,8 +1338,8 @@ Pareto k diagnostic values:
 <pre><code>Computed from 16000 posterior samples and 37 observations log-likelihood matrix.
 
          Estimate       SE
-elpd_loo   -39.30     5.12
-p_loo        3.76        -
+elpd_loo   -39.28     5.10
+p_loo        3.75        -
 ------
 
 Pareto k diagnostic values:
@@ -1331,7 +1351,7 @@ Pareto k diagnostic values:
 </div>
 </div>
 <p>Arviz has handy tools for comparing the results. First, I generate a tabular summary.</p>
-<div id="5c40d706" class="cell" data-execution_count="30">
+<div id="b93b9797" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>df_comp_loo <span class="op">=</span> az.compare({<span class="vs">r"$p(visit,wheight)$"</span>: warbler_idata, </span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                          <span class="vs">r"$p(\cdot)$"</span>: warbler_constantp_idata})</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>df_comp_loo</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1364,11 +1384,11 @@ Pareto k diagnostic values:
 <tr class="odd">
 <td data-quarto-table-cell-role="th">$p(\cdot)$</td>
 <td>0</td>
-<td>-39.297948</td>
-<td>3.763604</td>
+<td>-39.279293</td>
+<td>3.746388</td>
 <td>0.000000</td>
-<td>1.0</td>
-<td>5.120232</td>
+<td>1.000000e+00</td>
+<td>5.097099</td>
 <td>0.000000</td>
 <td>False</td>
 <td>log</td>
@@ -1376,12 +1396,12 @@ Pareto k diagnostic values:
 <tr class="even">
 <td data-quarto-table-cell-role="th">$p(visit,wheight)$</td>
 <td>1</td>
-<td>-54.421247</td>
-<td>6.210837</td>
-<td>15.123299</td>
-<td>0.0</td>
-<td>7.367675</td>
-<td>4.198303</td>
+<td>-54.290679</td>
+<td>6.069909</td>
+<td>15.011386</td>
+<td>4.405365e-13</td>
+<td>7.343970</td>
+<td>4.169049</td>
 <td>False</td>
 <td>log</td>
 </tr>
@@ -1393,7 +1413,7 @@ Pareto k diagnostic values:
 </div>
 <p>This indicates that the <span class="math inline">\(p(\cdot)\)</span> model is favored over the <span class="math inline">\(p(visit,wheight)\)</span> model.</p>
 <p>Arviz also generates plots for these comparisons.</p>
-<div id="1175453e" class="cell" data-execution_count="31">
+<div id="3ea144e8" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>az.plot_compare(df_comp_loo, insample_dev<span class="op">=</span><span class="va">False</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>/Users/philtpatton/miniforge3/envs/mc/lib/python3.11/site-packages/arviz/plots/backends/matplotlib/compareplot.py:87: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
