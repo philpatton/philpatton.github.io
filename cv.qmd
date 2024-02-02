@@ -1,0 +1,76 @@
+---
+title: "Philip T. Patton"
+description: Graduate Research Assistant & NOAA QUEST Fellow
+---
+
+## Education
+
+- Ph.D., Marine Biology, Hawaiʻi Institute of Marine Biology, 2025 (anticipated)
+- M.S., Fisheries, Wildlife, and Conservation Biology, North Carolina State University, 2016
+- B.S., Conservation Biology, SUNY College of Environmental Science and Forestry, 2013
+
+## Research Experience
+
+- NOAA QUEST Fellow, Pacific Islands Fisheries Science Center, NOAA Fisheries, 2021 - Present
+- Graduate Research Assistant, Hawaiʻi Institute of Marine Biology, University of Hawaiʻi at Mānoa, 2021 - Present
+- Graduate Research Assistant, Quantitative Ecology & Resource Management, University of Washington, 2016 - 2017
+- Graduate Research Assistant, Applied Ecology, North Carolina State University, 2014 - 2016
+
+## Professional Experience
+
+- Data Analyst, Health Services, Deschutes County, 2020 - 2021
+- Data Analyst, Supply Chain AI & Machine Learning, Starbucks Coffee Company, 2019
+- Quantitative Analyst, Seattle City Light, City of Seattle, 2017 - 2019
+
+## Grants, Awards, and Fellowships
+
+- Peter Castro HIMB Graduate Student Support Fund - Travel, Hawaiʻi Institute of Marine Biology, 2023, $500
+- Linda and Jim Collister Scholarship, Hawaiʻi Institute of Marine Biology, 2023, $1,000
+- Quantitative Ecology and Socioeconomic Training Fellowship (QUEST), NOAA Fisheries, 2021 to present, $180,000
+- Achievement Scholarship, University of Hawaiʻi at Mānoa, 2023, $500
+- Colonel Willys E. & Sandina L. Lord Endowed Scholarship, Hawaiʻi Institute of Marine Biology, 2022, $2,000
+- Student Travel Award, University of Washington, 2017, $500
+- Student and Postdoc Travel Award, University of Washington, 2017, $750
+- Travel Award, University of Washington, 2017, $500
+- Global Change Fellowship, USGS, 2015 to 2016, $12,000
+
+## [Papers](https://scholar.google.com/citations?user=4TUtf04AAAAJ&hl=en&oi=ao) 
+
+1. **Patton, P.T.**, Pacifici, K., Allen, J.B., Ashe, E., Athayde, A., Baird, R.W., Basran, C., Cabrera, E., Calambokidis, J., Cardoso, J., Carroll, E.L., Cesario, A., Cheeseman, T., Cheney, B.J., Corsi, E., Currie, J., Durban, J.W., Falcone, E.A., Fearnbach, H., Flynn, K., Franklin, T., Franklin, W., Vernazzani, B.G., Genov, T., Hill, M., Johnston, D.R., Keene, E.L., Mahaffy, S.D., McGuire, T.L., McPherson, L., Meyer, C., Michaud, R., Miliou, A., Oleson, E.M., Orbach, D.N., Pearson, H.C., Rasmussen, M.H., Rayment, W.J., Rinaldi, C., Rinaldi, R., Siciliano, S., Stack, S., Tintore, B., Torres, L.G., Towers, J.R., Trotter, C., Moore, R.T., Weir, C.R., Wellard, R., Wells, R., Yano, K.M., Zaeschmar, J.R. \& Bejder, L. (TBD) Evaluating trade--offs between automation and bias in population assessments relying on photo-identification. (TBD) Evaluating trade-offs between automation and bias in population assessments relying on photo-identification. *In prep*
+2. **Patton, P.T.** Pacifici, K., Miller, D.A.W., \& Collazo, J. (TBD) Partial pooling of data among species improves performance of occupancy models subject to two types of sampling error. *In prep*
+3. **Patton, P.T.** , Cheeseman, T., Abe, K., Yamaguchi, T., Reade, W., Southerland, K., Howard, A., Oleson, E.M., Allen, J.B., Ashe, E., Athayde, A., Baird, R.W., Basran, C., Cabrera, E., Calambokidis, J., Cardoso, J., Carroll, E.L., Cesario, A., Cheney, B.J., Corsi, E., Currie, J., Durban, J.W., Falcone, E.A., Fearnbach, H., Flynn, K., Franklin, T., Franklin, W., Vernazzani, B.G., Genov, T., Hill, M., Johnston, D.R., Keene, E.L., Mahaffy, S.D., McGuire, T.L., McPherson, L., Meyer, C., Michaud, R., Miliou, A., Orbach, D.N., Pearson, H.C., Rasmussen, M.H., Rayment, W.J., Rinaldi, C., Rinaldi, R., Siciliano, S., Stack, S., Tintore, B., Torres, L.G., Towers, J.R., Trotter, C., Moore, R.T., Weir, C.R., Wellard, R., Wells, R., Yano, K.M., Zaeschmar, J.R. \& Bejder, L.(2023) A deep learning approach to photo–identification demonstrates high performance on two dozen cetacean species. *Methods in Ecology and Evolution,* 14, 2611--2625. **featured on cover**
+4. Vivier, F., Wells, R.S., Hill, M.C., Yano, K.M., Bradford, A.L., Leunissen, E.M., Pacini, A., Booth, C.G., Rocho-Levine, J., Currie J.J., **Patton, P.T.**, & Bejder, L. (2023) Quantifying the age-structure of free-ranging delphinid populations: testing the accuracy of Unoccupied Aerial System-photogrammetry. *Ecology and Evolution,* 13, e10082.
+5. **Patton, P. T.**, Pacifici, K., \& Collazo, J. A. (2022) Modeling and estimating co-occurrence between the invasive Shiny Cowbird and its Puerto Rican hosts. *Biological Invasions,* 24, 2951--2960
+
+## Presentations
+
+1. **Patton, P.T.** Some hierarchical and machine learning models for wildlife science. Invited talk at University of Natural Resources and Life Sciences, Vienna (BOKU). July 2023.
+2. **Patton, P.T.** et al. The effect of fully automated photo--identification on mark-recapture estimates. Paper presented at the EURING Analytical Meeting. Montpellier, France. April 2023
+3. **Patton, P.T.** Assessing populations of resident cetaceans. HIMB Scholarship Symposium. K\=ane`ohe, Hawai`i. April 2022.
+4. **Patton, P. T.** & Gardner, B. Misspecifying movement models in spatial capture recapture studies. Paper presented at The Ecological Society of America Conference. Portland, OR, USA. August 2017
+5. **Patton, P. T.** et al. Modeling and estimating co--occurrence between generalist brood parasites and host communities. Paper presented at the EURING Analytical Meeting. Barcelona, Spain. June 2017
+6. **Patton, P. T.** et al. Multi--species occupancy models that incorporate false positive and false negative sampling errors. Paper presented at The Wildlife Society Conference. Raleigh, NC, USA. October 2016
+7. **Patton, P. T.** et al. Joint host--parasite occurrence models can improve predictions and reveal ecological traps. Paper presented at the International Statistical Ecology Conference. Seattle, WA, USA. July 2016
+
+## Teaching Experience
+
+- Teaching Assistant, Principles of Wildlife Science (FW 453), North Carolina State, Spring 2016
+- Teaching Assistant, Introduction to Probability and Statistics (APM 391), SUNY ESF, Fall 2012
+- Tutor, Calculus I (APM 105), Academic Support Services, SUNY ESF, 2011 to 2013
+
+## Professional Development
+
+- An Introduction to Close-Kin Mark-Recapture, EURING Analytical Meeting
+- C++ Virtual Training, NOAA Fisheries
+- Bayesian Model Selection and Decision Theory for Ecologists, International Statistical Ecology Conference
+- Flexible Programming with NIMBLE, International Statistical Ecology Conference
+- Introduction to Structured Decision Making, National Conservation Training Center
+
+## Professional Service
+
+- Referee: *Wildlife Society Bulletin*, *Marine Mammal Science*
+- Member: British Ecological Society, The Wildlife Society (biometrics working group), The Ecological Society of America (statistical ecology section)
+- Representative to the Faculty, Marine Biology Graduate Program, University of Hawai`i at Mānoa
+- Representative to the Graduate Student Organization, Marine Biology Graduate Program, University of Hawai`i at Mānoa
+
+---
