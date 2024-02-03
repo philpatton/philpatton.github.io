@@ -30,10 +30,12 @@ website:
         - notebooks.qmd
         - section: "PyMC"
           contents:
-            - href: occ.ipynb
+            - href: occ.ipynbv
               text: Occupancy
             - href: closed_cmr.ipynb
               text: Closed capture-recapture
+            - href: surv.ipynb
+              text: Open capture-recapture
 
 format:
   html:

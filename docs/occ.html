@@ -328,7 +328,7 @@ window.Quarto = {
 \]</span> which assumes a constant occurrence probability across sites and a constant detection probability. I start with this simple model, then add site- and visit-level covariates later.</p>
 <section id="simulated-examples" class="level1">
 <h1>Simulated examples</h1>
-<p>To start, I demonstrate how to simulate this zero-inflated model using numpy.</p>
+<p>To start, I demonstrate how to simulate this zero-inflated model using numpy. Throughout this section, I use hyperparameter values similar to those of <span class="citation" data-cites="kery2011">Kéry and Schaub (<a href="#ref-kery2011" role="doc-biblioref">2011</a>)</span>.</p>
 <div id="cell-2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
@@ -1441,6 +1441,9 @@ Henden, John-André, Nigel G Yoccoz, Rolf A Ims, and Knut Langeland. 2013. <span
 </div>
 <div id="ref-hooten2019" class="csl-entry" role="listitem">
 Hooten, Mevin B, and Trevor Hefley. 2019. <em>Bringing Bayesian Models to Life</em>. CRC Press.
+</div>
+<div id="ref-kery2011" class="csl-entry" role="listitem">
+Kéry, Marc, and Michael Schaub. 2011. <em>Bayesian Population Analysis Using WinBUGS: A Hierarchical Perspective</em>. Academic Press.
 </div>
 <div id="ref-royle2008" class="csl-entry" role="listitem">
 Royle, J Andrew, and Robert M Dorazio. 2008. <em>Hierarchical Modeling and Inference in Ecology: The Analysis of Data from Populations, Metapopulations and Communities</em>. Elsevier.
