@@ -36,6 +36,9 @@ website:
               text: Closed capture-recapture
             - href: surv.ipynb
               text: Open capture-recapture
+            - href: dist.ipynb
+              text: Distance sampling
+
 
 format:
   html:
