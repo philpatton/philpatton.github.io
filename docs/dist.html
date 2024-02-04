@@ -57,7 +57,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -107,6 +127,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -195,14 +244,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./surv.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Open capture-recapture</span></a>
+  <a href="./dist.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Distance sampling</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Distance sampling</span></a>
+  <a href="./surv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Open capture-recapture</span></a>
   </div>
 </li>
       </ul>
@@ -264,6 +313,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<p>In this notebook, I explore how to fit distance sampling models for estimating the size of a closed population. Similar to the occupancy and closed capture-recapture notebooks, I use parameter-expanded data-augmentation (PX-DA) and the zero-inflated binomial model in this notebook.</p>
+<p>The idea with distance sampling, also known as line-transect sampling, is that a surveyer traverses a transect, typically in a boat or a plane. As they survey, they note when they detect an individual, or a group, from the species of interest, and further note the distance from the transect to the animal. Further, they note the angle to the animal(s), such that they can calculate the perpendicular distance from the animal to the transect. We assume that probability of detecting an animal <span class="math inline">\(p\)</span> decreases monotonically as the distance from the transect grows, e.g., <span class="math inline">\(p=\exp(-x^2/\sigma^2),\)</span> where <span class="math inline">\(x\)</span> is the distance and <span class="math inline">\(\sigma\)</span> is a scale parameter to be estimated. These simple assumptions permit the estimation of the population size <span class="math inline">\(N\)</span> as well as density <span class="math inline">\(D.\)</span></p>
+<p>Following <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 24 and <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, Chapter 7, I use the impala data from <span class="citation" data-cites="burnham1980">Burnham, Anderson, and Laake (<a href="#ref-burnham1980" role="doc-biblioref">1980</a>)</span>, who credits P. Hemingway with the dataset. In this dataset, 73 impalas were observed along a 60km transect. The distance values below are the perpendicular distances, in meters, from the transect.</p>
 <div id="5b22ab31-839e-4253-b36f-a2ae103c14e0" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytensor.tensor <span class="im">as</span> pt</span>
@@ -271,37 +323,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">'fivethirtyeight'</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>x_observed <span class="op">=</span> np.array(</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">71.933980</span>, <span class="fl">26.047227</span>, <span class="fl">58.474341</span>, <span class="fl">92.349221</span>, <span class="fl">163.830409</span>, <span class="fl">84.523652</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">163.830409</span>, <span class="fl">157.330098</span>, <span class="fl">22.267696</span>, <span class="fl">72.105330</span>, <span class="fl">86.986979</span>, <span class="fl">50.795047</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">0.000000</span>, <span class="fl">73.135370</span>,  <span class="fl">0.000000</span>, <span class="fl">128.557522</span>, <span class="fl">163.830409</span>,  <span class="fl">71.845104</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">30.467336</span>, <span class="fl">71.073909</span>, <span class="fl">150.960702</span>, <span class="fl">68.829172</span>, <span class="fl">90.000000</span>, <span class="fl">64.983827</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">165.690874</span>, <span class="fl">38.008322</span>, <span class="fl">378.207430</span>, <span class="fl">78.146226</span>, <span class="fl">42.127052</span>, <span class="fl">0.000000</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">400.000000</span>, <span class="fl">175.386612</span>, <span class="fl">30.467336</span>, <span class="fl">35.069692</span>, <span class="fl">86.036465</span>, <span class="fl">31.686029</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">200.000000</span>, <span class="fl">271.892336</span>, <span class="fl">26.047227</span>, <span class="fl">76.604444</span>, <span class="fl">41.042417</span>, <span class="fl">200.000000</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">86.036465</span>, <span class="fl">0.000000</span>, <span class="fl">93.969262</span>, <span class="fl">55.127471</span>, <span class="fl">10.458689</span>, <span class="fl">84.523652</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">0.000000</span>, <span class="fl">77.645714</span>, <span class="fl">0.000000</span>, <span class="fl">96.418141</span>, <span class="fl">0.000000</span>, <span class="fl">64.278761</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">187.938524</span>, <span class="fl">0.000000</span>, <span class="fl">160.696902</span>, <span class="fl">150.453756</span>, <span class="fl">63.603607</span>, <span class="fl">193.185165</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">106.066017</span>, <span class="fl">114.906666</span>, <span class="fl">143.394109</span>, <span class="fl">128.557522</span>, <span class="fl">245.745613</span>, <span class="fl">123.127252</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">123.127252</span>, <span class="fl">153.208889</span>, <span class="fl">143.394109</span>, <span class="fl">34.202014</span>, <span class="fl">96.418141</span>, <span class="fl">259.807621</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">8.715574</span>]</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>,<span class="dv">4</span>))</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>ax.hist(x_observed, edgecolor<span class="op">=</span><span class="st">'white'</span>)</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Hemingway Impala Data'</span>)</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Number of detections'</span>)</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Distance'</span>)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">False</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting defaults</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">'fivethirtyeight'</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># hyper parameters</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">500</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>U_X <span class="op">=</span> <span class="dv">400</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>U_SIGMA <span class="op">=</span> <span class="dv">400</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># burnham impala dataset with distances in m</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>x_observed <span class="op">=</span> np.array(</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">71.933980</span>, <span class="fl">26.047227</span>, <span class="fl">58.474341</span>, <span class="fl">92.349221</span>, <span class="fl">163.830409</span>, <span class="fl">84.523652</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">163.830409</span>, <span class="fl">157.330098</span>, <span class="fl">22.267696</span>, <span class="fl">72.105330</span>, <span class="fl">86.986979</span>, <span class="fl">50.795047</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">0.000000</span>, <span class="fl">73.135370</span>,  <span class="fl">0.000000</span>, <span class="fl">128.557522</span>, <span class="fl">163.830409</span>,  <span class="fl">71.845104</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">30.467336</span>, <span class="fl">71.073909</span>, <span class="fl">150.960702</span>, <span class="fl">68.829172</span>, <span class="fl">90.000000</span>, <span class="fl">64.983827</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">165.690874</span>, <span class="fl">38.008322</span>, <span class="fl">378.207430</span>, <span class="fl">78.146226</span>, <span class="fl">42.127052</span>, <span class="fl">0.000000</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">400.000000</span>, <span class="fl">175.386612</span>, <span class="fl">30.467336</span>, <span class="fl">35.069692</span>, <span class="fl">86.036465</span>, <span class="fl">31.686029</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">200.000000</span>, <span class="fl">271.892336</span>, <span class="fl">26.047227</span>, <span class="fl">76.604444</span>, <span class="fl">41.042417</span>, <span class="fl">200.000000</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">86.036465</span>, <span class="fl">0.000000</span>, <span class="fl">93.969262</span>, <span class="fl">55.127471</span>, <span class="fl">10.458689</span>, <span class="fl">84.523652</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">0.000000</span>, <span class="fl">77.645714</span>, <span class="fl">0.000000</span>, <span class="fl">96.418141</span>, <span class="fl">0.000000</span>, <span class="fl">64.278761</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">187.938524</span>, <span class="fl">0.000000</span>, <span class="fl">160.696902</span>, <span class="fl">150.453756</span>, <span class="fl">63.603607</span>, <span class="fl">193.185165</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">106.066017</span>, <span class="fl">114.906666</span>, <span class="fl">143.394109</span>, <span class="fl">128.557522</span>, <span class="fl">245.745613</span>, <span class="fl">123.127252</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">123.127252</span>, <span class="fl">153.208889</span>, <span class="fl">143.394109</span>, <span class="fl">34.202014</span>, <span class="fl">96.418141</span>, <span class="fl">259.807621</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    ,<span class="fl">8.715574</span>]</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the distances </span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>,<span class="dv">4</span>))</span>
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>ax.hist(x_observed, edgecolor<span class="op">=</span><span class="st">'white'</span>)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Hemingway Impala Data'</span>)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Number of detections'</span>)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Distance (m)'</span>)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -310,19 +368,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p>Again, we treat this as a zero-inflated binomial model using PX-DA. The trick for doing so is to create a binary vector of length <span class="math inline">\(M\)</span>, <span class="math inline">\(y,\)</span> that represents whether the individual was detected during the study. Then, combine the indicator with the distance vector <span class="math inline">\(x\)</span> to create a the full dataset <span class="math inline">\((x,y).\)</span></p>
 <div id="eff86cc1-0f72-4444-ac02-dd1923ace734" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">500</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>U_X <span class="op">=</span> <span class="dv">400</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>U_SIGMA <span class="op">=</span> <span class="dv">400</span></span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="bu">len</span>(x_observed)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>unobserved_count <span class="op">=</span> M <span class="op">-</span> n</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>zeros <span class="op">=</span> np.zeros(unobserved_count)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="bu">len</span>(x_observed)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>unobserved_count <span class="op">=</span> M <span class="op">-</span> n</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>zeros <span class="op">=</span> np.zeros(unobserved_count)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.ones(n)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>y_augmented <span class="op">=</span> np.concatenate((y, zeros))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.ones(n)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>y_augmented <span class="op">=</span> np.concatenate((y, zeros))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="c61ec37e-0b32-4dc3-9c88-ff5b813082c3" class="cell" data-execution_count="3">
+<p>The issue is that <span class="math inline">\(x\)</span> is unobserved for the undetected individuals. To work around this, we put a uniform prior on the unobserved <span class="math inline">\(x,\)</span> i.e., <span class="math inline">\(x \sim \text{Uniform}(0, U_x).\)</span> With this “complete” <span class="math inline">\(x,\)</span> we can construct the detection function <span class="math inline">\(p\)</span> for the unobserved individuals.</p>
+<div id="cell-fig-dist" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> distance:</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    psi <span class="op">=</span> pm.Uniform(<span class="st">'psi'</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
@@ -337,9 +393,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(distance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
-<div>
-<figure class="figure">
-<p><img src="dist_files/figure-html/cell-4-output-1.svg" class="img-fluid figure-img"></p>
+<div id="fig-dist" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="dist_files/figure-html/fig-dist-output-1.svg" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Visual representation of the distance sampling model.
+</figcaption>
 </figure>
 </div>
 </div>
@@ -352,7 +413,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [psi, sigma, x_unobserved]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 12 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 15 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -376,142 +438,117 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:11&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:14&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
 </div>
-<div id="e9be61b0-ec55-4900-8849-26168657685d" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(distance_idata, var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'sigma'</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-fig-trace" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    distance_idata, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'sigma'</span>]</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="dist_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+<div id="fig-trace" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="dist_files/figure-html/fig-trace-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Traceplots for the distance sampling model.
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div id="83156795-bc3e-4d10-a3f1-167572123300" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>az.summary(distance_idata, var_names<span class="op">=</span>[<span class="st">'psi'</span>,<span class="st">'sigma'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<div>
-
-
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">mean</th>
-<th data-quarto-table-cell-role="th">sd</th>
-<th data-quarto-table-cell-role="th">hdi_3%</th>
-<th data-quarto-table-cell-role="th">hdi_97%</th>
-<th data-quarto-table-cell-role="th">mcse_mean</th>
-<th data-quarto-table-cell-role="th">mcse_sd</th>
-<th data-quarto-table-cell-role="th">ess_bulk</th>
-<th data-quarto-table-cell-role="th">ess_tail</th>
-<th data-quarto-table-cell-role="th">r_hat</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">psi</td>
-<td>0.360</td>
-<td>0.05</td>
-<td>0.267</td>
-<td>0.453</td>
-<td>0.001</td>
-<td>0.001</td>
-<td>4161.0</td>
-<td>3028.0</td>
-<td>1.0</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">sigma</td>
-<td>187.074</td>
-<td>17.62</td>
-<td>156.457</td>
-<td>219.449</td>
-<td>0.282</td>
-<td>0.203</td>
-<td>4227.0</td>
-<td>2982.0</td>
-<td>1.0</td>
-</tr>
-</tbody>
-</table>
-
+<p>This model samples slower than the models in the other notebooks, presumably because of the unobserved <span class="math inline">\(x.\)</span> As in the closed capture-recapture notebook, we will have to simulate the posterior for <span class="math inline">\(N\)</span> using the posterior distribution of <span class="math inline">\(\psi\)</span> and <span class="math inline">\(M.\)</span></p>
+<div id="cell-fig-posteriors" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>RNG <span class="op">=</span> np.random.default_rng()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># this does not make a copy of the posterior</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>post <span class="op">=</span> distance_idata.posterior</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate draws of N using the posterior of psi </span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>N_samples <span class="op">=</span> RNG.binomial(M, post.psi)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>N_samples <span class="op">=</span> N_samples.flatten()</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>N_hat <span class="op">=</span> N_samples.mean()</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>sigma_samples <span class="op">=</span> post.sigma.values.flatten()</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the results</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>fig, (ax0, ax1) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, sharey<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># histograms of the posteriors</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>ax0.hist(N_samples, edgecolor<span class="op">=</span><span class="st">'white'</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>ax1.hist(sigma_samples, edgecolor<span class="op">=</span><span class="st">'white'</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co"># show the abundance dist in terms of M</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>ax0.set_xlim((<span class="dv">0</span>, M))</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co"># axes labels </span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>ax0.set_xlabel(<span class="st">'Abundance $N$'</span>)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>ax0.set_ylabel(<span class="st">'Number of samples'</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>ax1.set_xlabel(<span class="st">'Detection range $\sigma$'</span>)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co"># add the point estimates</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>sigma_hat <span class="op">=</span> sigma_samples.mean()</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>ax0.text(<span class="dv">400</span>, <span class="dv">1300</span>, <span class="ss">f'$\hat</span><span class="ch">{{</span><span class="ss">N</span><span class="ch">}}</span><span class="ss">$=</span><span class="sc">{</span>N_hat<span class="sc">:.1f}</span><span class="ss">'</span>, ha<span class="op">=</span><span class="st">'center'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>ax1.text(<span class="dv">250</span>, <span class="dv">1300</span>, <span class="ss">f'$\hat</span><span class="ch">{{</span><span class="ss">\sigma</span><span class="ch">}}</span><span class="ss">$=</span><span class="sc">{</span>sigma_hat<span class="sc">:.1f}</span><span class="ss">'</span>, ha<span class="op">=</span><span class="st">'center'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="co"># the results from royle and dorazio (2008) for comparison</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>N_hat_royle <span class="op">=</span> <span class="fl">179.9</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>sigma_hat_royle <span class="op">=</span> <span class="dv">187</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>ax0.axvline(N_hat_royle, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'black'</span>)</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>ax1.axvline(sigma_hat_royle, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'black'</span>)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="fig-posteriors" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-posteriors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="dist_files/figure-html/fig-posteriors-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-posteriors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Posterior distributions for <span class="math inline">\(N\)</span> and <span class="math inline">\(\sigma.\)</span> Estimates from <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span> are shown with vertical lines.
+</figcaption>
+</figure>
 </div>
 </div>
 </div>
-<div id="b31ea5e5-255d-461c-b8ee-611f360ad1df" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>RNG <span class="op">=</span> np.random.default_rng()</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># this does not make a copy of the posterior</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>post <span class="op">=</span> distance_idata.posterior</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate draws of N using the posterior of psi </span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>N_samples <span class="op">=</span> RNG.binomial(M, post.psi)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>N_samples <span class="op">=</span> N_samples.flatten()</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>N_hat <span class="op">=</span> N_samples.mean()</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>sigma_samples <span class="op">=</span> post.sigma.values.flatten()</span>
+<p>The model shows a high level of agreement with <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, Chapter 7, although note that they reported results in terms of 100m units. It is also possible to plot the posterior distribution of the detection function.</p>
+<div id="cell-fig-func" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>xx <span class="op">=</span> np.arange(<span class="dv">400</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sigma_samps <span class="op">=</span> post.sigma.values.flatten()</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> det_func(x, s):</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.exp(<span class="op">-</span> (x <span class="op">**</span> <span class="dv">2</span>) <span class="op">/</span> (s <span class="op">**</span> <span class="dv">2</span>))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> np.array([det_func(xx, s) <span class="cf">for</span> s <span class="kw">in</span> sigma_samps])</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>p_mean <span class="op">=</span> p_samps.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>p_low <span class="op">=</span> np.quantile(p_samps, <span class="fl">0.02</span>, axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>p_high <span class="op">=</span> np.quantile(p_samps, <span class="fl">0.98</span>, axis<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>fig, (ax0, ax1) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, sharey<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>,<span class="dv">4</span>))</span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>ax0.hist(N_samples, edgecolor<span class="op">=</span><span class="st">'white'</span>)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># ax0.set_title('Posterior')</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>ax0.set_xlabel(<span class="st">'Abundance $N$'</span>)</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>ax0.set_ylabel(<span class="st">'Number of samples'</span>)</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co"># ax0.grid(False)</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co"># ax1.grid(False)</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>ax0.text(<span class="dv">375</span>, <span class="dv">1100</span>, <span class="ss">f'$\hat</span><span class="ch">{{</span><span class="ss">N</span><span class="ch">}}</span><span class="ss">$=</span><span class="sc">{</span>N_hat<span class="sc">:.1f}</span><span class="ss">'</span>, ha<span class="op">=</span><span class="st">'center'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>ax0.set_xlim((<span class="dv">0</span>,M))</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>ax1.hist(sigma_samples, edgecolor<span class="op">=</span><span class="st">'white'</span>)</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>ax1.set_xlabel(<span class="st">'Detection range $\sigma$'</span>)</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>sigma_hat <span class="op">=</span> sigma_samples.mean()</span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>ax1.text(<span class="dv">225</span>, <span class="dv">1100</span>, <span class="ss">f'$\hat</span><span class="ch">{{</span><span class="ss">\sigma</span><span class="ch">}}</span><span class="ss">$=</span><span class="sc">{</span>sigma_hat<span class="sc">:.1f}</span><span class="ss">'</span>, ha<span class="op">=</span><span class="st">'center'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>ax.plot(xx, p_mean, <span class="st">'-'</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>ax.fill_between(xx, p_low, p_high, alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Detection function'</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r'$p$'</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'Distance (m)'</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="dist_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
-</figure>
+<div id="fig-func" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="dist_files/figure-html/fig-func-output-1.png" class="img-fluid figure-img">
 </div>
-</div>
-</div>
-<div id="c45bd872-e7eb-40b0-97df-fd2307f14ab3" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>xx <span class="op">=</span> np.arange(<span class="dv">400</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>sigma_samps <span class="op">=</span> post.sigma.values.flatten()</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> det_func(x, s):</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.exp(<span class="op">-</span> (x <span class="op">**</span> <span class="dv">2</span>) <span class="op">/</span> (s <span class="op">**</span> <span class="dv">2</span>))</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> np.array([det_func(xx, s) <span class="cf">for</span> s <span class="kw">in</span> sigma_samps])</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>p_mean <span class="op">=</span> p_samps.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>p_low <span class="op">=</span> np.quantile(p_samps, <span class="fl">0.025</span>, axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>p_high <span class="op">=</span> np.quantile(p_samps, <span class="fl">0.975</span>, axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>,<span class="dv">4</span>))</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>ax.plot(xx, p_mean, <span class="st">'-'</span>)</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>ax.fill_between(xx, p_low, p_high, alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Detection function'</span>)</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r'$p$'</span>)</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'Distance $x$'</span>)</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="dist_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Posterior distribution for the detection function. The line represents the posterior mean while the shaded area is the 96% interval.
+</figcaption>
 </figure>
 </div>
 </div>
@@ -519,7 +556,18 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
 
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-burnham1980" class="csl-entry" role="listitem">
+Burnham, Kenneth P, David R Anderson, and Jeffrey L Laake. 1980. <span>“Estimation of Density from Line Transect Sampling of Biological Populations.”</span> <em>Wildlife Monographs</em>, no. 72: 3–202.
+</div>
+<div id="ref-hooten2019" class="csl-entry" role="listitem">
+Hooten, Mevin B, and Trevor Hefley. 2019. <em>Bringing Bayesian Models to Life</em>. CRC Press.
+</div>
+<div id="ref-royle2008" class="csl-entry" role="listitem">
+Royle, J Andrew, and Robert M Dorazio. 2008. <em>Hierarchical Modeling and Inference in Ecology: The Analysis of Data from Populations, Metapopulations and Communities</em>. Elsevier.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
