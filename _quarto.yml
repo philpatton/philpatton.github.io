@@ -34,8 +34,11 @@ website:
               text: Occupancy
             - href: closed_cmr.ipynb
               text: Closed capture-recapture
+            - href: dist.ipynb
+              text: Distance sampling
             - href: surv.ipynb
               text: Open capture-recapture
+
 
 format:
   html:
