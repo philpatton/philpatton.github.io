@@ -242,6 +242,12 @@ window.Quarto = {
  <span class="menu-text">Closed capture-recapture</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./surv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Open capture-recapture</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -418,7 +424,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co"># summarize into binomial data</span></span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>history_summarized <span class="op">=</span> history.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>For this model, I use the <code>pm.ZeroInflatedBinomial</code> class, just as I did in the occupancy notebook. That said, the parameters here are different. First, <span class="math inline">\(p\)</span> represents the probability of capturing a given individual during the survey. Second, <span class="math inline">\(\psi\)</span> represents a mysterious entity known as the inclusion probability. That is, the probability that an individual from the hyportheitical superpopulation <span class="math inline">\(M\)</span> is included in the popualation of interest <span class="math inline">\(N.\)</span> Then, we can estimate the population size as <span class="math inline">\(\hat{N}=M\hat{\psi},\)</span> or generate posterior draws of <span class="math inline">\(N,\)</span> e.g., <span class="math inline">\(N^{(s)} \sim \text{Bin}(M,\psi^{(s)})\)</span></p>
+<p>For this model, I use the <code>pm.ZeroInflatedBinomial</code> class, just as I did in the <a href="https://philpatton.github.io/occ.html">occupancy notebook</a>. That said, the parameters here are different. First, <span class="math inline">\(p\)</span> represents the probability of capturing a given individual during the survey. Second, <span class="math inline">\(\psi\)</span> represents a mysterious entity known as the inclusion probability. That is, the probability that an individual from the hyportheitical superpopulation <span class="math inline">\(M\)</span> is included in the popualation of interest <span class="math inline">\(N.\)</span> Then, we can estimate the population size as <span class="math inline">\(\hat{N}=M\hat{\psi},\)</span> or generate posterior draws of <span class="math inline">\(N,\)</span> e.g., <span class="math inline">\(N^{(s)} \sim \text{Bin}(M,\psi^{(s)})\)</span></p>
 <p>In this example, I combine the two species into one <code>pm.Model</code> object, making use of <code>coords</code>. That said, the parameters for each species are treated as independent.</p>
 <div id="79d505ca-ff47-4fac-b30f-a580c1dbfbcf" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># index for each species</span></span>

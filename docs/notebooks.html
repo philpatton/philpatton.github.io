@@ -173,6 +173,12 @@ div.csl-indent {
  <span class="menu-text">Closed capture-recapture</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./surv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Open capture-recapture</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -215,7 +221,7 @@ div.csl-indent {
 <section id="pymc" class="level1">
 <h1>PyMC</h1>
 <p>There are many valuable tools for fitting hierarchical models in ecology. These tools are typically R libraries, such as <a href="https://rbchan.github.io/unmarked/">unmarked</a>, or programs called from R, such as <a href="https://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/">JAGS</a> or <a href="https://fukamilab.github.io/BIO202/09-C-occupancy-models.html">Stan</a>. There are relatively fewer examples of how to fit these models in Python. While most ecologists, and arguably statisticians, use R, there are some benefits to using Python generally. For example, despite ecology being a lucrative industry, some of us might have to pivot to another field where Python may be more common. Besides, Python is widely used for machine learning, which is increasingly applied in ecology.</p>
-<p>In the PyMC notebooks, I try to demonstrate how to use PyMC to train the most common hierarchcial models in ecology. For this, I have drawn considerable inspiration from <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span> and <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, oftentimes simply porting their code, ideas, and analyses as a demonstration. In doing so, I hope to demonstrate PyMC’s core features, and highlight its strengths and weakenesses. The PyMC notebooks are somewhat sequential, with earlier notebooks explaining more basic features.</p>
+<p>In the PyMC notebooks, I try to demonstrate how to use PyMC to train the most common hierarchcial models in ecology. For this, I have drawn considerable inspiration from <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, <span class="citation" data-cites="kery2011">Kéry and Schaub (<a href="#ref-kery2011" role="doc-biblioref">2011</a>)</span>, and <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, oftentimes simply porting their code, ideas, and analyses. In doing so, I hope to demonstrate PyMC’s core features, and highlight its strengths and weakenesses. The PyMC notebooks are somewhat sequential, with earlier notebooks explaining more basic features.</p>
 
 
 
@@ -224,6 +230,9 @@ div.csl-indent {
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-hooten2019" class="csl-entry" role="listitem">
 Hooten, Mevin B, and Trevor Hefley. 2019. <em>Bringing Bayesian Models to Life</em>. CRC Press.
+</div>
+<div id="ref-kery2011" class="csl-entry" role="listitem">
+Kéry, Marc, and Michael Schaub. 2011. <em>Bayesian Population Analysis Using WinBUGS: A Hierarchical Perspective</em>. Academic Press.
 </div>
 <div id="ref-royle2008" class="csl-entry" role="listitem">
 Royle, J Andrew, and Robert M Dorazio. 2008. <em>Hierarchical Modeling and Inference in Ecology: The Analysis of Data from Populations, Metapopulations and Communities</em>. Elsevier.
