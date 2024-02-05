@@ -367,7 +367,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <p>This produces a capture history for each individual, which allows us to estimate the probability of capture and the number of individuals in the population <span class="math inline">\(N\)</span>.</p>
 <section id="model-m_0" class="level1">
 <h1>Model <span class="math inline">\(M_0\)</span></h1>
-<div id="95623a0e-0c9a-48c0-be48-7e40fda999d8" class="cell" data-execution_count="1">
+<div id="a6215878" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># libraries </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -389,7 +389,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">1500</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I explore fitting the simplest closed capture-recapture model, Model <span class="math inline">\(M_0,\)</span> through parameter-expanded data-autmentation <span class="citation" data-cites="royle2008">(PX-DA, <a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008</a>)</span>. The idea with PX-DA is to augment the capture histories with <span class="math inline">\(M-n\)</span> all zero capture-histories, where <span class="math inline">\(M\)</span> is a hyperparameter that should be much greater than the true population size <span class="math inline">\(N,\)</span> and <span class="math inline">\(n\)</span> is the total number of individuals that were captured during the study. This allows us to treat the data as a zero-inflated binomial distribution (see below).</p>
-<div id="05e82a09-b491-43e6-b328-a78bc25c806e" class="cell" data-execution_count="2">
+<div id="9132ff83" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> augment_history(history):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Augment a capture history with all-zero histories.'''</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -405,7 +405,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> augmented </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To demonstrate this approach, I use the salamander dataset from <span class="citation" data-cites="bailey2004">Bailey, Simons, and Pollock (<a href="#ref-bailey2004" role="doc-biblioref">2004</a>)</span>, as demonstrated in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 24. These data were collected on two salamander species, the red-cheeked salamander (<em>Plethodon jordani</em>) and the pygmy salamander (<em>Desmognathus wrighti</em>), in Great Smoky Mountains National Park. The salamanders were counted in 15m by 15m square plots. In this case, we augment the history by setting <span class="math inline">\(M=1500\)</span> (see above). There were <span class="math inline">\(n=92\)</span> individual red-cheeked and <span class="math inline">\(n=132\)</span> pygmy salamanders captured during the course of the survey.</p>
-<div id="071aab84-d626-4133-a648-bb1195ba5de1" class="cell" data-execution_count="3">
+<div id="92961185" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_history():</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Read, augment, and recombine the salamander histories.'''</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -475,7 +475,7 @@ Figure&nbsp;1: Visual representation of model <span class="math inline">\(M_0.\)
 </div>
 </div>
 </div>
-<div id="d3e59c8c-c752-49b2-824a-c093e170a312" class="cell" data-execution_count="5">
+<div id="ad0e72a6" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> M0:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    M0_idata <span class="op">=</span> pm.sample(DRAW_COUNT)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -483,7 +483,7 @@ Figure&nbsp;1: Visual representation of model <span class="math inline">\(M_0.\)
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [psi, p]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 20 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 17 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -507,7 +507,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:19&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:17&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
@@ -518,7 +518,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div id="fig-trace" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="closed_cmr_files/figure-html/fig-trace-output-1.png" class="img-fluid figure-img">
+<img src="closed_cmr_files/figure-html/fig-trace-output-1.png" width="1021" height="367" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: Traceplots for the salamander <span class="math inline">\(M_0\)</span> model. The red-cheeked salamander is in blue while the pygmy salamander is in red.
@@ -529,7 +529,7 @@ Figure&nbsp;2: Traceplots for the salamander <span class="math inline">\(M_0\)</
 </div>
 <p>For faster sampling, it’s better to seperate the two species into two seperate models. On my machine, the individual species models finish sampling in 2-3 seconds, compared to 15-20 seconds for the two species model. That said, the two species model is somewhat more convenient.</p>
 <p>Of course, the traceplots lack our true parameter of interest: the population size <span class="math inline">\(N.\)</span> We can simulate the posterior of <span class="math inline">\(N\)</span> as a <em>derived quantity</em>, using <span class="math inline">\(M\)</span> and the posterior distribuion of <span class="math inline">\(\psi.\)</span> Arviz has handy tools for calculating posteriors of derived quantities.</p>
-<div id="b17b997b-b3fa-4ecf-8c6d-b4d23541d0aa" class="cell" data-execution_count="7">
+<div id="cef88e35" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this does not make a copy of the posterior, allowing us to modify the idata object</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>post <span class="op">=</span> M0_idata.posterior</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -541,21 +541,21 @@ Figure&nbsp;2: Traceplots for the salamander <span class="math inline">\(M_0\)</
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>post[<span class="st">'N'</span>] <span class="op">=</span> (post.dims, N_samples)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we can look at the traceplots, this time excluding <span class="math inline">\(\psi\)</span> and looking at <span class="math inline">\(N.\)</span> I also added the estimates from <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 24, although they used a different prior for <span class="math inline">\(\psi.\)</span></p>
-<div id="268972b0-7360-4486-a761-e0044afad8b3" class="cell" data-execution_count="8">
+<div id="16dda186" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>N_hooten <span class="op">=</span> [<span class="fl">229.6</span>, <span class="fl">450.9</span>]</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>az.plot_trace(M0_idata, var_names<span class="op">=</span>[<span class="st">'p'</span>, <span class="st">'N'</span>], combined<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"N"</span>, {}, [N_hooten])])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="closed_cmr_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="closed_cmr_files/figure-html/cell-9-output-1.png" width="1021" height="367" class="figure-img"></p>
 <figcaption>Traceplots for the salamander <span class="math inline">\(M_0\)</span> model, including <span class="math inline">\(N\)</span>. Estimates from <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span> are shown by the vertical lines</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <p>We might expect estimates of capture probability <span class="math inline">\(p\)</span> and the abundance <span class="math inline">\(N,\)</span> by way of the inclusion probability <span class="math inline">\(\psi,\)</span> to be somewhat correlated. We can explore this relationship visually by plotting the posterior draws. For a more custom look to the plots, I plot the draws using matplotlib</p>
-<div id="5339261f-0144-4734-a0aa-d491a99bf2b4" class="cell" data-fig-lab="post" data-execution_count="9">
+<div id="78599ecc" class="cell" data-fig-lab="post" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stack the draws for each chain, creating a (n_draws, n_species) array </span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> np.vstack(post.p.to_numpy())</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>N_samps <span class="op">=</span> np.vstack(post.N.to_numpy())</span>
@@ -585,7 +585,7 @@ Figure&nbsp;2: Traceplots for the salamander <span class="math inline">\(M_0\)</
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="closed_cmr_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="closed_cmr_files/figure-html/cell-10-output-1.png" width="435" height="408" class="figure-img"></p>
 <figcaption>Posterior draws of <span class="math inline">\(N\)</span> and <span class="math inline">\(p\)</span> for both species of salamander.</figcaption>
 </figure>
 </div>
