@@ -380,7 +380,7 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<div id="58bc7ddb-bba4-4f8a-9f3a-45e3062b47c8" class="cell" data-execution_count="1">
+<div id="8d97dba8" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
@@ -445,7 +445,7 @@ window.Quarto = {
 <span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pt.triu(x) <span class="op">+</span> pt.tril(pt.ones_like(x), k<span class="op">=-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>As an example, I use the cormorant data from <span class="citation" data-cites="mccrea2014">McCrea and Morgan (<a href="#ref-mccrea2014" role="doc-biblioref">2014</a>)</span>, Table 4.6. These data come from an eleven year capture-recapture study between 1982 and 1993. These were breeding cormorants of unknown age. The data is summarized in the <span class="math inline">\(M\)</span>-array below. The last column is the number that were never recapured. The number released can be calculated from the array.</p>
-<div id="ebbb9cc5-7f9c-4a6b-bc17-7c280e38cecd" class="cell" data-execution_count="2">
+<div id="ea07a9c0" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>cormorant <span class="op">=</span> np.array([</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>       [ <span class="dv">10</span>,   <span class="dv">4</span>,   <span class="dv">2</span>,   <span class="dv">2</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,  <span class="dv">12</span>],</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>       [  <span class="dv">0</span>,  <span class="dv">42</span>,  <span class="dv">12</span>,  <span class="dv">16</span>,   <span class="dv">1</span>,   <span class="dv">0</span>,   <span class="dv">1</span>,   <span class="dv">1</span>,   <span class="dv">1</span>,   <span class="dv">0</span>,  <span class="dv">83</span>],</span>
@@ -458,7 +458,7 @@ window.Quarto = {
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>       [  <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>, <span class="dv">101</span>,  <span class="dv">55</span>, <span class="dv">274</span>],</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>       [  <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,  <span class="dv">84</span>,  <span class="dv">97</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="8f29566a-6a5f-4702-8bb8-00245959d73e" class="cell" data-execution_count="3">
+<div id="283b8501" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>interval_count, T <span class="op">=</span> cormorant.shape</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>number_recaptured <span class="op">=</span> cormorant[:,:<span class="op">-</span><span class="dv">1</span>]</span>
@@ -524,7 +524,7 @@ Figure&nbsp;1: Visual representation of the CJS model
 </div>
 </div>
 </div>
-<div id="d9954fd6-08b2-4905-bf0b-2f2ae10fb533" class="cell" data-execution_count="5">
+<div id="3f7e0482" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> phit:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    cjs_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -532,7 +532,7 @@ Figure&nbsp;1: Visual representation of the CJS model
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [p, phi]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 4 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 3 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -556,7 +556,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:03&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:02&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
@@ -574,7 +574,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div id="fig-cjs_trace" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cjs_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-cjs_trace-output-1.png" class="img-fluid figure-img">
+<img src="surv_files/figure-html/fig-cjs_trace-output-1.png" width="1021" height="367" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cjs_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: Traceplots for the cormorant CJS model with <span class="math inline">\(p(\cdot)\phi(t)\)</span>. MLEs from <span class="citation" data-cites="mccrea2014">McCrea and Morgan (<a href="#ref-mccrea2014" role="doc-biblioref">2014</a>)</span> shown by vertical and horizontal lines.
@@ -605,7 +605,7 @@ Figure&nbsp;2: Traceplots for the cormorant CJS model with <span class="math inl
 <div id="fig-cjs_surv" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cjs_surv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-cjs_surv-output-1.png" class="img-fluid figure-img">
+<img src="surv_files/figure-html/fig-cjs_surv-output-1.png" width="584" height="381" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cjs_surv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from the cormorant CJS. Horizontal lines represent the posterior median.
@@ -618,7 +618,7 @@ Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from
 <section id="jolly-seber-shwarz-arnason-jssa" class="level1">
 <h1>Jolly-Seber-Shwarz-Arnason (JSSA)</h1>
 <p>The second modeling framework I explore is the Jolly-Seber-Shwarz-Arnason (JSSA) model. This attempts to model entrants into the population, further permitting the estimation of the superpopulation size. As a demonstration, I use the classic European dipper data of <span class="citation" data-cites="lebreton1992">Lebreton et al. (<a href="#ref-lebreton1992" role="doc-biblioref">1992</a>)</span>. I first convert the dataset into the <span class="math inline">\(M\)</span>-array, since the data is in capture history format.</p>
-<div id="a88b6e70-0851-4494-b8e5-b4f3672bc0dd" class="cell" data-execution_count="8">
+<div id="be6ab3c7" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dipper <span class="op">=</span> np.loadtxt(<span class="st">'dipper.csv'</span>, delimiter<span class="op">=</span><span class="st">','</span>).astype(<span class="bu">int</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>dipper[:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
@@ -629,7 +629,7 @@ Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from
        [1, 1, 0, 0, 0, 0, 0]])</code></pre>
 </div>
 </div>
-<div id="a7a90ceb-7f47-4f7d-9133-6875d0524d45" class="cell" data-execution_count="9">
+<div id="8664a5a3" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dipper_m <span class="op">=</span> create_m_array(dipper)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>dipper_m</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
@@ -643,7 +643,7 @@ Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from
 </div>
 </div>
 <p>The JSSA model requires modeling the number of unmarked animals that were released during an occasion. We can calculate this using the <span class="math inline">\(m\)</span>-array by subtracting the number of marked animals who were released from the total number of released animals.</p>
-<div id="c2ce1d25-76cd-4e2f-96c1-6d22387234bc" class="cell" data-execution_count="10">
+<div id="b3218aea" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>recapture_array <span class="op">=</span> create_recapture_array(dipper)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>number_released <span class="op">=</span> dipper_m[:,<span class="dv">0</span>]</span>
@@ -663,7 +663,7 @@ Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from
 </div>
 </div>
 <p>Similar to the CJS model, this model requires a number of tricks to vectorize the operations. Many pertain to the distribution of the unmarked individuals. Similar to <a href="https://philpatton.github.io/occ.html">occupancy notebook</a>, I use a custom distribution to model the entrants into the population. Austin Rochford refers to this as an incomplete multinomial distribution.</p>
-<div id="2c700b69-c97b-45de-aef4-ed7238f44817" class="cell" data-execution_count="11">
+<div id="09e4d5c3" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>n, occasion_count <span class="op">=</span> dipper.shape</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>interval_count <span class="op">=</span> occasion_count <span class="op">-</span> <span class="dv">1</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -678,7 +678,7 @@ Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># index for generating sequences like [[0], [0,1], [0,1,2]]</span></span>
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>alive_yet_unmarked_index <span class="op">=</span> circulant(np.arange(occasion_count))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="916f5235-88dd-4953-afc2-2aa654ac4fa8" class="cell" data-execution_count="12">
+<div id="6530601b" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logp(x, n, p):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    x_last <span class="op">=</span> n <span class="op">-</span> x.<span class="bu">sum</span>()</span>
@@ -694,7 +694,7 @@ Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="85b65dfe-448c-46b1-a4d7-9694f9d8afb2" class="cell" data-execution_count="13">
+<div id="3215cc34" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># m-array for the CJS portion of the likelihood</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>cjs_marr <span class="op">=</span> dipper_m[:<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>:]</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>cjs_marr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -803,7 +803,7 @@ Figure&nbsp;4: Visual representation of the JSSA model
 </div>
 </div>
 </div>
-<div id="7b50f173-b257-44b0-a185-b0390ef5cf64" class="cell" data-execution_count="15">
+<div id="ad00a9e5" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> jssa:</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    jssa_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -811,7 +811,7 @@ Figure&nbsp;4: Visual representation of the JSSA model
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [p, phi, b0, N]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 5 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 4 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -854,7 +854,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div id="fig-jssa_trace" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-jssa_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-jssa_trace-output-1.png" class="img-fluid figure-img">
+<img src="surv_files/figure-html/fig-jssa_trace-output-1.png" width="1028" height="678" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jssa_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5: Traceplots for the dipper JSSA model. MLEs from the openCR package shown by vertical and horizontal lines.
@@ -885,7 +885,7 @@ Figure&nbsp;5: Traceplots for the dipper JSSA model. MLEs from the openCR packag
 <div id="fig-jssa_surv" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-jssa_surv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-jssa_surv-output-1.png" class="img-fluid figure-img">
+<img src="surv_files/figure-html/fig-jssa_surv-output-1.png" width="584" height="381" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jssa_surv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6: Violin plots of the posterior for apparent surival over time from the cormorant CJS. Horizontal lines represent the posterior median.
@@ -926,7 +926,7 @@ Figure&nbsp;6: Violin plots of the posterior for apparent surival over time from
 <div id="fig-jssa_post" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-jssa_post-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-jssa_post-output-1.png" class="img-fluid figure-img">
+<img src="surv_files/figure-html/fig-jssa_post-output-1.png" width="769" height="419" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jssa_post-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7: Posterior draws of <span class="math inline">\(N,\)</span> <span class="math inline">\(b_0,\)</span> and <span class="math inline">\(p\)</span> from the dipper JSSA model.
