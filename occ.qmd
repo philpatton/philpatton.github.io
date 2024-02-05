@@ -37,6 +37,13 @@ import numpy as np
 import pymc as pm
 import arviz as az
 import pandas as pd
+import matplotlib.pyplot as plt
+
+plt.style.use('fivethirtyeight')
+plt.rcParams['axes.facecolor'] = 'white'
+plt.rcParams['figure.facecolor'] = 'white'
+# pal = sns.color_palette('Set2')
+# sns.set_palette(pal)ß
 
 def scale(x):
     return (x - np.nanmean(x)) / np.nanstd(x)
@@ -105,14 +112,15 @@ with pm.Model() as constant:
 In JAGS, the prior for $p$ would be specified as `p ~ dunif(0, 1).` The PyMC equivalent is `p = pm.Uniform('p', 0, 1)`. This could, alternatively, be specified as `p = pm.Uniform('detection probability', 0, 1)`. For the likelihood, I use PyMC's built-in `ZeroInflatedBinomial` distribution. We tell PyMC that this is an observed random variable by supplying data to the `observed` argument. PyMC also has handy tools for visualizing the model.
 
 ```{python}
-#| fig-cap: 'The simplest possible occupancy model. Random variables appear as unshaded ellipses while data appears shaded. Notice the ''200'', which states that there are 200 observations (sites) of this random variable.'
+#| fig-cap: Visual representation of model $p(\cdot)\psi(\cdot).$ `MarginalMixture` refers to the zero-inflated binomial distribution. 
+#| label: fig-pdot
+ 
 pm.model_to_graphviz(constant)
 ```
 
 Now I can sample from the posterior. Again, I use the context manager, this time referring to the model by name. It's typical to name the output with `idata` because, by default, PyMC returns an object of class `InferenceData` from the Arviz package. Arviz is similar to the coda package for R.
 
 ```{python}
-#| output: asis
 with constant:
     constant_idata = pm.sample()
 ```
@@ -120,9 +128,12 @@ with constant:
 PyMC will try to use the No-U-Turn Sampler (NUTS) whenever possible. As you can see, it samples the posterior quickly. I can plot the output using the `az.plot_trace()`, supplying the true values for $p$ and $\psi$ for comparizon. I can also look at a tabular summary using `az.summary()`.
 
 ```{python}
-#| fig-cap: Estimated parameter values with the true values represented by vertical and horizontal lines.
+#| fig-cap: Traceplots for the $p(\cdot)\psi(\cdot)$ model. The true parameter values are shown by vertical and horizontal lines.
+#| label: fig-pdot_trace
 az.plot_trace(
     constant_idata,
+    compact=True,
+    figsize=(8,4),
     lines=[("psi", {}, [psi_true]), ("p", {}, [p_true])] 
 );
 ```
@@ -170,6 +181,8 @@ y[:5]
 Again, I specify the model with PyMC. Like JAGS, the random variables can be manipulated, as in a linear model with $x_j.$ These behave like numpy arrays, meaning that vectorized operations and broadcasting are available. To monitor the output of these manipulations, use the `pm.Deterministic` class. In this case, I am monitoring the site level occurrence probability $\psi_j.$
 
 ```{python}
+#| fig-cap: Visual representation of model $p(\cdot)\psi(x).$ `MarginalMixture` refers to the zero-inflated binomial distribution. 
+#| label: fig-psix
 with pm.Model() as psix:
 
     # occurrence process 
@@ -198,8 +211,11 @@ with psix:
 ```
 
 ```{python}
+#| fig-cap: Traceplots for the $p(\cdot)\psi(x)$ model. The true parameter values are shown by vertical and horizontal lines
+#| label: psix_trace
 az.plot_trace(
     psix_idata,
+    figsize=(8,6),
     var_names=['beta0', 'beta1', 'p'],
     lines=[("beta0", {}, [beta0_true]), ("beta1", {}, [beta1_true]), 
            ('p', {}, [p_true])]
@@ -287,6 +303,8 @@ def logp(x, p, psi):
 Then, I simply provide this function as an argument to the `CustomDist` class in our PyMC model.
 
 ```{python}
+#| fig-cap: Visual representation of the $p(w)\psi(w)$ model.
+#| label: fig-pw
 with pm.Model() as marginal:
 
     # occurrence process 
@@ -325,8 +343,11 @@ with marginal:
 ```
 
 ```{python}
+#| fig-cap: Tracepots for the $p(w)\psi(x)$ model. The true parameter values are shown by vertical and horizontal lines
+#| label: fig-pw_trace
 az.plot_trace(
     marginal_idata,
+    figsize=(8,6), 
     var_names=['beta0', 'beta1', 'alpha0', 'alpha1'],
     lines=[("beta0", {}, [beta0_true]), ("beta1", {}, [beta1_true]), 
            ('alpha0', {}, [alpha0_true]), ('alpha1', {}, [alpha1_true])]
@@ -371,6 +392,8 @@ W = np.stack((visit_int, visit_indicator, visit_wheight), axis=2)
 This example uses an extremely handy feature of PyMC: coordinates. This allows us to specify a prior for each $\alpha$ and $\beta$ value in one line of code, using the `dims` argument in our prior distribution. The length of vector is implied by length of the list in `coords`.
 
 ```{python}
+#| fig-cap: Visual representation of the willow warbler occupancy model. 
+#| label: fig-warbler
 coords = {"beta_coefs": ["Intercept", "Pland", 'Wheight'],
           "alpha_coefs": ["Intercept", "Visit", 'Wheight']}
 
@@ -418,11 +441,15 @@ az.summary(warbler_idata, var_names=['Alpha', 'Beta'])
 I compare the parameter estimates to the ones estimated by @hooten2019, Chapter 23. 
 
 ```{python}
+#| fig-cap: Traceplots from the willow warbler occupancy model. Estimates from @hooten2019 are shown by vertical and horizontal lines.
+#| label: fig-warbler_trace
+
 alpha_hat_hooten =  [0.04, 0.47, 0.68]
 beta_hat_hooten = [0.56, 1.92, 0.93]
 
 az.plot_trace(
     warbler_idata,
+    figsize=(8,4), 
     var_names=['Alpha', 'Beta'],
     lines=[("Alpha", {}, [alpha_hat_hooten]), 
            ("Beta", {}, [beta_hat_hooten])]
@@ -434,8 +461,11 @@ There is a high level of agreement between the two methods. While their algorith
 Arviz also produces forest plots for looking at effect sizes. 
 
 ```{python}
+#| fig-cap: Forest plots from willow warbler occupancy model. ESS refers to the effective sample size. 
+#| label: fig-warbler_forest
 az.plot_forest(warbler_idata, var_names=['Alpha', "Beta"], 
-               hdi_prob=0.95, ess=True);
+               figsize=(6,4),
+               hdi_prob=0.95, ess=True, combined=True);
 ```
 
 ## Model comparison
@@ -443,6 +473,8 @@ az.plot_forest(warbler_idata, var_names=['Alpha', "Beta"],
 PyMC also has handy tools for model comparison. I demonstrate these by fitting a model to the warbler data with a constant probability of detection. 
 
 ```{python}
+#| fig-cap: Visual representaion of the warbler occupancy model with constant $p.$
+#| label: fig-warbler_pdot
 Y_sum = Y.sum(axis=1)
 
 with pm.Model(coords=coords) as warbler_constantp:
@@ -505,6 +537,8 @@ This indicates that the $p(\cdot)$ model is favored over the $p(visit,wheight)$ 
 Arviz also generates plots for these comparisons. 
 
 ```{python}
+#| fig-cap: Comparison between the $p(visit,wheight)$ and the $p(\cdot)$ models in terms of loo.
+#| label: fig-warbler_comp
 az.plot_compare(df_comp_loo, insample_dev=False);
 ```
 

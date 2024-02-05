@@ -47,7 +47,7 @@ plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
 # pal = sns.color_palette('Set2')
-# sns.set_palette(pal)ß
+# sns.set_palette(pal)
 
 # hyperparameters 
 SEED = 808
@@ -87,18 +87,18 @@ def get_history():
     col_labs = [f'y{t}' for t in range(1, 5)]
 
     # subset each dataset before augmenting 
-    is_red = sal_data.spp == 0
-    red = sal_data.loc[is_red, col_labs].to_numpy()
-    
     is_pyg = sal_data.spp == 1
+    is_red = sal_data.spp == 0
+
     pyg = sal_data.loc[is_pyg, col_labs].to_numpy()
+    red = sal_data.loc[is_red, col_labs].to_numpy()
 
     # augment each set separately since they differ in length
-    red_augmented = augment_history(red)
     pyg_augmented = augment_history(pyg)
+    red_augmented = augment_history(red)
 
     # recombine into one history 
-    history = np.concatenate((red_augmented, pyg_augmented))
+    history = np.concatenate((pyg_augmented, red_augmented))
 
     return history
 
@@ -121,7 +121,7 @@ In this example, I combine the two species into one `pm.Model` object, making us
 species_idx = np.repeat([0, 1], M)
 
 # coordinates identifying parameter each species  
-coords = {'species': ['red_cheeked', 'pygmy']}
+coords = {'species': ['pygmy', 'red_cheeked']}
 
 with pm.Model(coords=coords) as M0:
 
@@ -150,7 +150,7 @@ with M0:
 #| fig-cap: Traceplots for the salamander $M_0$ model. The red-cheeked salamander is in blue while the pygmy salamander is in red.
 #| label: fig-trace
 
-az.plot_trace(M0_idata);
+az.plot_trace(M0_idata, figsize=(10,4));
 ```
 
 For faster sampling, it's better to seperate the two species into two seperate models. On my machine, the individual species models finish sampling in 2-3 seconds, compared to 15-20 seconds for the two species model. That said, the two species model is somewhat more convenient.
@@ -174,7 +174,7 @@ Now we can look at the traceplots, this time excluding $\psi$ and looking at $N.
 ```{python}
 #| fig-cap: 'Traceplots for the salamander $M_0$ model, including $N$. Estimates from @hooten2019 are shown by the vertical lines'
 N_hooten = [229.6, 450.9]
-az.plot_trace(M0_idata, var_names=['p', 'N'], combined=True,
+az.plot_trace(M0_idata, var_names=['p', 'N'], combined=True, figsize=(10,4),
               lines=[("N", {}, [N_hooten])]);
 ```
 
@@ -192,7 +192,7 @@ N_samps = np.vstack(post.N.to_numpy())
 fig, ax = plt.subplots(1, 1, figsize=(4, 4))
 
 # add the scatter for each species
-labs = ['Red-backed','Pygmy']
+labs = ['Pygmy', 'Red-backed']
 ax.scatter(p_samps[:,0], N_samps[:,0], s=5, alpha=0.2, label=labs[0])
 ax.scatter(p_samps[:,1], N_samps[:,1], s=5, alpha=0.2, label=labs[1])
 

@@ -316,7 +316,7 @@ window.Quarto = {
 <p>In this notebook, I explore how to fit distance sampling models for estimating the size of a closed population. Similar to the occupancy and closed capture-recapture notebooks, I use parameter-expanded data-augmentation (PX-DA) and the zero-inflated binomial model in this notebook.</p>
 <p>The idea with distance sampling, also known as line-transect sampling, is that a surveyer traverses a transect, typically in a boat or a plane. As they survey, they note when they detect an individual, or a group, from the species of interest, and further note the distance from the transect to the animal. Further, they note the angle to the animal(s), such that they can calculate the perpendicular distance from the animal to the transect. We assume that probability of detecting an animal <span class="math inline">\(p\)</span> decreases monotonically as the distance from the transect grows, e.g., <span class="math inline">\(p=\exp(-x^2/\sigma^2),\)</span> where <span class="math inline">\(x\)</span> is the distance and <span class="math inline">\(\sigma\)</span> is a scale parameter to be estimated. These simple assumptions permit the estimation of the population size <span class="math inline">\(N\)</span> as well as density <span class="math inline">\(D.\)</span></p>
 <p>Following <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 24 and <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, Chapter 7, I use the impala data from <span class="citation" data-cites="burnham1980">Burnham, Anderson, and Laake (<a href="#ref-burnham1980" role="doc-biblioref">1980</a>)</span>, who credits P. Hemingway with the dataset. In this dataset, 73 impalas were observed along a 60km transect. The distance values below are the perpendicular distances, in meters, from the transect.</p>
-<div id="724f5c4d" class="cell" data-execution_count="1">
+<div id="cell-fig-hist" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytensor.tensor <span class="im">as</span> pt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -361,15 +361,20 @@ window.Quarto = {
 <span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="dist_files/figure-html/cell-2-output-1.png" width="429" height="408" class="figure-img"></p>
+<div id="fig-hist" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="dist_files/figure-html/fig-hist-output-1.png" width="429" height="408" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Histogram of the number of detected impalas at varying distances.
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <p>Again, we treat this as a zero-inflated binomial model using PX-DA. The trick for doing so is to create a binary vector of length <span class="math inline">\(M\)</span>, <span class="math inline">\(y,\)</span> that represents whether the individual was detected during the study. Then, combine the indicator with the distance vector <span class="math inline">\(x\)</span> to create a the full dataset <span class="math inline">\((x,y).\)</span></p>
-<div id="659cd6be" class="cell" data-execution_count="2">
+<div id="14da023c" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="bu">len</span>(x_observed)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>unobserved_count <span class="op">=</span> M <span class="op">-</span> n</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>zeros <span class="op">=</span> np.zeros(unobserved_count)</span>
@@ -399,13 +404,13 @@ window.Quarto = {
 <img src="dist_files/figure-html/fig-dist-output-1.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Visual representation of the distance sampling model.
+Figure&nbsp;2: Visual representation of the distance sampling model.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div id="f55db106" class="cell" data-execution_count="4">
+<div id="6d248158" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> distance:</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    distance_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -413,7 +418,7 @@ Figure&nbsp;1: Visual representation of the distance sampling model.
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [psi, sigma, x_unobserved]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 12 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 11 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -445,16 +450,17 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div id="cell-fig-trace" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    distance_idata, </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'sigma'</span>]</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">4</span>),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'sigma'</span>]</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-trace" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="dist_files/figure-html/fig-trace-output-1.png" width="1021" height="367" class="figure-img">
+<img src="dist_files/figure-html/fig-trace-output-1.png" width="854" height="367" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Traceplots for the distance sampling model.
+Figure&nbsp;3: Traceplots for the distance sampling model.
 </figcaption>
 </figure>
 </div>
@@ -509,7 +515,7 @@ Figure&nbsp;2: Traceplots for the distance sampling model.
 <img src="dist_files/figure-html/fig-posteriors-output-1.png" width="766" height="382" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-posteriors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Posterior distributions for <span class="math inline">\(N\)</span> and <span class="math inline">\(\sigma.\)</span> Estimates from <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span> are shown with vertical lines.
+Figure&nbsp;4: Posterior distributions for <span class="math inline">\(N\)</span> and <span class="math inline">\(\sigma.\)</span> Estimates from <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span> are shown with vertical lines.
 </figcaption>
 </figure>
 </div>
@@ -546,7 +552,7 @@ Figure&nbsp;3: Posterior distributions for <span class="math inline">\(N\)</span
 <img src="dist_files/figure-html/fig-func-output-1.png" width="498" height="408" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: Posterior distribution for the detection function. The line represents the posterior mean while the shaded area is the 96% interval.
+Figure&nbsp;5: Posterior distribution for the detection function. The line represents the posterior mean while the shaded area is the 96% interval.
 </figcaption>
 </figure>
 </div>

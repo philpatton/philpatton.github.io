@@ -22,6 +22,8 @@ The idea with distance sampling, also known as line-transect sampling, is that a
 Following @hooten2019, Chapter 24 and @royle2008, Chapter 7, I use the impala data from @burnham1980, who credits P. Hemingway with the dataset. In this dataset, 73 impalas were observed along a 60km transect. The distance values below are the perpendicular distances, in meters, from the transect. 
 
 ```{python}
+#| fig-cap: Histogram of the number of detected impalas at varying distances.
+#| label: fig-hist
 import pymc as pm
 import pytensor.tensor as pt
 import matplotlib.pyplot as plt
@@ -110,6 +112,7 @@ with distance:
 
 az.plot_trace(
     distance_idata, 
+    figsize=(10,4),
     var_names=['psi', 'sigma']
 );
 ```

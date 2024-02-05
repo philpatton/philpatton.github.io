@@ -186,7 +186,7 @@ mccrea_phi = [0.79, 0.56, 0.83, 0.86, 0.73, 0.70, 0.81, 0.64, 0.46, 0.95]
 
 az.plot_trace(
     cjs_idata, 
-    combined=False,
+    figsize=(10, 4),
     lines=[("phi", {}, [mccrea_phi]), ("p", {}, [mccrea_p])] 
 );
 ```
@@ -394,6 +394,7 @@ N_mle = [310]
 
 az.plot_trace(
     jssa_idata, 
+    figsize=(10, 8),
     lines=[("phi", {}, phi_mle), ("p", {}, [p_mle]), ("N", {}, [N_mle]), ("b0", {}, [b0_mle])] 
 );
 ```
