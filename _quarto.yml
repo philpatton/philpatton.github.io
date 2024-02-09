@@ -38,6 +38,8 @@ website:
               text: Distance sampling
             - href: surv.qmd
               text: Open capture-recapture
+            - href: scr.qmd
+              text: Spatial capture-recapture
 
 
 format:
