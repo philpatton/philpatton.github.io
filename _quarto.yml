@@ -37,11 +37,10 @@ website:
               text: Closed capture-recapture
             - href: dist.qmd
               text: Distance sampling
-            - href: surv.qmd
-              text: Open capture-recapture
             - href: scr.qmd
               text: Spatial capture-recapture
-
+            - href: surv.qmd
+              text: Open capture-recapture
 
 format:
   html:
