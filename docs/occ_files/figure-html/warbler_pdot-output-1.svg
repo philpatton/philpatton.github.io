@@ -27,7 +27,7 @@
 <text text-anchor="middle" x="94" y="-298.74" font-family="Times,serif" font-size="14.00">Normal</text>
 </g>
 <!-- psi -->
-<g id="node2" class="node">
+<g id="node3" class="node">
 <title>psi</title>
 <polygon fill="none" stroke="black" points="139.12,-227.23 48.88,-227.23 48.88,-169.73 139.12,-169.73 139.12,-227.23"/>
 <text text-anchor="middle" x="94" y="-209.93" font-family="Times,serif" font-size="14.00">psi</text>
@@ -41,7 +41,7 @@
 <polygon fill="black" stroke="black" points="97.5,-238.98 94,-228.98 90.5,-238.98 97.5,-238.98"/>
 </g>
 <!-- y -->
-<g id="node3" class="node">
+<g id="node2" class="node">
 <title>y</title>
 <ellipse fill="lightgrey" stroke="black" cx="94" cy="-81.16" rx="78.14" ry="40.66"/>
 <text text-anchor="middle" x="94" y="-92.61" font-family="Times,serif" font-size="14.00">y</text>

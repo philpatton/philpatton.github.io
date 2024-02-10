@@ -18,11 +18,11 @@
 <path fill="none" stroke="black" d="M32,-8C32,-8 180,-8 180,-8 186,-8 192,-14 192,-20 192,-20 192,-117.82 192,-117.82 192,-123.82 186,-129.82 180,-129.82 180,-129.82 32,-129.82 32,-129.82 26,-129.82 20,-123.82 20,-117.82 20,-117.82 20,-20 20,-20 20,-14 26,-8 32,-8"/>
 <text text-anchor="middle" x="170.5" y="-15.2" font-family="Times,serif" font-size="14.00">3000</text>
 </g>
-<!-- psi -->
+<!-- p -->
 <g id="node1" class="node">
-<title>psi</title>
+<title>p</title>
 <ellipse fill="none" stroke="black" cx="168" cy="-210.98" rx="44.72" ry="40.66"/>
-<text text-anchor="middle" x="168" y="-222.43" font-family="Times,serif" font-size="14.00">psi</text>
+<text text-anchor="middle" x="168" y="-222.43" font-family="Times,serif" font-size="14.00">p</text>
 <text text-anchor="middle" x="168" y="-205.93" font-family="Times,serif" font-size="14.00">~</text>
 <text text-anchor="middle" x="168" y="-189.43" font-family="Times,serif" font-size="14.00">Uniform</text>
 </g>
@@ -34,23 +34,23 @@
 <text text-anchor="middle" x="106" y="-76.11" font-family="Times,serif" font-size="14.00">~</text>
 <text text-anchor="middle" x="106" y="-59.61" font-family="Times,serif" font-size="14.00">MarginalMixture</text>
 </g>
-<!-- psi&#45;&gt;history -->
+<!-- p&#45;&gt;history -->
 <g id="edge1" class="edge">
-<title>psi&#45;&gt;history</title>
+<title>p&#45;&gt;history</title>
 <path fill="none" stroke="black" d="M150.23,-173.35C143.84,-160.17 136.52,-145.09 129.71,-131.03"/>
 <polygon fill="black" stroke="black" points="133.03,-129.85 125.51,-122.38 126.73,-132.91 133.03,-129.85"/>
 </g>
-<!-- p -->
+<!-- psi -->
 <g id="node2" class="node">
-<title>p</title>
+<title>psi</title>
 <ellipse fill="none" stroke="black" cx="61" cy="-210.98" rx="44.72" ry="40.66"/>
-<text text-anchor="middle" x="61" y="-222.43" font-family="Times,serif" font-size="14.00">p</text>
+<text text-anchor="middle" x="61" y="-222.43" font-family="Times,serif" font-size="14.00">psi</text>
 <text text-anchor="middle" x="61" y="-205.93" font-family="Times,serif" font-size="14.00">~</text>
 <text text-anchor="middle" x="61" y="-189.43" font-family="Times,serif" font-size="14.00">Uniform</text>
 </g>
-<!-- p&#45;&gt;history -->
+<!-- psi&#45;&gt;history -->
 <g id="edge2" class="edge">
-<title>p&#45;&gt;history</title>
+<title>psi&#45;&gt;history</title>
 <path fill="none" stroke="black" d="M74.38,-171.97C78.75,-159.55 83.68,-145.57 88.32,-132.39"/>
 <polygon fill="black" stroke="black" points="91.6,-133.59 91.62,-122.99 85,-131.27 91.6,-133.59"/>
 </g>

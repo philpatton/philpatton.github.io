@@ -87,6 +87,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./surv.html" rel="next">
+<link href="./closed_cmr.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -254,6 +256,12 @@ window.Quarto = {
  <span class="menu-text">Open capture-recapture</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Spatial capture-recapture</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -374,7 +382,7 @@ Figure&nbsp;1: Histogram of the number of detected impalas at varying distances.
 </div>
 </div>
 <p>Again, we treat this as a zero-inflated binomial model using PX-DA. The trick for doing so is to create a binary vector of length <span class="math inline">\(M\)</span>, <span class="math inline">\(y,\)</span> that represents whether the individual was detected during the study. Then, combine the indicator with the distance vector <span class="math inline">\(x\)</span> to create a the full dataset <span class="math inline">\((x,y).\)</span></p>
-<div id="14da023c" class="cell" data-execution_count="2">
+<div id="d7356039" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="bu">len</span>(x_observed)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>unobserved_count <span class="op">=</span> M <span class="op">-</span> n</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>zeros <span class="op">=</span> np.zeros(unobserved_count)</span>
@@ -410,7 +418,7 @@ Figure&nbsp;2: Visual representation of the distance sampling model.
 </div>
 </div>
 </div>
-<div id="6d248158" class="cell" data-execution_count="4">
+<div id="cbb7b9e3" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> distance:</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    distance_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -418,7 +426,8 @@ Figure&nbsp;2: Visual representation of the distance sampling model.
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [psi, sigma, x_unobserved]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 11 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 15 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -442,7 +451,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:11&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:15&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
@@ -457,7 +466,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div id="fig-trace" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="dist_files/figure-html/fig-trace-output-1.png" width="854" height="367" class="figure-img">
+<img src="dist_files/figure-html/fig-trace-output-1.png" width="865" height="367" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Traceplots for the distance sampling model.
@@ -512,7 +521,7 @@ Figure&nbsp;3: Traceplots for the distance sampling model.
 <div id="fig-posteriors" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-posteriors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="dist_files/figure-html/fig-posteriors-output-1.png" width="766" height="382" class="figure-img">
+<img src="dist_files/figure-html/fig-posteriors-output-1.png" width="766" height="391" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-posteriors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;4: Posterior distributions for <span class="math inline">\(N\)</span> and <span class="math inline">\(\sigma.\)</span> Estimates from <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span> are shown with vertical lines.
@@ -960,6 +969,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./closed_cmr.html" class="pagination-link  aria-label=" closed="" capture-recapture"="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Closed capture-recapture</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./surv.html" class="pagination-link" aria-label="Open capture-recapture">
+        <span class="nav-page-text">Open capture-recapture</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 
 

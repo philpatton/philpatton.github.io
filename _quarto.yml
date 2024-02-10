@@ -4,6 +4,7 @@ project:
 
 website:
   title: "Philip T. Patton"
+  page-navigation: true
 
   navbar:
     left:
