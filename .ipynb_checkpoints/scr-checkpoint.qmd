@@ -1,0 +1,446 @@
+---
+title: Spatial capture-recapture
+description: Closed spatial capture-recapture models in PyMC
+author:
+  name: Philip T. Patton
+  affiliation:
+    - Marine Mammal Research Program
+    - Hawaiʻi Institute of Marine Biology
+date: 'February 8, 2024'
+bibliography: refs.bib
+jupyter:
+  kernelspec:
+    display_name: PyMC
+    language: python
+    name: pymc
+---
+
+In this notebook, I present an approach to fitting spatial capture-recapture (SCR) models in PyMC. SCR expands upon traditional capture-recapture by incorporating the location of the traps in the analysis. This matters because, typically, animals that live near a particular trap are more likely to be caught in it. In doing so, SCR links individual-level processes to the population-level, expanding the scientific scope of simple designs. 
+
+In this notebook, I train the simplest possible SCR model, SCR0 [@royle2013,Chapter 5], where the goal is estimating the true population size $N$. Similar to the other closed population notebooks, I do so using parameter-expanded data-augmentation (PX-DA). I also borrow the concept of the *detection function* from the distance sampling notebook.
+
+As a motivating example, I use the [ovenbird mist netting dataset](https://www.otago.ac.nz/density/examples/index.html) provided by Murray Efford via the secr package in R. The design of the study is outlined in @efford2004 and @borchers2008. In this dataset, ovenbirds were trapped in 44 mist nets over 8 to 10 consecutive days during the summers of 2005 to 2009. 
+
+```{python}
+#| fig-cap: 'Locations of the mist nets in the ovenbird dataset [@efford2004]'
+#| label: fig-nets
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import pytensor.tensor as pt 
+import pymc as pm
+import arviz as az
+from pymc.distributions.dist_math import binomln, logpow
+
+# hyper parameters
+SEED = 42
+RNG = np.random.default_rng(SEED)
+BUFFER = 100
+M = 200
+
+# plotting defaults
+plt.style.use('fivethirtyeight')
+plt.rcParams['axes.facecolor'] = 'white'
+plt.rcParams['figure.facecolor'] = 'white'
+
+def invlogit(x):
+    '''Inverse logit function'''
+    return 1 / (1 + np.exp(-x))
+
+def euclid_dist(X, S, library='np'):
+    '''Pairwise euclidian distance between points in (M, 2) and (N, 2) arrays'''
+    diff = X[np.newaxis, :, :] - S[:, np.newaxis, :]
+    
+    if library == 'np':
+        return np.sqrt(np.sum(diff ** 2, axis=-1))
+        
+    elif library == 'pm': 
+        return pm.math.sqrt(pm.math.sum(diff ** 2, axis=-1))
+
+def half_normal(d, s, library='np'):
+    '''Half normal detection function.'''
+    if library == 'np':
+        return np.exp( - (d ** 2) / (2 * s ** 2))
+        
+    elif library == 'pm':
+        return pm.math.exp( - (d ** 2) / (2 * s ** 2))
+
+def exponential(d, s, library='np'):
+    '''Negative exponential detection function.'''    
+    if library == 'np':
+        return np.exp(- d / s)
+        
+    elif library == 'pm':
+        return pm.math.exp(- d / s)
+
+# coordinates for each trap 
+ovenbird_trap = pd.read_csv('ovenbirdtrap.txt', delimiter=' ')
+trap_count, _ = ovenbird_trap.shape
+
+# information about each trap 
+trap_x = ovenbird_trap.x
+trap_y = ovenbird_trap.y
+X = ovenbird_trap[['x', 'y']].to_numpy()
+
+# define the state space around the traps
+x_max = trap_x.max() + BUFFER
+y_max = trap_y.max() + BUFFER
+x_min = trap_x.min() - BUFFER
+y_min = trap_y.min() - BUFFER
+
+# plot the trap locations
+fig, ax = plt.subplots(figsize=(4, 4))
+
+# plot the traps
+ax.scatter(trap_x, trap_y, marker='x', s=40, linewidth=1.5, color='C1')
+ax.set_ylim((y_min, y_max))
+ax.set_xlim((x_min, x_max))
+
+ax.annotate(
+    '44 nets\n30m apart', ha='center',
+    xy=(55, -150), xycoords='data', color='black',
+    xytext=(40, 30), textcoords='offset points',
+    arrowprops=dict(arrowstyle="->", color='black', linewidth=1,
+                    connectionstyle="angle3,angleA=90,angleB=0"))
+
+# aesthetics 
+ax.set_title('Mist net locations')
+ax.grid(False)
+plt.show()
+```
+
+One difference between spatial and traditional (non-spatial) capture is the addition of the trap identifier in the capture history. Whereas a traditional capture history is `[individual, occasion]`, a spatial capture history might be `[individual, occasion, trap]`. 
+
+In the ovenbird example, I ignore the `year` dimension, pooling parameters across years, which allows for better estimation of the detection parameters. My hack for doing so is treating every band/year combination as a unique individual in a combined year capture history. This is easy to implement, creates an awkward interpretation of $N$ (see below).  
+
+```{python}
+# ovenbird capture history
+oven_ch = pd.read_csv('ovenbirdcapt.txt', delimiter=' ')
+
+# create a unique bird/year identifier for each individual
+oven_ch['ID'] = oven_ch.groupby(['Year','Band']).ngroup()
+occasion_count = oven_ch.Day.max()
+
+# merge the datasets, making sure that traps with no detections are included 
+ovenbird = (
+    ovenbird_trap.merge(oven_ch[['ID', 'Net', 'Day']], how='left')
+      [['ID', 'Day', 'Net', 'x', 'y']]
+      .sort_values('ID')
+      .reset_index(drop=True)
+)
+
+ovenbird.head(10)
+```
+
+## Simulation
+
+Before estimating the parameters, I perform a small simulation. The simulation starts with a core idea of SCR: the *activity center*. The activity center $\mathbf{s}_i$ is the most likely place that you'd find an individual $i$ over the course of the trapping study. In this case, I assume that activity centers are uniformly distributed across the sample space. (The study takes place in homogenous habitat.)
+
+I compute the probability of detection for individual $i$ at trap $j$ as $p_{i,j}=g_0 \exp(-d_{i,j}^2/2\sigma^2),$ where $g_0$ is the probability of detecting an individual when it's activity center is at the trap, $d_{i,j}$ is the euclidean distance between the trap and the activity center, and $\sigma$ is the detection range parameter.
+
+```{python}
+# true population size
+N = 150
+
+# simulate activity centers
+sx_true = RNG.uniform(x_min, x_max, N)
+sy_true = RNG.uniform(y_min, y_max, N)
+S_true = np.column_stack((sx_true, sy_true))
+
+# true distance between the trap and the activity centers
+d_true = euclid_dist(X, S_true)
+
+# detection parameters
+g0_true = 0.025     
+sigma_true = 73     
+
+# simulate the number of captures at each trap for each individual
+capture_probability = g0_true * half_normal(d_true, sigma_true)
+sim_Y = RNG.binomial(occasion_count, capture_probability)
+
+# filter out undetected individuals
+was_detected = sim_Y.sum(axis=1) > 0
+sim_Y_det = sim_Y[was_detected]
+n_detected = int(was_detected.sum())
+```
+
+Following @royle2013, Chapter 5, I first fit the version of the model where we assume that we know the true population size. In this case, I'm only estimating the detection parameters and the activity center locations.
+
+```{python}
+#| fig-cap: Visual representation of the model where $N$ is known.
+#| label: fig-known
+
+# upper bound for the uniform prior on sigma
+U_SIGMA = 150
+
+with pm.Model() as known:
+
+    # priors for the activity centers
+    sx = pm.Uniform('sx', x_min, x_max, shape=n_detected)
+    sy = pm.Uniform('sy', y_min, y_max, shape=n_detected)
+    S = pt.stack([sx, sy], axis=1)
+
+    # priors for the detection parameters
+    g0 = pm.Uniform('g0', 0, 1)
+    sigma = pm.Uniform('sigma', 0, U_SIGMA)
+    
+    # probability of capture for each individual at each trap
+    distance = euclid_dist(X, S, 'pm')
+    p = pm.Deterministic('p', g0 * half_normal(distance, sigma))
+
+    # likelihood
+    pm.Binomial(
+        'y',
+        p=p,
+        n=occasion_count,
+        observed=sim_Y_det
+    )
+
+pm.model_to_graphviz(known)
+```
+
+```{python}
+with known:
+    known_idata = pm.sample()
+```
+
+```{python}
+az.summary(known_idata, var_names=['g0', 'sigma'])
+```
+
+```{python}
+#| fig-cap: Trace plots for model where $N$ is known. The true parameter values are shown by vertical and horizontal lines.
+#| label: fig-known_trace
+
+az.plot_trace(
+    known_idata, 
+    var_names=['g0', 'sigma'],
+    figsize=(8,4),
+    lines=[("g0", {}, [g0_true]), ("sigma", {}, [sigma_true])] 
+);
+```
+
+The trace plots show reasonable agreement between the true parameter values and the estimated values, although $g_0$ appears to be overestimated.
+
+## Ovenbird density
+
+Now, I estimate the density $D$ for the ovenbird population. Like distance sampling, SCR can robustly estimate the density of the population, regardless of the size of the state space. The difference between the model above and this one is that we use PX-DA to estimate the inclusion probability $\psi,$ and subsequently $N.$ First, I convert the `DataFrame` to a `(n_detected, n_traps)` array of binomial counts. 
+
+```{python}
+def get_Y(ch):
+    '''Get a (individual_count, trap_count) array of detections.'''
+
+    # count the number of detections per individual per trap
+    detection_counts = pd.crosstab(ch.ID, ch.Net, dropna=False)
+
+    # remove the ghost nan individual 
+    detection_counts = detection_counts.loc[~detection_counts.index.isna()]
+    
+    Y = detection_counts.to_numpy()
+    return Y
+
+Y = get_Y(ovenbird)
+detected_count, trap_count = Y.shape
+
+# augmented spatial capture histories with all zero histories
+all_zero_history = np.zeros((M - detected_count, trap_count))
+Y_augmented = np.row_stack((Y, all_zero_history))
+```
+
+Similar to the occupancy notebook, I use a custom distribution to model the zero-inflated data. This is necessary because the zero inflation happens at the individual (row) level. This is, in fact, the same distribution as the occupancy model, although including the binomial coefficient. 
+
+```{python}
+#| fig-cap: Visual representation of the ovenbird model using data augmentation.
+#| label: fig-oven
+
+def logp(value, n, p, psi):
+    
+    binom = binomln(n, value) + logpow(p, value) + logpow(1 - p, n - value)
+    bin_sum = pm.math.sum(binom, axis=1)
+    bin_exp = pm.math.exp(bin_sum)
+
+    res = pm.math.switch(
+        value.sum(axis=1) > 0,
+        bin_exp * psi,
+        bin_exp * psi + (1 - psi)
+    )
+    
+    return pm.math.log(res)
+
+with pm.Model() as oven:
+
+    # Priors
+    # activity centers
+    sx = pm.Uniform('sx', x_min, x_max, shape=M)
+    sy = pm.Uniform('sy', y_min, y_max, shape=M)
+    S = pt.stack([sx, sy], axis=1)
+
+    # capture parameters
+    g0 = pm.Uniform('g0', 0, 1, initval=0.05)
+    sigma = pm.Uniform('sigma', 0, U_SIGMA)
+
+    # inclusion probability 
+    psi = pm.Uniform('psi', 0, 1)
+
+    # compute the capture probability 
+    distance = euclid_dist(X, S, 'pm')
+    p = pm.Deterministic('p', g0 * half_normal(distance, sigma))
+
+    # likelihood 
+    pm.CustomDist(
+        'y',
+        occasion_count,
+        p,
+        psi,
+        logp=logp,
+        observed=Y_augmented
+    )
+
+pm.model_to_graphviz(oven)
+```
+
+```{python}
+with oven:
+    oven_idata = pm.sample()
+```
+
+```{python}
+az.summary(oven_idata, var_names=['g0', 'sigma', 'psi'])
+```
+
+```{python}
+#| fig-cap: Trace plots for the ovenbird model using data augmentation. Maximum likelihood estimates are shown by vertical and horizontal lines.
+#| label: fig-oven_trace
+
+g0_mle = [0.025]
+sigma_mle = [73]
+
+az.plot_trace(
+    oven_idata, 
+    var_names=['g0', 'sigma'],
+    figsize=(8,4),
+    lines=[("g0", {}, [g0_mle]), ("sigma", {}, [sigma_mle])] 
+);
+```
+
+The estimates are quite close to the maximum likelihood estimates, which I estimated using the secr package in R.
+
+Finally, I estimate density $D$ using the results. As in the closed capture-recapture and distance sampling notebooks, I use the posterior samples of $\psi$ and $M$ to sample the posterior of $N.$ This $N,$ however, has an awkward interpretation because I pooled across the years by combining all the detection histories. To get around this, I compute the average annual abundance by dividing by the total number of years in the sample. Then, I divide by the area of the state space. 
+
+```{python}
+#| fig-cap: Posterior distribution of the density $D$ of ovenbirds. The maximum likelihood estimate is shown by the dotted red line.
+#| label: fig-density
+
+psi_samps = oven_idata.posterior.psi.values.flatten()
+N_samps = RNG.binomial(M, psi_samps)
+
+# kludgy way of calculating abundance 
+year_count = 5
+average_annual_abundance = N_samps // year_count
+
+# area of the state space in terms of hectares 
+ha = 100 * 100
+mask_area = (x_max - x_min) * (y_max - y_min) / ha
+
+# density 
+D_samples = average_annual_abundance / mask_area 
+D_mle = 1.262946
+
+fig, ax = plt.subplots(figsize=(4,4))
+ax.hist(D_samples, edgecolor='white', bins=10)
+ax.axvline(D_mle, linestyle='--',color='C1')
+ax.set_xlabel('Ovenbirds per hectare')
+ax.set_ylabel('Number of samples')
+ax.text(1.5, 1000, f'$\hat{{D}}$={D_samples.mean():.2f}', va='center', ha='center')
+plt.show()
+```
+
+I also plot the estimated activity centers for every detected individual, as well as the posterior distribution for two of the detected individuals. 
+
+```{python}
+#| fig-cap: 'Estimated activity centers for the detected individuals, and posterior distributions for two of them.'
+#| label: fig-activity
+
+sx_samps = az.extract(oven_idata).sx
+sy_samps = az.extract(oven_idata).sy
+
+sx_mean = sx_samps[:detected_count].mean(axis=1)
+sy_mean = sy_samps[:detected_count].mean(axis=1)
+
+one = 49
+sx1 = sx_samps[one]
+sy1 = sy_samps[one]
+
+two = 2
+sx2 = sx_samps[two]
+sy2 = sy_samps[two]
+
+# plot the trap locations
+fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True, sharey=True, figsize=(5, 10),
+                               tight_layout=True)
+
+# plot the traps
+ax0.scatter(trap_x, trap_y, marker='x', s=40, linewidth=1.5, color='C1')
+ax0.set_ylim((y_min, y_max))
+ax0.set_xlim((x_min, x_max))
+
+# plot the mean activity centers
+ax0.scatter(sx_mean, sy_mean, marker='o', s=4, color='black')
+
+# aesthetics 
+ax0.set_title('Estimated activity centers')
+ax0.grid(False)
+
+# plot the traps
+ax1.scatter(trap_x, trap_y, marker='x', s=40, linewidth=1.5, color='C1')
+ax1.set_ylim((y_min, y_max))
+ax1.set_xlim((x_min, x_max))
+
+# plot the distributions of the activity centers
+ax1.scatter(sx1, sy1, marker='o', s=1, color='gray', alpha=0.2)
+ax1.scatter(sx2, sy2, marker='o', s=1, color='gray', alpha=0.2)
+
+# plot the mean
+ax1.scatter(sx1.mean(), sy1.mean(), marker='o', s=20, color='black')
+ax1.scatter(sx2.mean(), sy2.mean(), marker='o', s=20, color='black')
+
+# add the label
+ax1.text(sx1.mean(), sy1.mean() + 5, f'{one}', ha='center', va='bottom')
+ax1.text(sx2.mean(), sy2.mean() + 5, f'{two}', ha='center', va='bottom')
+
+# aesthetics 
+ax1.set_title('Posterior of two activity centers')
+ax1.grid(False)
+plt.show()
+```
+
+Finally, I plot the posterior distribution of the detection function. 
+
+```{python}
+#| fig-cap: Posterior distribution for the detection function. The line represents the posterior mean while the shaded area is the 96% interval.
+#| label: fig-func
+xx = np.arange(BUFFER * 2)
+
+sigma_samps = az.extract(oven_idata).sigma.values.flatten()
+g0_samps = az.extract(oven_idata).g0.values.flatten()
+
+p_samps = np.array(
+    [g * half_normal(xx, s) for g, s in zip(g0_samps, sigma_samps)]
+)
+
+p_mean = p_samps.mean(axis=0)
+p_low = np.quantile(p_samps, 0.02, axis=0)
+p_high = np.quantile(p_samps, 0.98, axis=0)
+
+fig, ax = plt.subplots(figsize=(5,4))
+
+ax.plot(xx, p_mean, '-')
+ax.fill_between(xx, p_low, p_high, alpha=0.2)
+
+ax.set_title('Detection function')
+ax.set_ylabel(r'$p$')
+ax.set_xlabel(r'Distance (m)')
+
+plt.show()
+```

@@ -12,7 +12,7 @@ jupyter:
   kernelspec:
     display_name: PyMC
     language: python
-    name: mc
+    name: pymc
 ---
 
 In this notebook, I explore how to fit distance sampling models for estimating the size of a closed population. Similar to the occupancy and closed capture-recapture notebooks, I use parameter-expanded data-augmentation (PX-DA) and the zero-inflated binomial model in this notebook.

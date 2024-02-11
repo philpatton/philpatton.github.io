@@ -12,7 +12,7 @@ jupyter:
   kernelspec:
     display_name: PyMC
     language: python
-    name: mc
+    name: pymc
 ---
 
 In this notebook, I explore models for estimating survival using capture-recapture data in PyMC. These models include the Cormack-Jolly-Seber (CJS) and Jolly-Seber-Shwarz-Arnason (JSSA) frameworks. The primary difference between the two is that the JSSA model also tries to estimate the probability of entry into the population, which permits esimation of the superpopulation size.
