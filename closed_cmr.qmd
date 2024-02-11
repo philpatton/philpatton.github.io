@@ -12,11 +12,7 @@ format:
     html-math-method: mathjax
     code-overflow: wrap
 bibliography: refs.bib
-jupyter:
-  kernelspec:
-    display_name: PyMC
-    language: python
-    name: mc
+jupyter: pymc
 ---
 
 In this notebook, I explore fitting closed population capture-recapture models in PyMC. Capture-recapture, at least the Lincoln-Peterson estimator, has been around for almost 100 years. Since then, countless varieties of capture-recapture models have been developed for closed populations [@otis1978]. 
@@ -42,21 +38,21 @@ import pymc as pm
 import arviz as az
 import matplotlib.pyplot as plt 
 import seaborn as sns
+from pymc.distributions.dist_math import binomln, logpow
 
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
-# pal = sns.color_palette('Set2')
+# pal = sns.color_palette("Set2")
 # sns.set_palette(pal)
 
 # hyperparameters 
 SEED = 808
 RNG = np.random.default_rng(SEED)
-DRAW_COUNT = 1000
 M = 1500
 ```
 
-I explore fitting the simplest closed capture-recapture model, Model $M_0,$ through parameter-expanded data-autmentation [PX-DA, @royle2008]. The idea with PX-DA is to augment the capture histories with $M-n$ all zero capture-histories, where $M$ is a hyperparameter that should be much greater than the true population size $N,$ and $n$ is the total number of individuals that were captured during the study. This allows us to treat the data as a zero-inflated binomial distribution (see below).
+I explore fitting the simplest closed capture-recapture model, Model $M_0,$ through parameter-expanded data-augmentation [PX-DA, @royle2008]. The idea with PX-DA is to augment the capture histories with $M-n$ all zero capture-histories, where $M$ is a hyperparameter that should be much greater than the true population size $N,$ and $n$ is the total number of individuals that were captured during the study. This allows us to treat the data as a zero-inflated binomial distribution (see below).
 
 ```{python}
 def augment_history(history):
@@ -109,7 +105,7 @@ _, T = history.shape
 history_summarized = history.sum(axis=1)
 ```
 
-For this model, I use the `pm.ZeroInflatedBinomial` class, just as I did in the [occupancy notebook](https://philpatton.github.io/occ.html). That said, the parameters here are different. First, $p$ represents the probability of capturing a given individual during the survey. Second, $\psi$ represents a mysterious entity known as the inclusion probability. That is, the probability that an individual from the hyportheitical superpopulation $M$ is included in the popualation of interest $N.$ Then, we can estimate the population size as $\hat{N}=M\hat{\psi},$ or generate posterior draws of $N,$ e.g., $N^{(s)} \sim \text{Bin}(M,\psi^{(s)})$
+For this model, I use the `pm.ZeroInflatedBinomial` class, just as I did in the [occupancy notebook](https://philpatton.github.io/occ.html). That said, the parameters here are different. First, $p$ represents the probability of capturing a given individual during the survey. Second, $\psi$ represents a mysterious entity known as the inclusion probability. That is, the probability that an individual from the hypothetical superpopulation $M$ is included in the population of interest $N.$ Then, we can estimate the population size as $\hat{N}=M\hat{\psi},$ or generate posterior draws of $N,$ e.g., $N^{(s)} \sim \text{Bin}(M,\psi^{(s)})$
 
 In this example, I combine the two species into one `pm.Model` object, making use of `coords`. That said, the parameters for each species are treated as independent. 
 
@@ -143,19 +139,19 @@ pm.model_to_graphviz(M0)
 
 ```{python}
 with M0:
-    M0_idata = pm.sample(DRAW_COUNT)
+    M0_idata = pm.sample()
 ```
 
 ```{python}
 #| fig-cap: Traceplots for the salamander $M_0$ model. The red-cheeked salamander is in blue while the pygmy salamander is in red.
 #| label: fig-trace
 
-az.plot_trace(M0_idata, figsize=(10,4));
+az.plot_trace(M0_idata, figsize=(8,4));
 ```
 
-For faster sampling, it's better to seperate the two species into two seperate models. On my machine, the individual species models finish sampling in 2-3 seconds, compared to 15-20 seconds for the two species model. That said, the two species model is somewhat more convenient.
+For faster sampling, it's better to separate the two species into two separate models. On my machine, the individual species models finish sampling in 2-3 seconds, compared to 15-20 seconds for the two species model. That said, the two species model is somewhat more convenient.
 
-Of course, the traceplots lack our true parameter of interest: the population size $N.$ We can simulate the posterior of $N$ as a *derived quantity*, using $M$ and the posterior distribuion of $\psi.$ Arviz has handy tools for calculating posteriors of derived quantities. 
+Of course, the trace plots lack our true parameter of interest: the population size $N.$ We can simulate the posterior of $N$ as a *derived quantity*, using $M$ and the posterior distribution of $\psi.$ Arviz has handy tools for calculating posteriors of derived quantities. 
 
 ```{python}
 # this does not make a copy of the posterior, allowing us to modify the idata object
@@ -169,19 +165,21 @@ N_samples = RNG.binomial(M, post.psi)
 post['N'] = (post.dims, N_samples)
 ```
 
-Now we can look at the traceplots, this time excluding $\psi$ and looking at $N.$ I also added the estimates from @hooten2019, Chapter 24, although they used a different prior for $\psi.$ 
+Now we can look at the trace plots, this time excluding $\psi$ and looking at $N.$ I also added the estimates from @hooten2019, Chapter 24, although they used a different prior for $\psi.$ 
 
 ```{python}
 #| fig-cap: 'Traceplots for the salamander $M_0$ model, including $N$. Estimates from @hooten2019 are shown by the vertical lines'
+#| label: fig-N_trace
 N_hooten = [229.6, 450.9]
-az.plot_trace(M0_idata, var_names=['p', 'N'], combined=True, figsize=(10,4),
-              lines=[("N", {}, [N_hooten])]);
+az.plot_trace(M0_idata, var_names=['N'], combined=True, 
+              figsize=(8,2),lines=[("N", {}, [N_hooten])]);
 ```
 
-We might expect estimates of capture probability $p$ and the abundance $N,$ by way of the inclusion probability $\psi,$ to be somewhat correlated. We can explore this relationship visually by plotting the posterior draws. For a more custom look to the plots, I plot the draws using matplotlib
+We might expect estimates of capture probability $p$ and the abundance $N,$ by way of the inclusion probability $\psi,$ to be somewhat correlated. We can explore this relationship visually by plotting the posterior draws. For a more custom look to the plots, I plot the draws using matplotlib.
 
 ```{python}
 #| fig-cap: Posterior draws of $N$ and $p$ for both species of salamander.
+#| label: fig-posterior
 #| fig-lab: post
 
 # stack the draws for each chain, creating a (n_draws, n_species) array 
@@ -193,8 +191,8 @@ fig, ax = plt.subplots(1, 1, figsize=(4, 4))
 
 # add the scatter for each species
 labs = ['Pygmy', 'Red-backed']
-ax.scatter(p_samps[:,0], N_samps[:,0], s=5, alpha=0.2, label=labs[0])
-ax.scatter(p_samps[:,1], N_samps[:,1], s=5, alpha=0.2, label=labs[1])
+ax.scatter(p_samps[:,0], N_samps[:,0], s=10, alpha=0.2, label=labs[0])
+ax.scatter(p_samps[:,1], N_samps[:,1], s=10, alpha=0.2, label=labs[1])
 
 # this removes the opacity for the dots in the legend
 leg = ax.legend()
@@ -208,6 +206,229 @@ ax.spines.top.set_visible(False)
 ax.set_ylabel(r'$N$')
 ax.set_xlabel(r'$p$')
 ax.set_title('Posterior draws')
+
+plt.show()
+```
+
+# Model $M_b$
+
+Next, I fit model $M_b,$ which accounts for the possibility that the capture probability changes after the animal is first caught. This could be from trap happiness, whereby animals are more likely to be trapped after their first time. Conversely, this could be from subsequent trap avoidance. 
+
+Mirroring [@royle2008, Chapter 5], I fit this model to the *Microtus* dataset reported in [@williams2002, Page 525]. This version of the [dataset](https://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/chapters.htm) includes encounter histories of $n=56$ adult males that were captured on $T=5$ consecutive days.
+
+```{python}
+# read in the microtus data
+microtus = np.loadtxt('microtus.data.txt').astype(int)
+
+# the last column is not relevant
+micro_hist = microtus[:,:-1]
+n, T = micro_hist.shape
+
+# augment with all zero histories
+M = 100
+micro_augmented = augment_history(micro_hist)
+
+# note the occasion when each individual was first seen
+first_seen = (micro_hist != 0).argmax(axis=1)
+
+# create the covariate for the behavior effect
+behavior_effect = np.zeros((M, T))
+for i, f in enumerate(first_seen):
+    behavior_effect[i, (f + 1):] = 1
+
+# covariate matrix
+x_int = np.ones((M, T))
+X = np.stack((x_int, behavior_effect), axis=2)
+```
+
+I use the same custom distribution as the occupancy notebook, the zero-inflated model, except the zero-inflation happens at the row-level. 
+
+```{python}
+#| fig-cap: Visual representation of model $M_b.$
+#| label: fig-mb
+
+def logp(value, n, p, psi):
+    
+    binom = binomln(n, value) + logpow(p, value) + logpow(1 - p, n - value)
+    bin_sum = pm.math.sum(binom, axis=1)
+    bin_exp = pm.math.exp(bin_sum)
+
+    res = pm.math.switch(
+        value.sum(axis=1) > 0,
+        bin_exp * psi,
+        bin_exp * psi + (1 - psi)
+    )
+    
+    return pm.math.log(res)
+
+coords = {'alpha_coeffs': ['Intercept', 'B_Response']}
+with pm.Model(coords=coords) as mb:
+
+    # priors for the capture and inclusion probabilities
+    psi = pm.Uniform('psi', 0, 1)
+    Alpha = pm.Normal('Alpha', 0, 2, dims='alpha_coeffs')
+
+    nu = pm.math.dot(X, Alpha)
+    p = pm.math.invlogit(nu)
+
+    # likelihood 
+    pm.CustomDist(
+        'y',
+        1,
+        p,
+        psi,
+        logp=logp,
+        observed=micro_augmented
+    )
+    
+pm.model_to_graphviz(mb)
+```
+
+```{python}
+with mb:
+    mb_idata = pm.sample()
+```
+
+```{python}
+az.summary(mb_idata)
+```
+
+```{python}
+#| fig-cap: Forest plot showing the catchability parameters from model $M_b.$
+#| label: fig-forest
+
+az.plot_forest(mb_idata, var_names=['Alpha'], combined=True, ess=True, figsize=(6,2));
+```
+
+The forest plot indicates that there is some evidence of a weak, positive behavioral response. Although note that the 94% credible intervals between the baseline capture rate and the behavioral effect overlap considerably. 
+
+```{python}
+#| fig-cap: Posterior distribution of $N$ from model $M_b.$ The number voles that were detected $n$ is shown by the vertical red line.
+#| label: fig-mb_N
+
+# simulate draws of N 
+N_samples = RNG.binomial(M, az.extract(mb_idata).psi.values)
+
+# add our draws back to the idata object, 
+fig, ax = plt.subplots(figsize=(4, 4))
+
+# add the scatter for each species
+ax.hist(N_samples, edgecolor='white')
+
+ax.set_ylabel('Number of samples')
+ax.set_title('Posterior of $N$')
+ax.axvline(n, color='C1')
+
+ax.annotate(
+    'Number\ndetected $n$', 
+    ha='left',
+    xy=(n, 1200), 
+    color='black',
+    xytext=(n-22, 900), 
+    arrowprops=dict(arrowstyle="->", color='black', linewidth=1,
+                    connectionstyle="angle3,angleA=90,angleB=0")
+)
+
+ax.set_ylim((0,1300))
+plt.show()
+```
+
+The posterior of $N$ shows one issue with this parameterization of the model. Notice that nearly half of the posterior samples estimate $N$ to be less that than the number of animals detected $n$! The discovery curve hints at why this may be the case. It seems that all the voles in the population may have been captured by the end of the study. 
+
+```{python}
+#| fig-cap: Discovery curve for the *Microtus* study.
+#| label: fig-discovery
+
+occasion, number_unmarked = np.unique(first_seen, return_counts=True)
+curve = np.cumsum(number_unmarked)
+
+occasion = np.insert(occasion + 1, 0, 0)
+curve = np.insert(curve, 0, 0)
+
+fig, ax = plt.subplots(figsize=(5, 3.5))
+ax.plot(occasion, curve)
+ax.fill_between(occasion, curve, alpha=0.2)
+ax.set_title('Discovery curve')
+ax.set_xlabel('Occasion')
+ax.set_ylabel('Unique voles captured')
+plt.show()
+```
+
+To get around this issue, I reparameterize the model in terms of the latent included state $z.$ The NUTS algorithm cannot sample discrete random variables. As such, PyMC assigns the NUTS algorithm to $\psi$ and $\alpha,$ and a Gibbs sampler to the latent states $z.$ This slows the sampler down relative to the previous parameterization. 
+
+```{python}
+#| fig-cap: Visual representation of the model with the latent occurrence state $z.$
+#| label: fig-latent
+
+# flattening the covariates makes this parameterization easier 
+x_int = np.ones(M * T)
+X = np.column_stack((x_int, behavior_effect.flatten()))
+
+# indices for individual 
+individual_idx = np.repeat(np.arange(M), T)
+micro_flat = micro_augmented.flatten()
+
+coords = {'alpha_coeffs': ['Intercept', 'B_Response']}
+with pm.Model(coords=coords) as latent_mb:
+
+    # priors for the capture and inclusion probabilities
+    psi = pm.Uniform('psi', 0, 1)
+    Alpha = pm.Normal('Alpha', 0, 2, dims='alpha_coeffs')
+
+    nu = pm.math.dot(X, Alpha).flatten()
+    p = pm.math.invlogit(nu)
+
+    z = pm.Bernoulli('z', psi, shape=M)
+
+    # likelihood 
+    pm.Bernoulli(
+        'y',
+        p=p * z[individual_idx],
+        observed=micro_flat
+    )
+    
+pm.model_to_graphviz(latent_mb)
+```
+
+```{python}
+with latent_mb:
+    latent_idata = pm.sample()
+```
+
+```{python}
+az.summary(latent_idata, var_names=['Alpha', 'psi'])
+```
+
+The parameterization had no effect on the estimates, although it did seem to reduce the effective sample size for each parameter. Now, to generate the posterior of $N,$ I simply sum up the values of $z$ in the posterior. This solves the above issue, effectively left-truncating the posterior at $n.$
+
+```{python}
+#| fig-cap: Posterior draws of $N$ and $p$ for both species of salamander.
+#| label: fig-latent_N
+
+# stack the draws for each chain, creating a (n_draws, n_species) array 
+N_samps = az.extract(latent_idata).z.values.sum(axis=0)
+
+N_values, N_counts = np.unique(N_samps, return_counts=True)
+
+# create the plot
+fig, ax = plt.subplots(figsize=(4, 4))
+
+ax.bar(N_values, N_counts)
+
+# ax.text(N_values[0], N_counts[0], r'$n$', va='bottom', ha='center')
+
+ax.annotate(
+    'Number\ndetected $n$', 
+    ha='left',
+    xy=(N_values[0], N_counts[0]), 
+    color='black',
+    xytext=(n+4, 800), 
+    arrowprops=dict(arrowstyle="->", color='black', linewidth=1,
+                    connectionstyle="angle3,angleA=90,angleB=0")
+)
+
+ax.set_ylabel('Number of samples')
+ax.set_title('Posterior of $N$')
 
 plt.show()
 ```
