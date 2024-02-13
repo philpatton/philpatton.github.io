@@ -1,0 +1,678 @@
+---
+title: Model comparison
+description: Comparing closed capture-recapture models in PyMC
+author:
+  name: Philip T. Patton
+  affiliation:
+    - Marine Mammal Research Program
+    - Hawaiʻi Institute of Marine Biology
+date: 'February 11, 2024'
+bibliography: refs.bib
+jupyter: pymc
+execute:
+  cache: true
+---
+
+In this notebook, I demonstrate an approach to model selection in PyMC. To do so, follow the lead of @king2008, although not nearly as elegantly. They demonstrate an approach to model selection for a typical suite of closed capture-recapture models. These include the effects of behavior $b$, time $t,$ and individual heterogeneity $h$ on capture probabilities $p$. The eight models considered here are combinations of the three: $M_{0},$ $M_{t},$ $M_{b},$ $M_{tb},$ $M_{h},$ $M_{th},$ $M_{bh}$. The full model, $M_{tbh}$, is  
+$$
+\begin{equation}
+\text{logit} \; p_{it} = \mu + \alpha_t + \beta x_{it} + \gamma_i,
+\end{equation}
+$$
+where $\mu$ is the average catchability, $\alpha_t$ is the effect of each occasion on catchability, $\beta$ is the behavioral effect, $x_{it}$ indicates whether the individual has been previously caught, and $\gamma_i$ is the individual random effect such that $\gamma_i \sim \text{Normal}(0,\sigma)$. Formulating the model this way makes the other models nested subsets of the full model.
+
+Like @king2008, I use the the Moray Firth bottlenose dolphin data as a motivating example. @wilson1999 detected $n=56$ dolphins over the course of $T=17$ boat surveys between May and September 1992. They generated the capture-recapture histories by way of photo-identification, which is near and dear to my heart (and my dissertation). 
+
+```{python}
+# libraries 
+import numpy as np
+import pandas as pd
+import pymc as pm
+import arviz as az
+import matplotlib.pyplot as plt 
+import seaborn as sns
+from pymc.distributions.dist_math import binomln, logpow
+
+plt.style.use('fivethirtyeight')
+plt.rcParams['axes.facecolor'] = 'white'
+plt.rcParams['figure.facecolor'] = 'white'
+pal = sns.color_palette("Set2")
+sns.set_palette(pal)
+
+# hyperparameters 
+SEED = 808
+RNG = np.random.default_rng(SEED)
+
+def augment_history(history):
+    '''Augment a capture history with all-zero histories.'''
+    
+    animals_captured, T = history.shape
+
+    # create M - n all zero histories
+    zero_history_count = M - animals_captured
+    zero_history = np.zeros((zero_history_count, T))
+
+    # tack those on to the capture history
+    augmented = np.row_stack((history, zero_history))
+
+    return augmented 
+
+def get_behavior_covariate(history):
+    
+    # note the occasion when each individual was first seen
+    first_seen = (history != 0).argmax(axis=1)
+    
+    # create the covariate for the behavior effect
+    behavior_covariate = np.zeros_like(history)
+    for i, f in enumerate(first_seen):
+        behavior_covariate[i, (f + 1):] = 1
+
+    return behavior_covariate
+
+def get_occasion_covariate(history):
+
+    _, T = history.shape
+    l = []
+    for t in range(T):
+        oc = np.zeros_like(history)
+        oc[:, t] = 1
+        l.append(oc)
+
+    return np.stack(l, axis=2)
+
+def sim_N(idata):
+    
+    psi_samps = az.extract(idata).psi.values
+    p_samps = az.extract(idata).p.values
+    not_p = (1 - p_samps)
+    
+    if p_samps.ndim == 1:
+        p_included = psi_samps * (not_p) ** T 
+        number_undetected = RNG.binomial(M - n, p_included)
+
+    elif p_samps.ndim == 3:
+        p_included = psi_samps * not_p.prod(axis=1)
+        number_undetected = RNG.binomial(1, p_included).sum(axis=0)
+
+    N = n + number_undetected
+    return N
+
+# convert the dolphin capture history from '1001001' to array
+dolphin = np.loadtxt('firth.txt', dtype=str)
+dolphin = np.array([list(map(int, d)) for d in dolphin])
+
+# augment the capture history with all zero histories
+n, T = dolphin.shape
+M = 500
+dolphin_augmented = augment_history(dolphin)
+
+# covariates for t and b
+occasion_covariate = get_occasion_covariate(dolphin_augmented)
+behavior_covariate = get_behavior_covariate(dolphin_augmented)
+```
+
+The discovery curve, the number of unique dolphins encountered as a function of the total number of dolphins encountered, may be flattening. This suggests that, at this point in the study, @wilson1999 may have encountered many of the unique individuals in the population.
+
+```{python}
+#| fig-cap: 'Discovery curve for the Moray Firth bottlenose dolphin surveys [@wilson1999].'
+#| label: fig-discovery
+
+# how many dolphins have been seen?
+total_seen = dolphin.sum(axis=0).cumsum()
+
+# how many new dolphins have been seen?
+first_seen = (dolphin != 0).argmax(axis=1)
+newbies = [sum(first_seen == t) for t in range(T)]
+total_newbies = np.cumsum(newbies)
+
+fig, ax = plt.subplots(figsize=(5, 3.5))
+ax.plot(total_seen, total_newbies)
+ax.fill_between(total_seen, total_newbies, alpha=0.2)
+ax.set_title('Discovery curve')
+ax.set_xlabel('Total dolphins')
+ax.set_ylabel('Unique dolphins')
+plt.show()
+```
+
+# Training each model
+
+This notebook looks messier than the others, in that I train several models with little commentary along the way. In practice, it would probably be better to wrap these up into a function or a class. To complete the model, I used the following priors,
+$$
+\begin{align}
+\psi &\sim \text{Uniform}(0, 1)\\
+\mu &\sim \text{Logistic}(0, 1) \\
+\alpha_t &\sim \text{Normal}(0, \sigma_{\alpha}) \\
+\beta &\sim \text{Normal}(0, \sigma_{\beta}) \\
+\gamma_i &\sim \text{Normal}(0, \sigma_{\gamma}) \\
+\sigma_{\alpha} &\sim \text{InverseGamma}(4, 3) \\
+\sigma_{\beta} &\sim \text{InverseGamma}(4, 3) \\
+\sigma_{\gamma} &\sim \text{InverseGamma}(4, 3), 
+\end{align}
+$$
+which were also used by @king2008. Although note that I used an informative $\text{Beta}(1, 5)$ prior for $\psi$ in the full model (see below). I use the same `logp` seen in the occupancy and closed capture-recapture notebooks, which accounts for row-level zero-inflation. Unlike other notebooks, I did not look at the summaries or the trace plots unless the sampler indicated that it had issues during training.
+
+```{python}
+def logp(value, n, p, psi):
+    
+    binom = binomln(n, value) + logpow(p, value) + logpow(1 - p, n - value)
+    bin_sum = pm.math.sum(binom, axis=1)
+    bin_exp = pm.math.exp(bin_sum)
+
+    res = pm.math.switch(
+        value.sum(axis=1) > 0,
+        bin_exp * psi,
+        bin_exp * psi + (1 - psi)
+    )
+    
+    return pm.math.log(res)
+```
+
+```{python}
+#| fig-cap: 'Visual representation of model $M_{0}$.'
+#| label: fig-m0
+
+with pm.Model() as m0:
+
+    # Priors
+    # inclusion
+    psi = pm.Uniform('psi', 0, 1)  
+
+    # mean catchability 
+    mu = pm.Logistic('mu', 0, 1)
+
+    # Linear model
+    mu_matrix = (np.ones((T, M)) * mu).T
+    p = pm.Deterministic('p', pm.math.invlogit(mu_matrix))
+
+    # Likelihood 
+    pm.CustomDist(
+        'y',
+        1,
+        p,
+        psi,
+        logp=logp,
+        observed=dolphin_augmented
+    )
+    
+pm.model_to_graphviz(m0)
+```
+
+```{python}
+with m0:
+    m0_idata = pm.sample()
+```
+
+```{python}
+#| fig-cap: Visual representation of model $M_t$.
+#| label: fig-mt
+
+with pm.Model() as mt:
+
+    # Priors
+    # inclusion
+    psi = pm.Uniform('psi', 0, 1)  
+
+    # mean catchability 
+    mu = pm.Logistic('mu', 0, 1)
+
+    # time effect
+    sigma_alpha = pm.InverseGamma('sigma_alpha', 4, 3)
+    alpha = pm.Normal('alpha', 0, tau=1/sigma_alpha, shape=T)
+
+    # Linear model
+    nu = mu + pm.math.dot(occasion_covariate, alpha)
+    p = pm.Deterministic('p', pm.math.invlogit(nu))
+
+    # Likelihood 
+    pm.CustomDist(
+        'y',
+        1,
+        p,
+        psi,
+        logp=logp,
+        observed=dolphin_augmented
+    )
+    
+pm.model_to_graphviz(mt)
+```
+
+```{python}
+with mt:
+    mt_idata = pm.sample()
+```
+
+```{python}
+#| fig-cap: Visual representation of model $M_b$.
+#| label: fig-mb
+
+with pm.Model() as mb:
+
+    # Priors
+    # inclusion
+    psi = pm.Uniform('psi', 0, 1)  
+
+    # mean catchability 
+    mu = pm.Logistic('mu', 0, 1)
+    
+    # behavior effect
+    sigma_beta = pm.InverseGamma('sigma_beta', 4, 3)
+    beta = pm.Normal('beta', 0, tau=1/sigma_beta)
+
+    # Linear model
+    nu = mu + behavior_covariate * beta 
+    p = pm.Deterministic('p', pm.math.invlogit(nu))
+
+    # Likelihood 
+    pm.CustomDist(
+        'y',
+        1,
+        p,
+        psi,
+        logp=logp,
+        observed=dolphin_augmented
+    )
+    
+pm.model_to_graphviz(mb)
+```
+
+```{python}
+with mb:
+    mb_idata = pm.sample()
+```
+
+```{python}
+#| fig-cap: 'Visual representation of model $M_{tb}$.'
+#| label: fig-mtb
+
+with pm.Model() as mtb:
+
+    # Priors
+    # inclusion
+    psi = pm.Uniform('psi', 0, 1)  
+
+    # mean catchability 
+    mu = pm.Logistic('mu', 0, 1)
+
+    # time effect
+    sigma_alpha = pm.InverseGamma('sigma_alpha', 4, 3)
+    alpha = pm.Normal('alpha', 0, tau=1/sigma_alpha, shape=T)
+
+    # behavior effect
+    sigma_beta = pm.InverseGamma('sigma_beta', 4, 3)
+    beta = pm.Normal('beta', 0, tau=1/sigma_beta)
+
+    # Linear model
+    nu = mu + pm.math.dot(occasion_covariate, alpha) + behavior_covariate * beta
+    p = pm.Deterministic('p', pm.math.invlogit(nu))
+
+    # Likelihood 
+    pm.CustomDist(
+        'y',
+        1,
+        p,
+        psi,
+        logp=logp,
+        observed=dolphin_augmented
+    )
+    
+pm.model_to_graphviz(mtb)
+```
+
+```{python}
+with mtb:
+    mtb_idata = pm.sample()
+```
+
+```{python}
+#| fig-cap: Visual representation of model $M_h$.
+#| label: fig-mh
+
+with pm.Model() as mh:
+
+    # Priors
+    # inclusion
+    psi = pm.Uniform('psi', 0, 1)  
+
+    # mean catchability 
+    mu = pm.Logistic('mu', 0, 1)
+
+    # individual effect
+    sigma_gamma = pm.InverseGamma('sigma_gamma', 4, 3)
+    gamma = pm.Normal('gamma', 0, tau=1/sigma_gamma, shape=M)
+
+    # Linear model
+    individual_effect = (np.ones((T, M)) * gamma).T
+    nu = mu + individual_effect
+    p = pm.Deterministic('p', pm.math.invlogit(nu))
+
+    # Likelihood 
+    pm.CustomDist(
+        'y',
+        1,
+        p,
+        psi,
+        logp=logp,
+        observed=dolphin_augmented
+    )
+    
+pm.model_to_graphviz(mh)
+```
+
+```{python}
+with mh:
+    mh_idata = pm.sample(3000, target_accept=0.99)
+```
+
+```{python}
+az.summary(mh_idata, var_names=['psi', 'mu', 'sigma_gamma'])
+```
+
+```{python}
+az.plot_trace(mh_idata, figsize=(8, 6), var_names=['psi', 'mu', 'sigma_gamma']);
+```
+
+```{python}
+#| fig-cap: 'Visual representation of model $M_{th}$.'
+#| label: fig-mth
+
+with pm.Model() as mth:
+
+    # Priors
+    # inclusion
+    psi = pm.Beta('psi', 1, 1)  
+
+    # mean catchability 
+    mu = pm.Logistic('mu', 0, 1)
+
+    # time effect
+    sigma_alpha = pm.InverseGamma('sigma_alpha', 4, 3)
+    alpha = pm.Normal('alpha', 0, tau=1/sigma_alpha, shape=T)
+
+    # individual effect
+    sigma_gamma = pm.InverseGamma('sigma_gamma', 4, 3)
+    gamma = pm.Normal('gamma', 0, tau=1/sigma_gamma, shape=M)
+
+    # Linear model
+    individual_effect = (np.ones((T, M)) * gamma).T
+    nu = mu + pm.math.dot(occasion_covariate, alpha) + individual_effect
+    p = pm.Deterministic('p', pm.math.invlogit(nu))
+
+    # Likelihood 
+    pm.CustomDist(
+        'y',
+        1,
+        p,
+        psi,
+        logp=logp,
+        observed=dolphin_augmented
+    )
+    
+pm.model_to_graphviz(mth)
+```
+
+```{python}
+with mth:
+    mth_idata = pm.sample(draws=3000, target_accept=0.95)
+```
+
+```{python}
+az.summary(mth_idata, var_names=['psi', 'mu', 'sigma_alpha', 'sigma_gamma', 'alpha'])
+```
+
+```{python}
+#| fig-cap: 'Trace plots for model $M_{th}$.'
+#| label: fig-mth_trace
+
+az.plot_trace(mth_idata, figsize=(8, 10),
+              var_names=['psi', 'mu', 'sigma_alpha', 'sigma_gamma', 'alpha']);
+```
+
+```{python}
+#| fig-cap: 'Visual representation of model $M_{bh}$.'
+#| label: fig-mbh
+
+with pm.Model() as mbh:
+
+    # Priors
+    # inclusion
+    psi = pm.Beta('psi', 1, 1)  
+
+    # mean catchability 
+    mu = pm.Logistic('mu', 0, 1)
+
+    # behavior effect
+    sigma_beta = pm.InverseGamma('sigma_beta', 4, 3)
+    beta = pm.Normal('beta', 0, tau=1/sigma_beta)
+    
+    # individual effect
+    sigma_gamma = pm.InverseGamma('sigma_gamma', 4, 3)
+    gamma = pm.Normal('gamma', 0, tau=1/sigma_gamma, shape=M)
+
+    # Linear model
+    individual_effect = (np.ones((T, M)) * gamma).T
+    nu = mu + behavior_covariate * beta + individual_effect
+    p = pm.Deterministic('p', pm.math.invlogit(nu))
+
+    # Likelihood 
+    pm.CustomDist(
+        'y',
+        1,
+        p,
+        psi,
+        logp=logp,
+        observed=dolphin_augmented
+    )
+    
+pm.model_to_graphviz(mbh)
+```
+
+```{python}
+with mbh:
+    mbh_idata = pm.sample(draws=3000, target_accept=0.95)
+```
+
+```{python}
+az.summary(mbh_idata, var_names=['psi', 'mu', 'beta', 'sigma_gamma'])
+```
+
+```{python}
+az.plot_trace(mbh_idata, figsize=(8, 10),
+              var_names=['psi', 'mu', 'beta', 'sigma_beta', 'sigma_gamma']);
+```
+
+```{python}
+#| fig-cap: 'Visual representation of model $M_{tbh}$.'
+#| label: fig-mtbh
+
+with pm.Model() as mtbh:
+
+    # Priors
+    # inclusion
+    psi = pm.Beta('psi', 1, 5)  
+
+    # mean catchability 
+    mu = pm.Logistic('mu', 0, 1)
+
+    # time effect
+    sigma_alpha = pm.InverseGamma('sigma_alpha', 4, 3)
+    alpha = pm.Normal('alpha', 0, tau=1/sigma_alpha, shape=T)
+
+    # behavior effect
+    sigma_beta = pm.InverseGamma('sigma_beta', 4, 3)
+    beta = pm.Normal('beta', 0, tau=1/sigma_beta)
+
+    # individual effect
+    sigma_gamma = pm.InverseGamma('sigma_gamma', 4, 3)
+    gamma = pm.Normal('gamma', 0, tau=1/sigma_gamma, shape=M)
+
+    # Linear model
+    individual_effect = (np.ones((T, M)) * gamma).T
+    nu = mu + pm.math.dot(occasion_covariate, alpha) + behavior_covariate * beta + individual_effect
+    p = pm.Deterministic('p', pm.math.invlogit(nu))
+
+    # Likelihood 
+    pm.CustomDist(
+        'y',
+        1,
+        p,
+        psi,
+        logp=logp,
+        observed=dolphin_augmented
+    )
+    
+pm.model_to_graphviz(mtbh)
+```
+
+```{python}
+with mtbh:
+    mtbh_idata = pm.sample(draws=2000)
+```
+
+```{python}
+az.summary(mtbh_idata, 
+           var_names=['psi', 'mu', 'alpha', 'beta', 'sigma_alpha', 'sigma_beta', 'sigma_gamma'])
+```
+
+```{python}
+#| fig-cap: 'Trace plots for the model with $M_{tbh}$.'
+#| label: fig-mtbh_trace
+
+az.plot_trace(mtbh_idata, figsize=(8,14),
+           var_names=['psi', 'mu', 'alpha', 'beta', 'sigma_alpha', 'sigma_beta', 'sigma_gamma']);
+```
+
+The trace plots and summary statistics show convergence issues for many of the individual heterogeneity models. The variance parameter, $\sigma_{\gamma},$ seems to sample poorly. Further, models with both behavioral and individual effects lead to extremely large estimates of $\psi$. This appears to happen regardless of the size of the data augmentation $M.$ 
+
+Note that I upped the `target_accept` value for some models. This slows the sampler, but lowers the risk of divergence. 
+
+# Model comparison
+
+Next, I select a model for inference using an approximation of leave-one-out (loo) cross-validation [@vehtari2017]. This approximation can be calculated using PyMC. To do so, I calculate the log-likelihood for each model, which is added to the `InferenceData` object. This makes it possible to compare the models using loo and `az.compare`.
+
+```{python}
+with m0:
+    pm.compute_log_likelihood(m0_idata)
+
+with mt:
+    pm.compute_log_likelihood(mt_idata)
+
+with mb:
+    pm.compute_log_likelihood(mb_idata)
+
+with mtb:
+    pm.compute_log_likelihood(mtb_idata)
+
+with mh:
+    pm.compute_log_likelihood(mh_idata)
+
+with mth:
+    pm.compute_log_likelihood(mth_idata)
+
+with mbh:
+    pm.compute_log_likelihood(mbh_idata)
+
+with mtbh:
+    pm.compute_log_likelihood(mtbh_idata)
+```
+
+```{python}
+model_dict = {"m0": m0_idata, "mt": mt_idata, "mb": mb_idata, 
+              "mtb": mtb_idata, "mh": mh_idata, "mth": mth_idata, 
+              "mbh": mbh_idata, "mtbh": mtbh_idata}
+
+comparison = az.compare(model_dict)
+```
+
+The comparison tools notes issues with several of the models, suggesting a lack of robustness. Inspection of the comparison table shows that the struggling models all include the individual effect $h.$ A more thorough analysis would consider reparameterizing the model, e.g., through the non-centered parameterization. In lieu of that, I simply discard the models that fail this test and re-do the comparison with the passing models. 
+
+```{python}
+comparison.round(2)
+```
+
+```{python}
+good_dict = {"m0": m0_idata, "mt": mt_idata, "mb": mb_idata, "mtb": mtb_idata}
+good_comparison = az.compare(good_dict)
+good_comparison.round(2)
+```
+
+```{python}
+#| fig-cap: 'Differences in the ELPD criteria, calculated using loo, for each model [@vehtari2017].'
+#| label: fig-comp
+
+az.plot_compare(good_comparison, figsize=(5, 4));
+```
+
+The comparison shows that all of the model weight belongs to two models: $M_t$ and $M_{tb}.$
+
+# Model averaged predictions
+
+Finally, we can use the model weights to simulate a weighted posterior of $N.$ To do so, I take a weighted sample of each of the posteriors of $N,$ with the weight dictated by the comparison tool. 
+
+```{python}
+#| fig-cap: 'Posteriors of $N$ from the four models under consideration (top panel), with the model averaged posterior (bottom panel).'
+#| label: fig-N
+
+posteriors = [sim_N(good_dict[model]) for model in good_dict]
+weights = [good_comparison.loc[model].weight for model in good_dict]
+sample_count = len(posteriors[0])
+
+l = []
+for w, p in zip(weights, posteriors):
+    weighted_sample = RNG.choice(p, size=int(w * sample_count))
+    l.append(weighted_sample)
+
+weighted_posterior = np.concatenate(l)
+
+fig, (ax0, ax1) = plt.subplots(2, 1, figsize=(7, 6), sharex=True, sharey=True, tight_layout=True)
+
+pal = sns.color_palette("Set2")
+
+# labs = [k for k in good_dict.keys()]
+labs = [r'$M_{0}$', r'$M_{t}$', r'$M_{b}$', r'$M_{tb}$']
+for i, p in enumerate(posteriors):
+    ax0.hist(p, color=pal[i], edgecolor='white', bins=60, alpha=0.6, label=labs[i])
+
+ax0.set_title(r'Posteriors of $N$')
+# ax1.set_title(r'Weighted posterior')
+
+ax0.set_xlim((53, 150))
+ax0.legend()
+
+ax0.set_ylabel('Number of samples')
+ax1.set_ylabel('Number of samples')
+
+ax1.hist(weighted_posterior, edgecolor='white', bins=60, alpha=0.9, color=pal[6], label='Weighted')
+ax1.legend()
+
+plt.show()
+```
+
+We can also look at the posterior densities of $p$ from Model $M_t,$ the second most weighted model. 
+
+```{python}
+#| fig-cap: Posteriors of $p$ from model $M_t$
+#| label: fig-p
+
+p_samps = az.extract(mt_idata).p.mean(axis=0)
+
+fig, ax = plt.subplots(figsize=(6, 4))
+
+a = 0.4
+# ax[0].set_title("Poisson")
+pal = sns.color_palette('viridis', T)
+for t in range(T):
+    label_idx = t % 2
+    if label_idx == 0:
+        az.plot_dist(p_samps[t], ax=ax, color=pal[t], label=f'$t_{{{t}}}$',
+                     plot_kwargs={'linewidth':3, 'alpha': a})
+    else:
+        az.plot_dist(p_samps[t], ax=ax, color=pal[t],
+                     plot_kwargs={'linewidth':3, 'alpha': a})
+
+ax.set_title(r'Posterior densities of $p$ from $M_t$')
+ax.set_xlabel(r'$p$')
+
+plt.show()
+```
+
+This notebook demonstrates a simple way to compare models using leave one out cross-validation (loo) and a classic example from capture-recapture. This is just one way, however, to perform model comparison using PyMC. Perhaps a more effective solution for this problem would be placing a shrinkage prior on the $\sigma$ parameters. 
