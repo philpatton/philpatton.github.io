@@ -164,40 +164,28 @@ az.plot_trace(M0_idata, figsize=(8,4));
 
 For faster sampling, it's better to separate the two species into two separate models. On my machine, the individual species models finish sampling in 2-3 seconds, compared to 15-20 seconds for the two species model. That said, the two species model is somewhat more convenient.
 
-Of course, the trace plots lack our true parameter of interest: the population size $N.$ We can simulate the posterior of $N$ as a *derived quantity*, using $M$ and the posterior distribution of $\psi.$ Arviz has handy tools for calculating posteriors of derived quantities. 
+Of course, the trace plots lack our true parameter of interest: the population size $N.$ We can simulate the posterior of $N$ as a *derived quantity*, using the posterior distribution of $\psi$ and $p.$ 
 
 ```{python}
-# def sim_N(idata):
-    
-#     psi_samps = az.extract(idata).psi.values
-#     p_samps = az.extract(idata).p.values
-#     not_p = (1 - p_samps)
-    
-#     if p_samps.ndim == 1:
-#         p_included = psi_samps * (not_p) ** T 
-#         number_undetected = RNG.binomial(M - n, p_included)
+# az.extract flattens the chains
+posterior = az.extract(M0_idata)
+psi_samps = posterior.psi.values
+p_samps = posterior.p.values
 
-#     elif p_samps.ndim == 3:
-#         p_included = psi_samps * not_p.prod(axis=1)
-#         number_undetected = RNG.binomial(1, p_included).sum(axis=0)
-
-#     N = n + number_undetected
-#     return N
-
-psi_samps = az.extract(M0_idata).psi.values
-p_samps = az.extract(M0_idata).p.values
-
+# conditional probability that the animal is in the sample 
 not_p = (1 - p_samps)
-p_included = psi_samps * (not_p) ** T 
+p_included = (psi_samps * (not_p) ** T) / (psi_samps * (not_p) ** T + (1 - psi_samps))
 
+# simulate the number of undetected animals in each population
 number_undetected_pyg = RNG.binomial(M - n_pyg, p_included[0])
 number_undetected_red = RNG.binomial(M - n_red, p_included[1])
 
+# simulate N
 N_pyg = n_pyg + number_undetected_pyg
 N_red = n_red + number_undetected_red
 ```
 
-Now we can look at the trace plots, this time excluding $\psi$ and looking at $N.$ I also added the estimates from @hooten2019, Chapter 24, although they used a different prior for $\psi.$ 
+Below I plotted the posterior distributions of $N$ for both species, adding the estimates from @hooten2019, Chapter 24. Although note that they used a different prior for $\psi.$ 
 
 ```{python}
 #| fig-cap: Posterior distributions of $N$ from the $M_0$ model. Estimates from @hooten2019 are shown by the vertical lines'
@@ -344,10 +332,11 @@ The forest plot indicates that there is some evidence of a weak, positive behavi
 
 # simulate draws of N 
 psi_samps = az.extract(mb_idata).psi.values
-p_samps = az.extract(mb_idata).p.values
+p_samps = az.extract(mb_idata).p.values[:n]
 
 not_p = (1 - p_samps)
-p_included = psi_samps * not_p[n:].prod(axis=1)
+bin_prod = not_p.prod(axis=1)
+p_included = (psi_samps * bin_prod) / (psi_samps * bin_prod + (1 - psi_samps))
 
 number_undetected = RNG.binomial(1, p_included).sum(axis=0)
 N_samples = n + number_undetected
@@ -359,8 +348,6 @@ N_values, N_counts = np.unique(N_samples, return_counts=True)
 fig, ax = plt.subplots(figsize=(4, 4))
 
 ax.bar(N_values, N_counts)
-
-# ax.text(N_values[0], N_counts[0], r'$n$', va='bottom', ha='center')
 
 ax.annotate(
     'Number\ndetected $n$', 
@@ -400,6 +387,28 @@ ax.fill_between(total_seen, total_newbies, alpha=0.2)
 ax.set_title('Discovery curve')
 ax.set_xlabel('Total voles captured')
 ax.set_ylabel('Unique voles captured')
+plt.show()
+```
+
+We can also look at the behavioral effect by visualizing the posterior distributions of $p.$ As we can see, the voles who have been captured before are more likely to be captured again. 
+
+```{python}
+#| fig-cap: Posterior distributions for the probability of detection given the behavioral effect.
+#| label: fig-b_effect
+
+p_samples = az.extract(mb_idata).p.values.reshape(500, 4000)
+b_cov = X[:,:,1].flatten()
+
+zero_p = p_samples[b_cov==0,].flatten()
+one_p = p_samples[b_cov==1,].flatten() 
+
+fig, ax = plt.subplots(figsize=(5, 3.5))
+az.plot_dist(zero_p, ax=ax, label='First detection', color='C0')
+az.plot_dist(one_p, ax=ax, label='Seen before', color='C1')
+ax.set_title('Posterior distributions of $p$')
+# ax.set_xlabel('$p$')
+ax.set_yticks([])
+ax.legend()
 plt.show()
 ```
 

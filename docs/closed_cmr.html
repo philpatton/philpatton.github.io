@@ -382,7 +382,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <p>This produces a capture history for each individual, which allows us to estimate the probability of capture and the number of individuals in the population <span class="math inline">\(N\)</span>.</p>
 <section id="model-m_0" class="level1">
 <h1>Model <span class="math inline">\(M_0\)</span></h1>
-<div id="edb878ab" class="cell" data-execution_count="1">
+<div id="9339667e" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># libraries </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -404,7 +404,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">1500</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I explore fitting the simplest closed capture-recapture model, Model <span class="math inline">\(M_0,\)</span> through parameter-expanded data-augmentation <span class="citation" data-cites="royle2008">(PX-DA, <a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008</a>)</span>. The idea with PX-DA is to augment the capture histories with <span class="math inline">\(M-n\)</span> all zero capture-histories, where <span class="math inline">\(M\)</span> is a hyperparameter that should be much greater than the true population size <span class="math inline">\(N,\)</span> and <span class="math inline">\(n\)</span> is the total number of individuals that were captured during the study. This allows us to treat the data as a zero-inflated binomial distribution (see below).</p>
-<div id="8e7819d0" class="cell" data-execution_count="2">
+<div id="f0224abd" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> augment_history(history):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Augment a capture history with all-zero histories.'''</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -420,7 +420,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> augmented </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To demonstrate this approach, I use the salamander dataset from <span class="citation" data-cites="bailey2004">Bailey, Simons, and Pollock (<a href="#ref-bailey2004" role="doc-biblioref">2004</a>)</span>, as demonstrated in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 24. These data were collected on two salamander species, the red-cheeked salamander (<em>Plethodon jordani</em>) and the pygmy salamander (<em>Desmognathus wrighti</em>), in Great Smoky Mountains National Park. The salamanders were counted in 15m by 15m square plots. In this case, we augment the history by setting <span class="math inline">\(M=1500\)</span> (see above). There were <span class="math inline">\(n=92\)</span> individual red-cheeked and <span class="math inline">\(n=132\)</span> pygmy salamanders captured during the course of the survey.</p>
-<div id="44d4d895" class="cell" data-execution_count="3">
+<div id="1d62dcf4" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_histories():</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Read, augment, and recombine the salamander histories.'''</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -503,7 +503,7 @@ Figure&nbsp;1: Visual representation of model <span class="math inline">\(M_0.\)
 </div>
 </div>
 </div>
-<div id="c2d27d5d" class="cell" data-execution_count="5">
+<div id="3857a0a9" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> M0:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    M0_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -511,7 +511,7 @@ Figure&nbsp;1: Visual representation of model <span class="math inline">\(M_0.\)
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [psi, p]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 22 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 17 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -535,7 +535,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:21&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:16&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
@@ -556,38 +556,26 @@ Figure&nbsp;2: Traceplots for the salamander <span class="math inline">\(M_0\)</
 </div>
 </div>
 <p>For faster sampling, it’s better to separate the two species into two separate models. On my machine, the individual species models finish sampling in 2-3 seconds, compared to 15-20 seconds for the two species model. That said, the two species model is somewhat more convenient.</p>
-<p>Of course, the trace plots lack our true parameter of interest: the population size <span class="math inline">\(N.\)</span> We can simulate the posterior of <span class="math inline">\(N\)</span> as a <em>derived quantity</em>, using <span class="math inline">\(M\)</span> and the posterior distribution of <span class="math inline">\(\psi.\)</span> Arviz has handy tools for calculating posteriors of derived quantities.</p>
-<div id="4428a178" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># def sim_N(idata):</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#     psi_samps = az.extract(idata).psi.values</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#     p_samps = az.extract(idata).p.values</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     not_p = (1 - p_samps)</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     if p_samps.ndim == 1:</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#         p_included = psi_samps * (not_p) ** T </span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#         number_undetected = RNG.binomial(M - n, p_included)</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#     elif p_samps.ndim == 3:</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#         p_included = psi_samps * not_p.prod(axis=1)</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#         number_undetected = RNG.binomial(1, p_included).sum(axis=0)</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#     N = n + number_undetected</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#     return N</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>psi_samps <span class="op">=</span> az.extract(M0_idata).psi.values</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> az.extract(M0_idata).p.values</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>not_p <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> p_samps)</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>p_included <span class="op">=</span> psi_samps <span class="op">*</span> (not_p) <span class="op">**</span> T </span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>number_undetected_pyg <span class="op">=</span> RNG.binomial(M <span class="op">-</span> n_pyg, p_included[<span class="dv">0</span>])</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>number_undetected_red <span class="op">=</span> RNG.binomial(M <span class="op">-</span> n_red, p_included[<span class="dv">1</span>])</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>N_pyg <span class="op">=</span> n_pyg <span class="op">+</span> number_undetected_pyg</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>N_red <span class="op">=</span> n_red <span class="op">+</span> number_undetected_red</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Of course, the trace plots lack our true parameter of interest: the population size <span class="math inline">\(N.\)</span> We can simulate the posterior of <span class="math inline">\(N\)</span> as a <em>derived quantity</em>, using the posterior distribution of <span class="math inline">\(\psi\)</span> and <span class="math inline">\(p.\)</span></p>
+<div id="f6fe3881" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># az.extract flattens the chains</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> az.extract(M0_idata)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>psi_samps <span class="op">=</span> posterior.psi.values</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> posterior.p.values</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># conditional probability that the animal is in the sample </span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>not_p <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> p_samps)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>p_included <span class="op">=</span> (psi_samps <span class="op">*</span> (not_p) <span class="op">**</span> T) <span class="op">/</span> (psi_samps <span class="op">*</span> (not_p) <span class="op">**</span> T <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> psi_samps))</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate the number of undetected animals in each population</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>number_undetected_pyg <span class="op">=</span> RNG.binomial(M <span class="op">-</span> n_pyg, p_included[<span class="dv">0</span>])</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>number_undetected_red <span class="op">=</span> RNG.binomial(M <span class="op">-</span> n_red, p_included[<span class="dv">1</span>])</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate N</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>N_pyg <span class="op">=</span> n_pyg <span class="op">+</span> number_undetected_pyg</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>N_red <span class="op">=</span> n_red <span class="op">+</span> number_undetected_red</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now we can look at the trace plots, this time excluding <span class="math inline">\(\psi\)</span> and looking at <span class="math inline">\(N.\)</span> I also added the estimates from <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 24, although they used a different prior for <span class="math inline">\(\psi.\)</span></p>
+<p>Below I plotted the posterior distributions of <span class="math inline">\(N\)</span> for both species, adding the estimates from <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 24. Although note that they used a different prior for <span class="math inline">\(\psi.\)</span></p>
 <div id="cell-fig-N_trace" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>N_hooten <span class="op">=</span> [<span class="fl">229.6</span>, <span class="fl">450.9</span>]</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">4</span>))</span>
@@ -603,7 +591,7 @@ Figure&nbsp;2: Traceplots for the salamander <span class="math inline">\(M_0\)</
 <div id="fig-n_trace" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-n_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="closed_cmr_files/figure-html/fig-n_trace-output-1.png" width="600" height="381" class="figure-img">
+<img src="closed_cmr_files/figure-html/fig-n_trace-output-1.png" width="587" height="381" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-n_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Posterior distributions of <span class="math inline">\(N\)</span> from the <span class="math inline">\(M_0\)</span> model. Estimates from <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span> are shown by the vertical lines’
@@ -640,7 +628,7 @@ Figure&nbsp;3: Posterior distributions of <span class="math inline">\(N\)</span>
 <div id="fig-posterior" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-posterior-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="closed_cmr_files/figure-html/fig-posterior-output-1.png" width="444" height="408" class="figure-img">
+<img src="closed_cmr_files/figure-html/fig-posterior-output-1.png" width="432" height="408" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-posterior-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;4: Posterior draws of <span class="math inline">\(N\)</span> and <span class="math inline">\(p\)</span> for both species of salamander.
@@ -654,7 +642,7 @@ Figure&nbsp;4: Posterior draws of <span class="math inline">\(N\)</span> and <sp
 <h1>Model <span class="math inline">\(M_b\)</span></h1>
 <p>Next, I fit model <span class="math inline">\(M_b,\)</span> which accounts for the possibility that the capture probability changes after the animal is first caught. This could be from trap happiness, whereby animals are more likely to be trapped after their first time. Conversely, this could be from subsequent trap avoidance.</p>
 <p>Mirroring <span class="citation" data-cites="royle2008">(<a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008, chap. 5</a>)</span>, I fit this model to the <em>Microtus</em> dataset reported in <span class="citation" data-cites="williams2002">(<a href="#ref-williams2002" role="doc-biblioref">Williams, Nichols, and Conroy 2002, 525</a>)</span>. This version of the <a href="https://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/chapters.htm">dataset</a> includes encounter histories of <span class="math inline">\(n=56\)</span> adult males that were captured on <span class="math inline">\(T=5\)</span> consecutive days.</p>
-<div id="4716a4b9" class="cell" data-execution_count="10">
+<div id="651d9f92" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the microtus data</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>microtus <span class="op">=</span> np.loadtxt(<span class="st">'microtus.data.txt'</span>).astype(<span class="bu">int</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -728,7 +716,7 @@ Figure&nbsp;5: Visual representation of model <span class="math inline">\(M_b.\)
 </div>
 </div>
 </div>
-<div id="e958542a" class="cell" data-execution_count="12">
+<div id="a23ae05f" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mb:</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    mb_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -765,7 +753,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
     
 </div>
 </div>
-<div id="fd84aff0" class="cell" data-execution_count="13">
+<div id="47c00c11" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>az.summary(mb_idata, var_names<span class="op">=</span>[<span class="st">'Alpha'</span>, <span class="st">'psi'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <div>
@@ -789,38 +777,38 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">Alpha[Intercept]</td>
-<td>0.114</td>
-<td>0.254</td>
-<td>-0.337</td>
-<td>0.606</td>
+<td>0.103</td>
+<td>0.239</td>
+<td>-0.339</td>
+<td>0.557</td>
 <td>0.005</td>
 <td>0.004</td>
-<td>2182.0</td>
-<td>1735.0</td>
+<td>2059.0</td>
+<td>2216.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">Alpha[B_Response]</td>
-<td>0.611</td>
-<td>0.296</td>
-<td>0.013</td>
-<td>1.128</td>
+<td>0.630</td>
+<td>0.285</td>
+<td>0.116</td>
+<td>1.165</td>
 <td>0.006</td>
 <td>0.005</td>
-<td>2127.0</td>
-<td>1820.0</td>
+<td>2062.0</td>
+<td>1965.0</td>
 <td>1.0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">psi</td>
-<td>0.576</td>
-<td>0.052</td>
+<td>0.574</td>
+<td>0.050</td>
 <td>0.478</td>
-<td>0.673</td>
+<td>0.662</td>
 <td>0.001</td>
 <td>0.001</td>
-<td>2599.0</td>
-<td>2246.0</td>
+<td>2446.0</td>
+<td>2274.0</td>
 <td>1.0</td>
 </tr>
 </tbody>
@@ -835,7 +823,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div id="fig-forest" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-forest-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="closed_cmr_files/figure-html/fig-forest-output-1.png" width="692" height="222" class="figure-img">
+<img src="closed_cmr_files/figure-html/fig-forest-output-1.png" width="699" height="222" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-forest-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6: Forest plot showing the catchability parameters from model <span class="math inline">\(M_b.\)</span>
@@ -848,38 +836,37 @@ Figure&nbsp;6: Forest plot showing the catchability parameters from model <span 
 <div id="cell-fig-mb_N" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate draws of N </span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>psi_samps <span class="op">=</span> az.extract(mb_idata).psi.values</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> az.extract(mb_idata).p.values</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> az.extract(mb_idata).p.values[:n]</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>not_p <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> p_samps)</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>p_included <span class="op">=</span> psi_samps <span class="op">*</span> not_p[n:].prod(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>number_undetected <span class="op">=</span> RNG.binomial(<span class="dv">1</span>, p_included).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>N_samples <span class="op">=</span> n <span class="op">+</span> number_undetected</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co"># use a bar chart since the posterior is bunched up </span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>N_values, N_counts <span class="op">=</span> np.unique(N_samples, return_counts<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co"># create the plot</span></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>ax.bar(N_values, N_counts)</span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="co"># ax.text(N_values[0], N_counts[0], r'$n$', va='bottom', ha='center')</span></span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>ax.annotate(</span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Number</span><span class="ch">\n</span><span class="st">detected $n$'</span>, </span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    ha<span class="op">=</span><span class="st">'left'</span>,</span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>    xy<span class="op">=</span>(N_values[<span class="dv">0</span>], N_counts[<span class="dv">0</span>]), </span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'black'</span>,</span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    xytext<span class="op">=</span>(n<span class="op">+</span><span class="dv">1</span>, <span class="dv">1600</span>), </span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>    arrowprops<span class="op">=</span><span class="bu">dict</span>(arrowstyle<span class="op">=</span><span class="st">"-&gt;"</span>, color<span class="op">=</span><span class="st">'black'</span>, linewidth<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>                    connectionstyle<span class="op">=</span><span class="st">"angle3,angleA=90,angleB=0"</span>)</span>
-<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Number of samples'</span>)</span>
-<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Posterior of $N$'</span>)</span>
-<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>bin_prod <span class="op">=</span> not_p.prod(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>p_included <span class="op">=</span> (psi_samps <span class="op">*</span> bin_prod) <span class="op">/</span> (psi_samps <span class="op">*</span> bin_prod <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> psi_samps))</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>number_undetected <span class="op">=</span> RNG.binomial(<span class="dv">1</span>, p_included).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>N_samples <span class="op">=</span> n <span class="op">+</span> number_undetected</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co"># use a bar chart since the posterior is bunched up </span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>N_values, N_counts <span class="op">=</span> np.unique(N_samples, return_counts<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co"># create the plot</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>ax.bar(N_values, N_counts)</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>ax.annotate(</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Number</span><span class="ch">\n</span><span class="st">detected $n$'</span>, </span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    ha<span class="op">=</span><span class="st">'left'</span>,</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    xy<span class="op">=</span>(N_values[<span class="dv">0</span>], N_counts[<span class="dv">0</span>]), </span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'black'</span>,</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    xytext<span class="op">=</span>(n<span class="op">+</span><span class="dv">1</span>, <span class="dv">1600</span>), </span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    arrowprops<span class="op">=</span><span class="bu">dict</span>(arrowstyle<span class="op">=</span><span class="st">"-&gt;"</span>, color<span class="op">=</span><span class="st">'black'</span>, linewidth<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>                    connectionstyle<span class="op">=</span><span class="st">"angle3,angleA=90,angleB=0"</span>)</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Number of samples'</span>)</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Posterior of $N$'</span>)</span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-mb_n" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -920,6 +907,35 @@ Figure&nbsp;7: Posterior distribution of <span class="math inline">\(N\)</span> 
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-discovery-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;8: Discovery curve for the <em>Microtus</em> study.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>We can also look at the behavioral effect by visualizing the posterior distributions of <span class="math inline">\(p.\)</span> As we can see, the voles who have been captured before are more likely to be captured again.</p>
+<div id="cell-fig-b_effect" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>p_samples <span class="op">=</span> az.extract(mb_idata).p.values.reshape(<span class="dv">500</span>, <span class="dv">4000</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>b_cov <span class="op">=</span> X[:,:,<span class="dv">1</span>].flatten()</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>zero_p <span class="op">=</span> p_samples[b_cov<span class="op">==</span><span class="dv">0</span>,].flatten()</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>one_p <span class="op">=</span> p_samples[b_cov<span class="op">==</span><span class="dv">1</span>,].flatten() </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="fl">3.5</span>))</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>az.plot_dist(zero_p, ax<span class="op">=</span>ax, label<span class="op">=</span><span class="st">'First detection'</span>, color<span class="op">=</span><span class="st">'C0'</span>)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>az.plot_dist(one_p, ax<span class="op">=</span>ax, label<span class="op">=</span><span class="st">'Seen before'</span>, color<span class="op">=</span><span class="st">'C1'</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Posterior distributions of $p$'</span>)</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ax.set_xlabel('$p$')</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>ax.set_yticks([])</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="fig-b_effect" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-b_effect-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="closed_cmr_files/figure-html/fig-b_effect-output-1.png" width="437" height="344" class="figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-b_effect-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: Posterior distributions for the probability of detection given the behavioral effect.
 </figcaption>
 </figure>
 </div>
