@@ -8,7 +8,11 @@ author:
     - Hawaiʻi Institute of Marine Biology
 date: 'February 2, 2024'
 bibliography: refs.bib
-jupyter: pymc
+jupyter:
+  kernelspec:
+    display_name: PyMC
+    language: python
+    name: pymc
 ---
 
 In this notebook, I explore how to fit distance sampling models for estimating the size of a closed population. Similar to the occupancy and closed capture-recapture notebooks, I use parameter-expanded data-augmentation (PX-DA) and the zero-inflated binomial model in this notebook.
@@ -90,8 +94,8 @@ with pm.Model() as distance:
     x_unobserved = pm.Uniform('x_unobserved', 0, U_X, shape=unobserved_count)
     x_complete = pt.concatenate((x_observed, x_unobserved))
 
-    p = pm.Deterministic('p', pm.math.exp(- x_complete ** 2 / sigma ** 2))
-    
+    p = pm.math.exp(- x_complete ** 2 / sigma ** 2)
+
     pm.ZeroInflatedBinomial('y', p=p, psi=psi, n=1, observed=y_augmented)
 
 pm.model_to_graphviz(distance)
@@ -116,43 +120,30 @@ az.plot_trace(
 This model samples slower than the models in the other notebooks, presumably because of the unobserved $x.$ As in the closed capture-recapture notebook, we will have to simulate the posterior for $N$ using the posterior distribution of $\psi$ and $M.$ 
 
 ```{python}
-# RNG = np.random.default_rng()
-
-# this does not make a copy of the posterior
-# post = distance_idata.posterior
-
-# # simulate draws of N using the posterior of psi 
-# N_samples = RNG.binomial(M, post.psi)
-# N_samples = N_samples.flatten()
-# N_hat = N_samples.mean()
-
-RNG = np.random.default_rng()
-
-posterior = az.extract(distance_idata)
-psi_samples = posterior.psi.to_numpy()
-p_samples = posterior.p.to_numpy()
-
-not_p = (1 - p_samples[n:])
-p_included = (not_p * psi_samples) / (not_p * psi_samples + (1 - psi_samples))
-n_undetected = RNG.binomial(1, p_included).sum(axis=0)
-N_samples = n + n_undetected
-```
-
-```{python}
 #| fig-cap: Posterior distributions for $N$ and $\sigma.$ Estimates from @royle2008 are shown with vertical lines.
 #| label: fig-posteriors
 
-sigma_samples = posterior.sigma.to_numpy()
+RNG = np.random.default_rng()
+
+# this does not make a copy of the posterior
+post = distance_idata.posterior
+
+# simulate draws of N using the posterior of psi 
+N_samples = RNG.binomial(M, post.psi)
+N_samples = N_samples.flatten()
+N_hat = N_samples.mean()
+
+sigma_samples = post.sigma.values.flatten()
 
 # plot the results
 fig, (ax0, ax1) = plt.subplots(1, 2, sharey=True, figsize=(8,4))
 
 # histograms of the posteriors
-ax0.hist(N_samples, edgecolor='white', bins=30)
-ax1.hist(sigma_samples, edgecolor='white', bins=30)
+ax0.hist(N_samples, edgecolor='white')
+ax1.hist(sigma_samples, edgecolor='white')
 
 # show the abundance dist in terms of M
-# ax0.set_xlim((100, M))
+ax0.set_xlim((0, M))
 
 # axes labels 
 ax0.set_xlabel('Abundance $N$')
@@ -160,33 +151,33 @@ ax0.set_ylabel('Number of samples')
 ax1.set_xlabel('Detection range $\sigma$')
 
 # add the point estimates
-N_hat = N_samples.mean()
 sigma_hat = sigma_samples.mean()
-ax0.text(200, 350, f'$\hat{{N}}$={N_hat:.1f}', ha='left', va='center')
-ax1.text(205, 350, f'$\hat{{\sigma}}$={sigma_hat:.1f}', ha='left', va='center')
+ax0.text(400, 1300, f'$\hat{{N}}$={N_hat:.1f}', ha='center', va='center')
+ax1.text(250, 1300, f'$\hat{{\sigma}}$={sigma_hat:.1f}', ha='center', va='center')
 
 # the results from royle and dorazio (2008) for comparison
 N_hat_royle = 179.9
 sigma_hat_royle = 187
 
-ax0.axvline(N_hat_royle, linestyle='--', linewidth=3, color='C1')
-ax1.axvline(sigma_hat_royle, linestyle='--', linewidth=3, color='C1')
+ax0.axvline(N_hat_royle, linestyle='--', linewidth=1, color='black')
+ax1.axvline(sigma_hat_royle, linestyle='--', linewidth=1, color='black')
 
 plt.show()
 ```
 
-The model shows a high level of agreement with @royle2008, Chapter 7, although note that they reported $\sigma$ in terms of 100m units. It is also possible to plot the posterior distribution of the detection function.
+The model shows a high level of agreement with @royle2008, Chapter 7, although note that they reported results in terms of 100m units. It is also possible to plot the posterior distribution of the detection function.
 
 ```{python}
 #| fig-cap: Posterior distribution for the detection function. The line represents the posterior mean while the shaded area is the 96% interval.
 #| label: fig-func
 
 xx = np.arange(400)
+sigma_samps = post.sigma.values.flatten()
 
 def det_func(x, s):
     return np.exp(- (x ** 2) / (s ** 2))
 
-p_samps = np.array([det_func(xx, s) for s in sigma_samples])
+p_samps = np.array([det_func(xx, s) for s in sigma_samps])
 
 p_mean = p_samps.mean(axis=0)
 p_low = np.quantile(p_samps, 0.02, axis=0)

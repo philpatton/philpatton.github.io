@@ -3,7 +3,7 @@ title: "Notebooks"
 bibliography: refs.bib
 ---
 
-Please find here any notebooks that I may have thought would be of general interest. For now, these mainly consist of my attempts to port standard ecological models to [PyMC](https://www.pymc.io/welcome.html), a Python library for doing Bayesian analysis. 
+Please find here any notebooks that I may have thought would be of general interest. For now, these mainly consist of my attempts to port standard ecological models to [PyMC](https://www.pymc.io/welcome.html), a Python library for doing Bayesian analysis.  
 
 # PyMC
 

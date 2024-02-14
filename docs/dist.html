@@ -88,7 +88,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./scr.html" rel="next">
-<link href="./closed_cmr.html" rel="prev">
+<link href="./comparison.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -246,6 +246,12 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Model comparison</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./dist.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Distance sampling</span></a>
   </div>
@@ -382,7 +388,7 @@ Figure&nbsp;1: Histogram of the number of detected impalas at varying distances.
 </div>
 </div>
 <p>Again, we treat this as a zero-inflated binomial model using PX-DA. The trick for doing so is to create a binary vector of length <span class="math inline">\(M\)</span>, <span class="math inline">\(y,\)</span> that represents whether the individual was detected during the study. Then, combine the indicator with the distance vector <span class="math inline">\(x\)</span> to create a the full dataset <span class="math inline">\((x,y).\)</span></p>
-<div id="0d902e3f" class="cell" data-execution_count="2">
+<div id="e211aabf" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="bu">len</span>(x_observed)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>unobserved_count <span class="op">=</span> M <span class="op">-</span> n</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>zeros <span class="op">=</span> np.zeros(unobserved_count)</span>
@@ -400,8 +406,8 @@ Figure&nbsp;1: Histogram of the number of detected impalas at varying distances.
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    x_unobserved <span class="op">=</span> pm.Uniform(<span class="st">'x_unobserved'</span>, <span class="dv">0</span>, U_X, shape<span class="op">=</span>unobserved_count)</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    x_complete <span class="op">=</span> pt.concatenate((x_observed, x_unobserved))</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.math.exp(<span class="op">-</span> x_complete <span class="op">**</span> <span class="dv">2</span> <span class="op">/</span> sigma <span class="op">**</span> <span class="dv">2</span>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.Deterministic(<span class="st">'p'</span>, pm.math.exp(<span class="op">-</span> x_complete <span class="op">**</span> <span class="dv">2</span> <span class="op">/</span> sigma <span class="op">**</span> <span class="dv">2</span>))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    pm.ZeroInflatedBinomial(<span class="st">'y'</span>, p<span class="op">=</span>p, psi<span class="op">=</span>psi, n<span class="op">=</span><span class="dv">1</span>, observed<span class="op">=</span>y_augmented)</span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(distance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -418,7 +424,7 @@ Figure&nbsp;2: Visual representation of the distance sampling model.
 </div>
 </div>
 </div>
-<div id="b844cdc6" class="cell" data-execution_count="4">
+<div id="f6c948b9" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> distance:</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    distance_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -426,7 +432,7 @@ Figure&nbsp;2: Visual representation of the distance sampling model.
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [psi, sigma, x_unobserved]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 12 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 11 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -465,7 +471,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div id="fig-trace" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="dist_files/figure-html/fig-trace-output-1.png" width="854" height="367" class="figure-img">
+<img src="dist_files/figure-html/fig-trace-output-1.png" width="864" height="367" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Traceplots for the distance sampling model.
@@ -475,52 +481,65 @@ Figure&nbsp;3: Traceplots for the distance sampling model.
 </div>
 </div>
 <p>This model samples slower than the models in the other notebooks, presumably because of the unobserved <span class="math inline">\(x.\)</span> As in the closed capture-recapture notebook, we will have to simulate the posterior for <span class="math inline">\(N\)</span> using the posterior distribution of <span class="math inline">\(\psi\)</span> and <span class="math inline">\(M.\)</span></p>
-<div id="cell-fig-posteriors" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>RNG <span class="op">=</span> np.random.default_rng()</span>
+<div id="6c3e5eda" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># RNG = np.random.default_rng()</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># this does not make a copy of the posterior</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>post <span class="op">=</span> distance_idata.posterior</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># post = distance_idata.posterior</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate draws of N using the posterior of psi </span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>N_samples <span class="op">=</span> RNG.binomial(M, post.psi)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>N_samples <span class="op">=</span> N_samples.flatten()</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>N_hat <span class="op">=</span> N_samples.mean()</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># # simulate draws of N using the posterior of psi </span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># N_samples = RNG.binomial(M, post.psi)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># N_samples = N_samples.flatten()</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># N_hat = N_samples.mean()</span></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>sigma_samples <span class="op">=</span> post.sigma.values.flatten()</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>RNG <span class="op">=</span> np.random.default_rng()</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the results</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>fig, (ax0, ax1) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, sharey<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># histograms of the posteriors</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>ax0.hist(N_samples, edgecolor<span class="op">=</span><span class="st">'white'</span>)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>ax1.hist(sigma_samples, edgecolor<span class="op">=</span><span class="st">'white'</span>)</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co"># show the abundance dist in terms of M</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>ax0.set_xlim((<span class="dv">0</span>, M))</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co"># axes labels </span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>ax0.set_xlabel(<span class="st">'Abundance $N$'</span>)</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>ax0.set_ylabel(<span class="st">'Number of samples'</span>)</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>ax1.set_xlabel(<span class="st">'Detection range $\sigma$'</span>)</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="co"># add the point estimates</span></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>sigma_hat <span class="op">=</span> sigma_samples.mean()</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>ax0.text(<span class="dv">400</span>, <span class="dv">1300</span>, <span class="ss">f'$\hat</span><span class="ch">{{</span><span class="ss">N</span><span class="ch">}}</span><span class="ss">$=</span><span class="sc">{</span>N_hat<span class="sc">:.1f}</span><span class="ss">'</span>, ha<span class="op">=</span><span class="st">'center'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>ax1.text(<span class="dv">250</span>, <span class="dv">1300</span>, <span class="ss">f'$\hat</span><span class="ch">{{</span><span class="ss">\sigma</span><span class="ch">}}</span><span class="ss">$=</span><span class="sc">{</span>sigma_hat<span class="sc">:.1f}</span><span class="ss">'</span>, ha<span class="op">=</span><span class="st">'center'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="co"># the results from royle and dorazio (2008) for comparison</span></span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>N_hat_royle <span class="op">=</span> <span class="fl">179.9</span></span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>sigma_hat_royle <span class="op">=</span> <span class="dv">187</span></span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>ax0.axvline(N_hat_royle, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'black'</span>)</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>ax1.axvline(sigma_hat_royle, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'black'</span>)</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> az.extract(distance_idata)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>psi_samples <span class="op">=</span> posterior.psi.to_numpy()</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>p_samples <span class="op">=</span> posterior.p.to_numpy()</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>not_p <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> p_samples[n:])</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>p_included <span class="op">=</span> (not_p <span class="op">*</span> psi_samples) <span class="op">/</span> (not_p <span class="op">*</span> psi_samples <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> psi_samples))</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>n_undetected <span class="op">=</span> RNG.binomial(<span class="dv">1</span>, p_included).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>N_samples <span class="op">=</span> n <span class="op">+</span> n_undetected</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-fig-posteriors" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sigma_samples <span class="op">=</span> posterior.sigma.to_numpy()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the results</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>fig, (ax0, ax1) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, sharey<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>))</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># histograms of the posteriors</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>ax0.hist(N_samples, edgecolor<span class="op">=</span><span class="st">'white'</span>, bins<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>ax1.hist(sigma_samples, edgecolor<span class="op">=</span><span class="st">'white'</span>, bins<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># show the abundance dist in terms of M</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ax0.set_xlim((100, M))</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># axes labels </span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>ax0.set_xlabel(<span class="st">'Abundance $N$'</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>ax0.set_ylabel(<span class="st">'Number of samples'</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>ax1.set_xlabel(<span class="st">'Detection range $\sigma$'</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co"># add the point estimates</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>N_hat <span class="op">=</span> N_samples.mean()</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>sigma_hat <span class="op">=</span> sigma_samples.mean()</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>ax0.text(<span class="dv">200</span>, <span class="dv">350</span>, <span class="ss">f'$\hat</span><span class="ch">{{</span><span class="ss">N</span><span class="ch">}}</span><span class="ss">$=</span><span class="sc">{</span>N_hat<span class="sc">:.1f}</span><span class="ss">'</span>, ha<span class="op">=</span><span class="st">'left'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>ax1.text(<span class="dv">205</span>, <span class="dv">350</span>, <span class="ss">f'$\hat</span><span class="ch">{{</span><span class="ss">\sigma</span><span class="ch">}}</span><span class="ss">$=</span><span class="sc">{</span>sigma_hat<span class="sc">:.1f}</span><span class="ss">'</span>, ha<span class="op">=</span><span class="st">'left'</span>, va<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co"># the results from royle and dorazio (2008) for comparison</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>N_hat_royle <span class="op">=</span> <span class="fl">179.9</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>sigma_hat_royle <span class="op">=</span> <span class="dv">187</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>ax0.axvline(N_hat_royle, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'C1'</span>)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>ax1.axvline(sigma_hat_royle, linestyle<span class="op">=</span><span class="st">'--'</span>, linewidth<span class="op">=</span><span class="dv">3</span>, color<span class="op">=</span><span class="st">'C1'</span>)</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-posteriors" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-posteriors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="dist_files/figure-html/fig-posteriors-output-1.png" width="766" height="391" class="figure-img">
+<img src="dist_files/figure-html/fig-posteriors-output-1.png" width="754" height="382" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-posteriors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;4: Posterior distributions for <span class="math inline">\(N\)</span> and <span class="math inline">\(\sigma.\)</span> Estimates from <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span> are shown with vertical lines.
@@ -529,30 +548,29 @@ Figure&nbsp;4: Posterior distributions for <span class="math inline">\(N\)</span
 </div>
 </div>
 </div>
-<p>The model shows a high level of agreement with <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, Chapter 7, although note that they reported results in terms of 100m units. It is also possible to plot the posterior distribution of the detection function.</p>
-<div id="cell-fig-func" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>xx <span class="op">=</span> np.arange(<span class="dv">400</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sigma_samps <span class="op">=</span> post.sigma.values.flatten()</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> det_func(x, s):</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.exp(<span class="op">-</span> (x <span class="op">**</span> <span class="dv">2</span>) <span class="op">/</span> (s <span class="op">**</span> <span class="dv">2</span>))</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> np.array([det_func(xx, s) <span class="cf">for</span> s <span class="kw">in</span> sigma_samps])</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>p_mean <span class="op">=</span> p_samps.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>p_low <span class="op">=</span> np.quantile(p_samps, <span class="fl">0.02</span>, axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>p_high <span class="op">=</span> np.quantile(p_samps, <span class="fl">0.98</span>, axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>,<span class="dv">4</span>))</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>ax.plot(xx, p_mean, <span class="st">'-'</span>)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>ax.fill_between(xx, p_low, p_high, alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Detection function'</span>)</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r'$p$'</span>)</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'Distance (m)'</span>)</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The model shows a high level of agreement with <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, Chapter 7, although note that they reported <span class="math inline">\(\sigma\)</span> in terms of 100m units. It is also possible to plot the posterior distribution of the detection function.</p>
+<div id="cell-fig-func" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>xx <span class="op">=</span> np.arange(<span class="dv">400</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> det_func(x, s):</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.exp(<span class="op">-</span> (x <span class="op">**</span> <span class="dv">2</span>) <span class="op">/</span> (s <span class="op">**</span> <span class="dv">2</span>))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> np.array([det_func(xx, s) <span class="cf">for</span> s <span class="kw">in</span> sigma_samples])</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>p_mean <span class="op">=</span> p_samps.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>p_low <span class="op">=</span> np.quantile(p_samps, <span class="fl">0.02</span>, axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>p_high <span class="op">=</span> np.quantile(p_samps, <span class="fl">0.98</span>, axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>,<span class="dv">4</span>))</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>ax.plot(xx, p_mean, <span class="st">'-'</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>ax.fill_between(xx, p_low, p_high, alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Detection function'</span>)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r'$p$'</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'Distance (m)'</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="fig-func" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -970,8 +988,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./closed_cmr.html" class="pagination-link  aria-label=" closed="" capture-recapture"="">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Closed capture-recapture</span>
+      <a href="./comparison.html" class="pagination-link  aria-label=" model="" comparison"="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Model comparison</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
