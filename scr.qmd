@@ -8,11 +8,7 @@ author:
     - Hawaiʻi Institute of Marine Biology
 date: 'February 8, 2024'
 bibliography: refs.bib
-jupyter:
-  kernelspec:
-    display_name: PyMC
-    language: python
-    name: pymc
+jupyter: pymc
 ---
 
 In this notebook, I present an approach to fitting spatial capture-recapture (SCR) models in PyMC. SCR expands upon traditional capture-recapture by incorporating the location of the traps in the analysis. This matters because, typically, animals that live near a particular trap are more likely to be caught in it. In doing so, SCR links individual-level processes to the population-level, expanding the scientific scope of simple designs. 
@@ -329,13 +325,30 @@ The estimates are quite close to the maximum likelihood estimates, which I estim
 Finally, I estimate density $D$ using the results. As in the closed capture-recapture and distance sampling notebooks, I use the posterior samples of $\psi$ and $M$ to sample the posterior of $N.$ This $N,$ however, has an awkward interpretation because I pooled across the years by combining all the detection histories. To get around this, I compute the average annual abundance by dividing by the total number of years in the sample. Then, I divide by the area of the state space. 
 
 ```{python}
+def sim_N(idata, n, K):
+
+    psi_samps = az.extract(idata).psi.to_numpy()
+    p_samps = az.extract(idata).p
+    p_samps_undet = p_samps[n:, :, :]
+    
+    bin_probs = (1 - p_samps_undet) ** K
+    bin_prod = bin_probs.prod(axis=1)
+    p_included = (bin_prod * psi_samps) / (bin_prod * psi_samps  + (1 - psi_samps))
+    
+    number_undetected = RNG.binomial(1, p_included).sum(axis=0)
+    N_samps = n + number_undetected
+
+    return N_samps
+
+```
+
+```{python}
 #| fig-cap: Posterior distribution of the density $D$ of ovenbirds. The maximum likelihood estimate is shown by the dotted red line.
 #| label: fig-density
 
-psi_samps = oven_idata.posterior.psi.values.flatten()
-N_samps = RNG.binomial(M, psi_samps)
+N_samps = sim_N(oven_idata, detected_count, occasion_count)
 
-# kludgy way of calculating abundance 
+# kludgy way of calculating avergage abundance 
 year_count = 5
 average_annual_abundance = N_samps // year_count
 
@@ -348,11 +361,11 @@ D_samples = average_annual_abundance / mask_area
 D_mle = 1.262946
 
 fig, ax = plt.subplots(figsize=(4,4))
-ax.hist(D_samples, edgecolor='white', bins=10)
+ax.hist(D_samples, edgecolor='white', bins=13)
 ax.axvline(D_mle, linestyle='--',color='C1')
 ax.set_xlabel('Ovenbirds per hectare')
 ax.set_ylabel('Number of samples')
-ax.text(1.5, 1000, f'$\hat{{D}}$={D_samples.mean():.2f}', va='center', ha='center')
+ax.text(1.4, 800, f'$\hat{{D}}$={D_samples.mean():.2f}', va='bottom', ha='left')
 plt.show()
 ```
 
@@ -444,3 +457,4 @@ ax.set_xlabel(r'Distance (m)')
 
 plt.show()
 ```
+
