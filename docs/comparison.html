@@ -87,8 +87,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./dist.html" rel="next">
-<link href="./closed_cmr.html" rel="prev">
+<link href="./surv.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -205,7 +204,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occ.html">PyMC</a></li><li class="breadcrumb-item"><a href="./comparison.html">Model comparison</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./comparison.html">Model comparison</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -234,7 +233,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./occ.html" class="sidebar-item-text sidebar-link">
+  <a href="./occupancy.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Occupancy</span></a>
   </div>
 </li>
@@ -242,12 +241,6 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="./closed_cmr.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Closed capture-recapture</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./comparison.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Model comparison</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -264,8 +257,20 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./msom.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Community occupancy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./surv.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Open capture-recapture</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./comparison.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Model comparison</span></a>
   </div>
 </li>
       </ul>
@@ -289,7 +294,7 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occ.html">PyMC</a></li><li class="breadcrumb-item"><a href="./comparison.html">Model comparison</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./comparison.html">Model comparison</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Model comparison</h1>
 </div>
@@ -342,7 +347,7 @@ window.Quarto = {
 \end{equation}
 \]</span> where <span class="math inline">\(\mu\)</span> is the average catchability, <span class="math inline">\(\alpha_t\)</span> is the effect of each occasion on catchability, <span class="math inline">\(\beta\)</span> is the behavioral effect, <span class="math inline">\(x_{it}\)</span> indicates whether the individual has been previously caught, and <span class="math inline">\(\gamma_i\)</span> is the individual random effect such that <span class="math inline">\(\gamma_i \sim \text{Normal}(0,\sigma)\)</span>. Formulating the model this way makes the other models nested subsets of the full model.</p>
 <p>Like <span class="citation" data-cites="king2008">King and Brooks (<a href="#ref-king2008" role="doc-biblioref">2008</a>)</span>, I use the the Moray Firth bottlenose dolphin data as a motivating example. <span class="citation" data-cites="wilson1999">Wilson, Hammond, and Thompson (<a href="#ref-wilson1999" role="doc-biblioref">1999</a>)</span> detected <span class="math inline">\(n=56\)</span> dolphins over the course of <span class="math inline">\(T=17\)</span> boat surveys between May and September 1992. They generated the capture-recapture histories by way of photo-identification, which is near and dear to my heart (and my dissertation).</p>
-<div id="9df1c249" class="cell" data-execution_count="1">
+<div id="9df1c249" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># libraries </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -430,7 +435,7 @@ window.Quarto = {
 <span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>behavior_covariate <span class="op">=</span> get_behavior_covariate(dolphin_augmented)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The discovery curve, the number of unique dolphins encountered as a function of the total number of dolphins encountered, may be flattening. This suggests that, at this point in the study, <span class="citation" data-cites="wilson1999">Wilson, Hammond, and Thompson (<a href="#ref-wilson1999" role="doc-biblioref">1999</a>)</span> may have encountered many of the unique individuals in the population.</p>
-<div id="cell-fig-discovery" class="cell" data-execution_count="2">
+<div id="cell-fig-discovery" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># how many dolphins have been seen?</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>total_seen <span class="op">=</span> dolphin.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>).cumsum()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -473,7 +478,7 @@ Figure&nbsp;1: Discovery curve for the Moray Firth bottlenose dolphin surveys <s
 \sigma_{\gamma} &amp;\sim \text{InverseGamma}(4, 3),
 \end{align}
 \]</span> which were also used by <span class="citation" data-cites="king2008">King and Brooks (<a href="#ref-king2008" role="doc-biblioref">2008</a>)</span>. Although note that I used an informative <span class="math inline">\(\text{Beta}(1, 5)\)</span> prior for <span class="math inline">\(\psi\)</span> in the full model (see below). I use the same <code>logp</code> seen in the occupancy and closed capture-recapture notebooks, which accounts for row-level zero-inflation. Unlike other notebooks, I did not look at the summaries or the trace plots unless the sampler indicated that it had issues during training.</p>
-<div id="96268995" class="cell" data-execution_count="3">
+<div id="96268995" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logp(value, n, p, psi):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    binom <span class="op">=</span> binomln(n, value) <span class="op">+</span> logpow(p, value) <span class="op">+</span> logpow(<span class="dv">1</span> <span class="op">-</span> p, n <span class="op">-</span> value)</span>
@@ -488,7 +493,7 @@ Figure&nbsp;1: Discovery curve for the Moray Firth bottlenose dolphin surveys <s
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pm.math.log(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-fig-m0" class="cell" data-execution_count="4">
+<div id="cell-fig-m0" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> m0:</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priors</span></span>
@@ -526,7 +531,7 @@ Figure&nbsp;2: Visual representation of model <span class="math inline">\(M_{0}\
 </div>
 </div>
 </div>
-<div id="7cfecedf" class="cell" data-execution_count="5">
+<div id="7cfecedf" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> m0:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    m0_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -563,7 +568,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
     
 </div>
 </div>
-<div id="cell-fig-mt" class="cell" data-execution_count="6">
+<div id="cell-fig-mt" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> mt:</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priors</span></span>
@@ -605,7 +610,7 @@ Figure&nbsp;3: Visual representation of model <span class="math inline">\(M_t\)<
 </div>
 </div>
 </div>
-<div id="db47f675" class="cell" data-execution_count="7">
+<div id="db47f675" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mt:</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    mt_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -642,7 +647,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
     
 </div>
 </div>
-<div id="cell-fig-mb" class="cell" data-execution_count="8">
+<div id="cell-fig-mb" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> mb:</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priors</span></span>
@@ -684,7 +689,7 @@ Figure&nbsp;4: Visual representation of model <span class="math inline">\(M_b\)<
 </div>
 </div>
 </div>
-<div id="c63006c8" class="cell" data-execution_count="9">
+<div id="c63006c8" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mb:</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    mb_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -721,7 +726,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
     
 </div>
 </div>
-<div id="cell-fig-mtb" class="cell" data-execution_count="10">
+<div id="cell-fig-mtb" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> mtb:</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priors</span></span>
@@ -767,7 +772,7 @@ Figure&nbsp;5: Visual representation of model <span class="math inline">\(M_{tb}
 </div>
 </div>
 </div>
-<div id="5b2b3579" class="cell" data-execution_count="11">
+<div id="5b2b3579" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mtb:</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    mtb_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -804,7 +809,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
     
 </div>
 </div>
-<div id="cell-fig-mh" class="cell" data-execution_count="12">
+<div id="cell-fig-mh" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> mh:</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priors</span></span>
@@ -847,7 +852,7 @@ Figure&nbsp;6: Visual representation of model <span class="math inline">\(M_h\)<
 </div>
 </div>
 </div>
-<div id="2e77c8bc" class="cell" data-execution_count="13">
+<div id="2e77c8bc" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mh:</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    mh_idata <span class="op">=</span> pm.sample(<span class="dv">3000</span>, target_accept<span class="op">=</span><span class="fl">0.99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -886,7 +891,7 @@ The effective sample size per chain is smaller than 100 for some parameters.  A 
     
 </div>
 </div>
-<div id="cda1cf76" class="cell" data-execution_count="14">
+<div id="cda1cf76" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>az.summary(mh_idata, var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'mu'</span>, <span class="st">'sigma_gamma'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <div>
@@ -950,7 +955,7 @@ The effective sample size per chain is smaller than 100 for some parameters.  A 
 </div>
 </div>
 </div>
-<div id="d0e2061d" class="cell" data-execution_count="15">
+<div id="d0e2061d" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(mh_idata, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>), var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'mu'</span>, <span class="st">'sigma_gamma'</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
@@ -960,7 +965,7 @@ The effective sample size per chain is smaller than 100 for some parameters.  A 
 </div>
 </div>
 </div>
-<div id="cell-fig-mth" class="cell" data-execution_count="16">
+<div id="cell-fig-mth" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> mth:</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priors</span></span>
@@ -1007,7 +1012,7 @@ Figure&nbsp;7: Visual representation of model <span class="math inline">\(M_{th}
 </div>
 </div>
 </div>
-<div id="0a216500" class="cell" data-execution_count="17">
+<div id="0a216500" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mth:</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    mth_idata <span class="op">=</span> pm.sample(draws<span class="op">=</span><span class="dv">3000</span>, target_accept<span class="op">=</span><span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -1046,7 +1051,7 @@ The effective sample size per chain is smaller than 100 for some parameters.  A 
     
 </div>
 </div>
-<div id="ac0088d8" class="cell" data-execution_count="18">
+<div id="ac0088d8" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>az.summary(mth_idata, var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'mu'</span>, <span class="st">'sigma_alpha'</span>, <span class="st">'sigma_gamma'</span>, <span class="st">'alpha'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
 <div>
@@ -1326,7 +1331,7 @@ The effective sample size per chain is smaller than 100 for some parameters.  A 
 </div>
 </div>
 </div>
-<div id="cell-fig-mth_trace" class="cell" data-execution_count="19">
+<div id="cell-fig-mth_trace" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(mth_idata, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">10</span>),</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>              var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'mu'</span>, <span class="st">'sigma_alpha'</span>, <span class="st">'sigma_gamma'</span>, <span class="st">'alpha'</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -1342,7 +1347,7 @@ Figure&nbsp;8: Trace plots for model <span class="math inline">\(M_{th}\)</span>
 </div>
 </div>
 </div>
-<div id="cell-fig-mbh" class="cell" data-execution_count="20">
+<div id="cell-fig-mbh" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> mbh:</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priors</span></span>
@@ -1389,7 +1394,7 @@ Figure&nbsp;9: Visual representation of model <span class="math inline">\(M_{bh}
 </div>
 </div>
 </div>
-<div id="6a59dac9" class="cell" data-execution_count="21">
+<div id="6a59dac9" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mbh:</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    mbh_idata <span class="op">=</span> pm.sample(draws<span class="op">=</span><span class="dv">3000</span>, target_accept<span class="op">=</span><span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -1427,7 +1432,7 @@ The effective sample size per chain is smaller than 100 for some parameters.  A 
     
 </div>
 </div>
-<div id="b41d1d0a" class="cell" data-execution_count="22">
+<div id="b41d1d0a" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>az.summary(mbh_idata, var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'mu'</span>, <span class="st">'beta'</span>, <span class="st">'sigma_gamma'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="22">
 <div>
@@ -1503,7 +1508,7 @@ The effective sample size per chain is smaller than 100 for some parameters.  A 
 </div>
 </div>
 </div>
-<div id="84d2a0a1" class="cell" data-execution_count="23">
+<div id="84d2a0a1" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(mbh_idata, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">10</span>),</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>              var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'mu'</span>, <span class="st">'beta'</span>, <span class="st">'sigma_beta'</span>, <span class="st">'sigma_gamma'</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -1514,7 +1519,7 @@ The effective sample size per chain is smaller than 100 for some parameters.  A 
 </div>
 </div>
 </div>
-<div id="cell-fig-mtbh" class="cell" data-execution_count="24">
+<div id="cell-fig-mtbh" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> mtbh:</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priors</span></span>
@@ -1565,7 +1570,7 @@ Figure&nbsp;10: Visual representation of model <span class="math inline">\(M_{tb
 </div>
 </div>
 </div>
-<div id="e2c665fb" class="cell" data-execution_count="25">
+<div id="e2c665fb" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mtbh:</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    mtbh_idata <span class="op">=</span> pm.sample(draws<span class="op">=</span><span class="dv">2000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -1603,7 +1608,7 @@ The effective sample size per chain is smaller than 100 for some parameters.  A 
     
 </div>
 </div>
-<div id="55650746" class="cell" data-execution_count="26">
+<div id="55650746" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>az.summary(mtbh_idata, </span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>           var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'mu'</span>, <span class="st">'alpha'</span>, <span class="st">'beta'</span>, <span class="st">'sigma_alpha'</span>, <span class="st">'sigma_beta'</span>, <span class="st">'sigma_gamma'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="26">
@@ -1908,7 +1913,7 @@ The effective sample size per chain is smaller than 100 for some parameters.  A 
 </div>
 </div>
 </div>
-<div id="cell-fig-mtbh_trace" class="cell" data-execution_count="27">
+<div id="cell-fig-mtbh_trace" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(mtbh_idata, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">14</span>),</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>           var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'mu'</span>, <span class="st">'alpha'</span>, <span class="st">'beta'</span>, <span class="st">'sigma_alpha'</span>, <span class="st">'sigma_beta'</span>, <span class="st">'sigma_gamma'</span>])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -1930,7 +1935,7 @@ Figure&nbsp;11: Trace plots for the model with <span class="math inline">\(M_{tb
 <section id="model-comparison" class="level1">
 <h1>Model comparison</h1>
 <p>Next, I select a model for inference using an approximation of leave-one-out (loo) cross-validation <span class="citation" data-cites="vehtari2017">(<a href="#ref-vehtari2017" role="doc-biblioref">Vehtari, Gelman, and Gabry 2017</a>)</span>. This approximation can be calculated using PyMC. To do so, I calculate the log-likelihood for each model, which is added to the <code>InferenceData</code> object. This makes it possible to compare the models using loo and <code>az.compare</code>.</p>
-<div id="2295416f" class="cell" data-execution_count="28">
+<div id="2295416f" class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> m0:</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    pm.compute_log_likelihood(m0_idata)</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2163,7 +2168,7 @@ Figure&nbsp;11: Trace plots for the model with <span class="math inline">\(M_{tb
     
 </div>
 </div>
-<div id="fb3ea3e0" class="cell" data-execution_count="29">
+<div id="fb3ea3e0" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>model_dict <span class="op">=</span> {<span class="st">"m0"</span>: m0_idata, <span class="st">"mt"</span>: mt_idata, <span class="st">"mb"</span>: mb_idata, </span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>              <span class="st">"mtb"</span>: mtb_idata, <span class="st">"mh"</span>: mh_idata, <span class="st">"mth"</span>: mth_idata, </span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">"mbh"</span>: mbh_idata, <span class="st">"mtbh"</span>: mtbh_idata}</span>
@@ -2187,7 +2192,7 @@ Figure&nbsp;11: Trace plots for the model with <span class="math inline">\(M_{tb
 </div>
 </div>
 <p>The comparison tools notes issues with several of the models, suggesting a lack of robustness. Inspection of the comparison table shows that the struggling models all include the individual effect <span class="math inline">\(h.\)</span> A more thorough analysis would consider reparameterizing the model, e.g., through the non-centered parameterization. In lieu of that, I simply discard the models that fail this test and re-do the comparison with the passing models.</p>
-<div id="f6e5b383" class="cell" data-execution_count="30">
+<div id="f6e5b383" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>comparison.<span class="bu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="30">
 <div>
@@ -2311,7 +2316,7 @@ Figure&nbsp;11: Trace plots for the model with <span class="math inline">\(M_{tb
 </div>
 </div>
 </div>
-<div id="67238ba1" class="cell" data-execution_count="31">
+<div id="67238ba1" class="cell" data-execution_count="32">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>good_dict <span class="op">=</span> {<span class="st">"m0"</span>: m0_idata, <span class="st">"mt"</span>: mt_idata, <span class="st">"mb"</span>: mb_idata, <span class="st">"mtb"</span>: mtb_idata}</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>good_comparison <span class="op">=</span> az.compare(good_dict)</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>good_comparison.<span class="bu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2397,7 +2402,7 @@ Figure&nbsp;11: Trace plots for the model with <span class="math inline">\(M_{tb
 </div>
 </div>
 </div>
-<div id="cell-fig-comp" class="cell" data-execution_count="32">
+<div id="cell-fig-comp" class="cell" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>az.plot_compare(good_comparison, figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">4</span>))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>/Users/philtpatton/miniforge3/envs/pymc/lib/python3.11/site-packages/arviz/plots/backends/matplotlib/compareplot.py:87: FutureWarning: Series.__getitem__ treating keys as positions is deprecated. In a future version, integer keys will always be treated as labels (consistent with DataFrame behavior). To access a value by position, use `ser.iloc[pos]`
@@ -2421,7 +2426,7 @@ Figure&nbsp;12: Differences in the ELPD criteria, calculated using loo, for each
 <section id="model-averaged-predictions" class="level1">
 <h1>Model averaged predictions</h1>
 <p>Finally, we can use the model weights to simulate a weighted posterior of <span class="math inline">\(N.\)</span> To do so, I take a weighted sample of each of the posteriors of <span class="math inline">\(N,\)</span> with the weight dictated by the comparison tool.</p>
-<div id="cell-fig-N" class="cell" data-execution_count="33">
+<div id="cell-fig-N" class="cell" data-execution_count="34">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>posteriors <span class="op">=</span> [sim_N(good_dict[model]) <span class="cf">for</span> model <span class="kw">in</span> good_dict]</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> [good_comparison.loc[model].weight <span class="cf">for</span> model <span class="kw">in</span> good_dict]</span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>sample_count <span class="op">=</span> <span class="bu">len</span>(posteriors[<span class="dv">0</span>])</span>
@@ -2469,7 +2474,7 @@ Figure&nbsp;13: Posteriors of <span class="math inline">\(N\)</span> from the fo
 </div>
 </div>
 <p>We can also look at the posterior densities of <span class="math inline">\(p\)</span> from Model <span class="math inline">\(M_t,\)</span> the second most weighted model.</p>
-<div id="cell-fig-p" class="cell" data-execution_count="34">
+<div id="cell-fig-p" class="cell" data-execution_count="35">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> az.extract(mt_idata).p.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
@@ -2909,14 +2914,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./closed_cmr.html" class="pagination-link  aria-label=" closed="" capture-recapture"="">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Closed capture-recapture</span>
+      <a href="./surv.html" class="pagination-link  aria-label=" open="" capture-recapture"="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Open capture-recapture</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./dist.html" class="pagination-link" aria-label="Distance sampling">
-        <span class="nav-page-text">Distance sampling</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

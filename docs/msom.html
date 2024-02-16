@@ -87,6 +87,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./surv.html" rel="next">
+<link href="./scr.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -160,7 +162,7 @@ window.Quarto = {
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-sidebar docked nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -186,7 +188,7 @@ window.Quarto = {
 <span class="menu-text">CV</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./notebooks.html"> 
+    <a class="nav-link active" href="./notebooks.html" aria-current="page"> 
 <span class="menu-text">Notebooks</span></a>
   </li>  
 </ul>
@@ -198,10 +200,86 @@ window.Quarto = {
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./msom.html">Community occupancy</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./notebooks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notebooks</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">PyMC</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./occupancy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Occupancy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./closed_cmr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Closed capture-recapture</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dist.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Distance sampling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Spatial capture-recapture</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./msom.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Community occupancy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./surv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Open capture-recapture</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Model comparison</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -219,7 +297,7 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./msom.html">Community occupancy</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Community occupancy</h1>
 </div>
@@ -269,7 +347,7 @@ window.Quarto = {
 <section id="us-breeding-bird-survey" class="level1">
 <h1>US Breeding Bird Survey</h1>
 <p>As a motivating example, I use the breeding bird survey (BBS) data used by <span class="citation" data-cites="dorazio2005">Dorazio and Royle (<a href="#ref-dorazio2005" role="doc-biblioref">2005</a>)</span> and <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, Chapter 12. This is a <span class="math inline">\((n, J)\)</span> matrix with the number of times each species was detected over <span class="math inline">\(K\)</span> surveys, where <span class="math inline">\(n\)</span> is the number of detected species and <span class="math inline">\(J\)</span> is the number surveyed sites. In this example, <span class="math inline">\(n=99\)</span> species were detected at the <span class="math inline">\(J=50\)</span> sites over the <span class="math inline">\(K=11\)</span> surveys in New Hampshire. The BBS occurs on routes across the US. This dataset represents one route.</p>
-<div id="cell-fig-bbs" class="cell" data-execution_count="1">
+<div id="cell-fig-bbs" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
@@ -330,7 +408,7 @@ Figure&nbsp;1: Number of detections for each species at each site along this BBS
 <h2 class="anchored" data-anchor-id="known-n">Known <span class="math inline">\(N\)</span></h2>
 <p>First, I fit the the known <span class="math inline">\(N\)</span> version of the model. The goal of this version is to estimate occurrence and detection for each species, without estimating species richness.</p>
 <p>This notebook makes extensive use of the <code>coords</code> feature in PyMC. <code>Coords</code> makes it easier to incorporate the species-level effects via the multivariate normal. I use a <span class="math inline">\(\text{Normal}(0, 2)\)</span> prior for both <span class="math inline">\(\mu\)</span> parameters, and a LKJ Cholesky covariance prior for <span class="math inline">\(\mathbf{\Sigma}.\)</span></p>
-<div id="cell-fig-known" class="cell" data-execution_count="2">
+<div id="cell-fig-known" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'process'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>], </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">'process_bis'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">'species'</span>: lookup}</span>
@@ -374,7 +452,7 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
 </div>
 </div>
 </div>
-<div id="b7e9257f" class="cell" data-execution_count="3">
+<div id="44a2f9e7" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> known:</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    known_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -382,8 +460,6 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [mu, chol, ab]
-/Users/philtpatton/miniforge3/envs/pymc/lib/python3.11/site-packages/pytensor/compile/function/types.py:970: RuntimeWarning: invalid value encountered in accumulate
-  self.vm()
 Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 43 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -408,12 +484,12 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:42&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:43&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
 </div>
-<div id="cell-fig-trace_known." class="cell" data-execution_count="4">
+<div id="cell-fig-trace_known." class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mu_hat_royle <span class="op">=</span> [<span class="op">-</span><span class="fl">1.11</span>, <span class="op">-</span><span class="fl">1.7</span>]</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>az.plot_trace(known_idata, var_names<span class="op">=</span>[<span class="st">'mu'</span>], figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">2</span>),</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"mu"</span>, {}, [mu_hat_royle])])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -430,7 +506,7 @@ Figure&nbsp;3: Trace plots for the community level means of occupancy and abunda
 </div>
 </div>
 </div>
-<div id="cell-fig-probs" class="cell" data-execution_count="5">
+<div id="cell-fig-probs" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>samps <span class="op">=</span> az.extract(known_idata, var_names<span class="op">=</span><span class="st">'ab'</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ab_mean <span class="op">=</span> samps.mean(axis<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -460,7 +536,7 @@ Figure&nbsp;4: Species-level probabilities of detection and occupancy.
 <h2 class="anchored" data-anchor-id="unknown-n">Unknown <span class="math inline">\(N\)</span></h2>
 <p>Next, I train the unknown <span class="math inline">\(N\)</span> version of the model. Like many other notebooks in this series, it relies on augmenting the detection histories with all-zero histories. These represent the detection histories for species that may use the study site, but were not detected over the <span class="math inline">\(K=11\)</span> surveys. I also augment the species names in the <code>coords</code> dict, such that we can still use the <code>dims</code> argument in the multivariate normal. Mirroring <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, I augment the history <span class="math inline">\(M - n\)</span> all-zero histories, where <span class="math inline">\(M=250\)</span> and <span class="math inline">\(n\)</span> is the number of species detected during the survey.</p>
 <p>Similar to the occupancy notebook, I use a <code>CustomDist</code> to model the augmented history. This accounts for the “row-level” zero-inflation, whereby we know that the species is included in the super community if it was detected along the BBS route. The only difference with this <code>logp</code> is that it uses a <code>ZeroInflatedBinomial</code> distribution under the hood, rather than a Bernoulli, and uses the parameter <span class="math inline">\(\Omega\)</span> to account for the row-level inflation.</p>
-<div id="cell-fig-unknown" class="cell" data-execution_count="6">
+<div id="cell-fig-unknown" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">250</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>all_zero_history <span class="op">=</span> np.zeros((M <span class="op">-</span> n, J))</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>Y_augmented <span class="op">=</span> np.row_stack((Y, all_zero_history))</span>
@@ -537,7 +613,7 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 </div>
 </div>
 </div>
-<div id="8ef4157e" class="cell" data-execution_count="7">
+<div id="539274fc" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> unknown:</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    unknown_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -545,7 +621,7 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [omega, mu, chol, ab]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 172 seconds.
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 183 seconds.
 The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
 The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details</code></pre>
 </div>
@@ -571,12 +647,12 @@ The effective sample size per chain is smaller than 100 for some parameters.  A 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 02:51&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 03:03&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
 </div>
-<div id="cell-fig-trace_unknown." class="cell" data-execution_count="8">
+<div id="cell-fig-trace_unknown." class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>omega_hat_royle <span class="op">=</span> [<span class="fl">0.55</span>]</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>az.plot_trace(unknown_idata, var_names<span class="op">=</span>[<span class="st">'omega'</span>], figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">2</span>), </span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"omega"</span>, {}, [omega_hat_royle])])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -594,7 +670,7 @@ Figure&nbsp;6: Trace plots for the inclusion parameter for the unknown <span cla
 </div>
 </div>
 <p>I can plot the posterior distribution of species richness <span class="math inline">\(N.\)</span> This is slightly more complicated than before sinc there is an additional level of zero-inflation (included and never detected or not-included) in this model compared to the occupancy model (present and never detection or not present).</p>
-<div id="cell-fig-postN" class="cell" data-execution_count="9">
+<div id="cell-fig-postN" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># relevant posterior samples</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>post <span class="op">=</span> az.extract(unknown_idata)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>o_samps <span class="op">=</span> post.omega.to_numpy()</span>
@@ -627,7 +703,7 @@ Figure&nbsp;6: Trace plots for the inclusion parameter for the unknown <span cla
 <div id="fig-postn" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-postn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="msom_files/figure-html/fig-postn-output-1.png" width="587" height="386" class="figure-img">
+<img src="msom_files/figure-html/fig-postn-output-1.png" width="587" height="382" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-postn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7: Posterior distribution of species richness from the BBS model.
@@ -1037,6 +1113,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./scr.html" class="pagination-link  aria-label=" spatial="" capture-recapture"="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Spatial capture-recapture</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./surv.html" class="pagination-link" aria-label="Open capture-recapture">
+        <span class="nav-page-text">Open capture-recapture</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 
 

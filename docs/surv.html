@@ -87,7 +87,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./scr.html" rel="prev">
+<link href="./comparison.html" rel="next">
+<link href="./msom.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -204,7 +205,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occ.html">PyMC</a></li><li class="breadcrumb-item"><a href="./surv.html">Open capture-recapture</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./surv.html">Open capture-recapture</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -233,7 +234,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./occ.html" class="sidebar-item-text sidebar-link">
+  <a href="./occupancy.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Occupancy</span></a>
   </div>
 </li>
@@ -241,12 +242,6 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="./closed_cmr.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Closed capture-recapture</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./comparison.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Model comparison</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -263,8 +258,20 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./msom.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Community occupancy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./surv.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Open capture-recapture</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Model comparison</span></a>
   </div>
 </li>
       </ul>
@@ -287,7 +294,7 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occ.html">PyMC</a></li><li class="breadcrumb-item"><a href="./surv.html">Open capture-recapture</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./surv.html">Open capture-recapture</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Open capture-recapture</h1>
 </div>
@@ -393,7 +400,7 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<div id="9b143832" class="cell" data-execution_count="1">
+<div id="62f89791" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
@@ -458,7 +465,7 @@ window.Quarto = {
 <span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pt.triu(x) <span class="op">+</span> pt.tril(pt.ones_like(x), k<span class="op">=-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>As an example, I use the cormorant data from <span class="citation" data-cites="mccrea2014">McCrea and Morgan (<a href="#ref-mccrea2014" role="doc-biblioref">2014</a>)</span>, Table 4.6. These data come from an eleven year capture-recapture study between 1982 and 1993. These were breeding cormorants of unknown age. The data is summarized in the <span class="math inline">\(M\)</span>-array below. The last column is the number that were never recapured. The number released can be calculated from the array.</p>
-<div id="6e92d85e" class="cell" data-execution_count="2">
+<div id="c5683c4d" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>cormorant <span class="op">=</span> np.array([</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>       [ <span class="dv">10</span>,   <span class="dv">4</span>,   <span class="dv">2</span>,   <span class="dv">2</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,  <span class="dv">12</span>],</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>       [  <span class="dv">0</span>,  <span class="dv">42</span>,  <span class="dv">12</span>,  <span class="dv">16</span>,   <span class="dv">1</span>,   <span class="dv">0</span>,   <span class="dv">1</span>,   <span class="dv">1</span>,   <span class="dv">1</span>,   <span class="dv">0</span>,  <span class="dv">83</span>],</span>
@@ -471,7 +478,7 @@ window.Quarto = {
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>       [  <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>, <span class="dv">101</span>,  <span class="dv">55</span>, <span class="dv">274</span>],</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>       [  <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,  <span class="dv">84</span>,  <span class="dv">97</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="ea99c812" class="cell" data-execution_count="3">
+<div id="dac76354" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>interval_count, T <span class="op">=</span> cormorant.shape</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>number_recaptured <span class="op">=</span> cormorant[:,:<span class="op">-</span><span class="dv">1</span>]</span>
@@ -537,7 +544,7 @@ Figure&nbsp;1: Visual representation of the CJS model
 </div>
 </div>
 </div>
-<div id="e563ebf3" class="cell" data-execution_count="5">
+<div id="9f029e4e" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> phit:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    cjs_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -569,7 +576,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:03&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:02&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
@@ -631,7 +638,7 @@ Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from
 <section id="jolly-seber-shwarz-arnason-jssa" class="level1">
 <h1>Jolly-Seber-Shwarz-Arnason (JSSA)</h1>
 <p>The second modeling framework I explore is the Jolly-Seber-Shwarz-Arnason (JSSA) model. This attempts to model entrants into the population, further permitting the estimation of the superpopulation size. As a demonstration, I use the classic European dipper data of <span class="citation" data-cites="lebreton1992">Lebreton et al. (<a href="#ref-lebreton1992" role="doc-biblioref">1992</a>)</span>. I first convert the dataset into the <span class="math inline">\(M\)</span>-array, since the data is in capture history format.</p>
-<div id="ce502e8a" class="cell" data-execution_count="8">
+<div id="fda56c6c" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dipper <span class="op">=</span> np.loadtxt(<span class="st">'dipper.csv'</span>, delimiter<span class="op">=</span><span class="st">','</span>).astype(<span class="bu">int</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>dipper[:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
@@ -642,7 +649,7 @@ Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from
        [1, 1, 0, 0, 0, 0, 0]])</code></pre>
 </div>
 </div>
-<div id="c55a4b17" class="cell" data-execution_count="9">
+<div id="ff504d9e" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dipper_m <span class="op">=</span> create_m_array(dipper)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>dipper_m</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
@@ -656,7 +663,7 @@ Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from
 </div>
 </div>
 <p>The JSSA model requires modeling the number of unmarked animals that were released during an occasion. We can calculate this using the <span class="math inline">\(m\)</span>-array by subtracting the number of marked animals who were released from the total number of released animals.</p>
-<div id="1428f12d" class="cell" data-execution_count="10">
+<div id="7d74b4bd" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>recapture_array <span class="op">=</span> create_recapture_array(dipper)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>number_released <span class="op">=</span> dipper_m[:,<span class="dv">0</span>]</span>
@@ -676,7 +683,7 @@ Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from
 </div>
 </div>
 <p>Similar to the CJS model, this model requires a number of tricks to vectorize the operations. Many pertain to the distribution of the unmarked individuals. Similar to <a href="https://philpatton.github.io/occ.html">occupancy notebook</a>, I use a custom distribution to model the entrants into the population. Austin Rochford refers to this as an incomplete multinomial distribution.</p>
-<div id="64568a19" class="cell" data-execution_count="11">
+<div id="9e5c1358" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>n, occasion_count <span class="op">=</span> dipper.shape</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>interval_count <span class="op">=</span> occasion_count <span class="op">-</span> <span class="dv">1</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -691,7 +698,7 @@ Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># index for generating sequences like [[0], [0,1], [0,1,2]]</span></span>
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>alive_yet_unmarked_index <span class="op">=</span> circulant(np.arange(occasion_count))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="6844cb2a" class="cell" data-execution_count="12">
+<div id="729324b6" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logp(x, n, p):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    x_last <span class="op">=</span> n <span class="op">-</span> x.<span class="bu">sum</span>()</span>
@@ -707,7 +714,7 @@ Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="d9bba3ed" class="cell" data-execution_count="13">
+<div id="ce21438b" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># m-array for the CJS portion of the likelihood</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>cjs_marr <span class="op">=</span> dipper_m[:<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>:]</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>cjs_marr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -816,7 +823,7 @@ Figure&nbsp;4: Visual representation of the JSSA model
 </div>
 </div>
 </div>
-<div id="f10c9a36" class="cell" data-execution_count="15">
+<div id="a36d0932" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> jssa:</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    jssa_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -848,7 +855,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:04&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:03&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
@@ -868,7 +875,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div id="fig-jssa_trace" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-jssa_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-jssa_trace-output-1.png" width="860" height="678" class="figure-img">
+<img src="surv_files/figure-html/fig-jssa_trace-output-1.png" width="867" height="678" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jssa_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5: Traceplots for the dipper JSSA model. MLEs from the openCR package shown by vertical and horizontal lines.
@@ -940,7 +947,7 @@ Figure&nbsp;6: Violin plots of the posterior for apparent surival over time from
 <div id="fig-jssa_post" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-jssa_post-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-jssa_post-output-1.png" width="754" height="419" class="figure-img">
+<img src="surv_files/figure-html/fig-jssa_post-output-1.png" width="771" height="419" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jssa_post-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7: Posterior draws of <span class="math inline">\(N,\)</span> <span class="math inline">\(b_0,\)</span> and <span class="math inline">\(p\)</span> from the dipper JSSA model.
@@ -1351,11 +1358,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./scr.html" class="pagination-link  aria-label=" spatial="" capture-recapture"="">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Spatial capture-recapture</span>
+      <a href="./msom.html" class="pagination-link  aria-label=" community="" occupancy"="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Community occupancy</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./comparison.html" class="pagination-link" aria-label="Model comparison">
+        <span class="nav-page-text">Model comparison</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

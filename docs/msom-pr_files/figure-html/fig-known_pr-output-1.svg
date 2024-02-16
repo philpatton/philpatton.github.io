@@ -65,7 +65,7 @@
 <polygon fill="black" stroke="black" points="160.51,-356.94 157.01,-346.94 153.51,-356.94 160.51,-356.94"/>
 </g>
 <!-- p -->
-<g id="node5" class="node">
+<g id="node6" class="node">
 <title>p</title>
 <polygon fill="none" stroke="black" points="208.14,-215.32 117.89,-215.32 117.89,-157.82 208.14,-157.82 208.14,-215.32"/>
 <text text-anchor="middle" x="163.01" y="-198.02" font-family="Times,serif" font-size="14.00">p</text>
@@ -87,7 +87,7 @@
 <text text-anchor="middle" x="271.01" y="-165.02" font-family="Times,serif" font-size="14.00">Deterministic</text>
 </g>
 <!-- y -->
-<g id="node6" class="node">
+<g id="node5" class="node">
 <title>y</title>
 <ellipse fill="lightgrey" stroke="black" cx="217.01" cy="-81.16" rx="78.14" ry="40.66"/>
 <text text-anchor="middle" x="217.01" y="-92.61" font-family="Times,serif" font-size="14.00">y</text>

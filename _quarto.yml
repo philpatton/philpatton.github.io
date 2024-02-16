@@ -39,7 +39,7 @@ website:
               text: Distance sampling
             - href: scr.qmd
               text: Spatial capture-recapture
-            - href: msom.
+            - href: msom.qmd
               text: Community occupancy
             - href: surv.qmd
               text: Open capture-recapture
