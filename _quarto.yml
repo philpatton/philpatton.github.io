@@ -41,8 +41,10 @@ website:
               text: Spatial capture-recapture
             - href: msom.qmd
               text: Community occupancy
-            - href: surv.qmd
-              text: Open capture-recapture
+            - href: cjs.qmd
+              text: Cormack-Jolly-Seber
+            - href: jssa.qmd
+              text: Jolly-Seber 
             - href: comparison.qmd
               text: Model comparison
 format:

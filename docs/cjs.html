@@ -8,9 +8,9 @@
 
 <meta name="author" content="Philip T. Patton">
 <meta name="dcterms.date" content="2024-02-02">
-<meta name="description" content="Open population capture recapture models in PyMC">
+<meta name="description" content="Estimating survival with CJS models in PyMC">
 
-<title>Philip T. Patton - Open capture-recapture</title>
+<title>Philip T. Patton - Cormack-Jolly-Seber</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -87,7 +87,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./comparison.html" rel="next">
+<link href="./jssa.html" rel="next">
 <link href="./msom.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -205,7 +205,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./surv.html">Open capture-recapture</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./cjs.html">Cormack-Jolly-Seber</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -264,8 +264,14 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./surv.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Open capture-recapture</span></a>
+  <a href="./cjs.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Cormack-Jolly-Seber</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./jssa.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Jolly-Seber</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -287,21 +293,20 @@ window.Quarto = {
    
   <ul>
   <li><a href="#cormack-jolly-seber" id="toc-cormack-jolly-seber" class="nav-link active" data-scroll-target="#cormack-jolly-seber">Cormack-Jolly-Seber</a></li>
-  <li><a href="#jolly-seber-shwarz-arnason-jssa" id="toc-jolly-seber-shwarz-arnason-jssa" class="nav-link" data-scroll-target="#jolly-seber-shwarz-arnason-jssa">Jolly-Seber-Shwarz-Arnason (JSSA)</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./surv.html">Open capture-recapture</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./cjs.html">Cormack-Jolly-Seber</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Open capture-recapture</h1>
+<h1 class="title">Cormack-Jolly-Seber</h1>
 </div>
 
 <div>
   <div class="description">
-    Open population capture recapture models in PyMC
+    Estimating survival with CJS models in PyMC
   </div>
 </div>
 
@@ -340,11 +345,10 @@ window.Quarto = {
 </header>
 
 
-<p>In this notebook, I explore models for estimating survival using capture-recapture data in PyMC. These models include the Cormack-Jolly-Seber (CJS) and Jolly-Seber-Shwarz-Arnason (JSSA) frameworks. The primary difference between the two is that the JSSA model also tries to estimate the probability of entry into the population, which permits esimation of the superpopulation size.</p>
-<p>In this notebook, I have drawn considerable inspiration from Austin Rochford’s <a href="https://austinrochford.com/posts/2018-01-31-capture-recapture.html">notebook</a> on capture-recapture in PyMC, the <a href="https://github.com/philpatton/autocapture">second chapter</a> of my dissertation (a work in progress), and <span class="citation" data-cites="mccrea2014">McCrea and Morgan (<a href="#ref-mccrea2014" role="doc-biblioref">2014</a>)</span>.</p>
+<p>In this notebook, I explore the Cormack-Jolly-Seber (CJS) model for estimating survival using capture-recapture data in PyMC. I have drawn considerable inspiration from Austin Rochford’s <a href="https://austinrochford.com/posts/2018-01-31-capture-recapture.html">notebook</a> on capture-recapture in PyMC, the <a href="https://github.com/philpatton/autocapture">second chapter</a> of my dissertation (a work in progress), and <span class="citation" data-cites="mccrea2014">McCrea and Morgan (<a href="#ref-mccrea2014" role="doc-biblioref">2014</a>)</span>.</p>
 <section id="cormack-jolly-seber" class="level1">
 <h1>Cormack-Jolly-Seber</h1>
-<p>First, I explore fitting the Cormack-Jolly-Seber (CJS) model in PyMC. The CJS framework does not model entrance into the population, just survival, simplifying the model structure. There are many methods for estimating parameters in the model, including state-space formulations that explicitly model the latent alive/dead state <span class="math inline">\(z.\)</span> Following the theme of the previous notebooks, I instead marginalize this variable out of the model by using the so-called <span class="math inline">\(M\)</span>-array. This is an array that contains the sufficient statistics for the CJS and JSSA models. For example, <span class="math inline">\(m_{1,2}\)</span> is the number of individuals that were released on at <span class="math inline">\(t=1\)</span> and were <em>first</em> recaptured on <span class="math inline">\(t=2.\)</span></p>
+<p>The goal of the CJS model is to estimate survival, accounting for capture probabilities being less than one. There are many methods for estimating parameters in the model, including state-space formulations that explicitly model the latent alive/dead state <span class="math inline">\(z.\)</span> Following the theme of the previous notebooks, I instead marginalize this variable out of the model by using the so-called <span class="math inline">\(M\)</span>-array. This is an array that contains the sufficient statistics for the CJS models. For example, <span class="math inline">\(m_{1,2}\)</span> is the number of individuals that were released on at <span class="math inline">\(t=1\)</span> and were <em>first</em> recaptured on <span class="math inline">\(t=2.\)</span></p>
 <table class="table">
 <caption>An example of the M-array from a four year capture-recapture survey. The number recaptured, <span class="math inline">\(m_{i,j}\)</span> refers to the number of individuals released at <span class="math inline">\(i\)</span> who were first recaptured at time <span class="math inline">\(j\)</span>.</caption>
 <colgroup>
@@ -400,7 +404,7 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<div id="62f89791" class="cell" data-execution_count="1">
+<div id="4a583ed4" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
@@ -465,7 +469,7 @@ window.Quarto = {
 <span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pt.triu(x) <span class="op">+</span> pt.tril(pt.ones_like(x), k<span class="op">=-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>As an example, I use the cormorant data from <span class="citation" data-cites="mccrea2014">McCrea and Morgan (<a href="#ref-mccrea2014" role="doc-biblioref">2014</a>)</span>, Table 4.6. These data come from an eleven year capture-recapture study between 1982 and 1993. These were breeding cormorants of unknown age. The data is summarized in the <span class="math inline">\(M\)</span>-array below. The last column is the number that were never recapured. The number released can be calculated from the array.</p>
-<div id="c5683c4d" class="cell" data-execution_count="2">
+<div id="28a78610" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>cormorant <span class="op">=</span> np.array([</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>       [ <span class="dv">10</span>,   <span class="dv">4</span>,   <span class="dv">2</span>,   <span class="dv">2</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,  <span class="dv">12</span>],</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>       [  <span class="dv">0</span>,  <span class="dv">42</span>,  <span class="dv">12</span>,  <span class="dv">16</span>,   <span class="dv">1</span>,   <span class="dv">0</span>,   <span class="dv">1</span>,   <span class="dv">1</span>,   <span class="dv">1</span>,   <span class="dv">0</span>,  <span class="dv">83</span>],</span>
@@ -478,7 +482,7 @@ window.Quarto = {
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>       [  <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>, <span class="dv">101</span>,  <span class="dv">55</span>, <span class="dv">274</span>],</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>       [  <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,   <span class="dv">0</span>,  <span class="dv">84</span>,  <span class="dv">97</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="dac76354" class="cell" data-execution_count="3">
+<div id="2859321f" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>interval_count, T <span class="op">=</span> cormorant.shape</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>number_recaptured <span class="op">=</span> cormorant[:,:<span class="op">-</span><span class="dv">1</span>]</span>
@@ -535,7 +539,7 @@ window.Quarto = {
 <div id="fig-cjs" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cjs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-cjs-output-1.svg" class="img-fluid figure-img">
+<img src="cjs_files/figure-html/fig-cjs-output-1.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cjs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Visual representation of the CJS model
@@ -544,7 +548,7 @@ Figure&nbsp;1: Visual representation of the CJS model
 </div>
 </div>
 </div>
-<div id="9f029e4e" class="cell" data-execution_count="5">
+<div id="86f76e4a" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> phit:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    cjs_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -552,7 +556,8 @@ Figure&nbsp;1: Visual representation of the CJS model
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [p, phi]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 3 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 3 seconds.
+There were 3 divergences after tuning. Increase `target_accept` or reparameterize.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -576,7 +581,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:02&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:02&lt;00:00 Sampling 4 chains, 3 divergences]
     </div>
     
 </div>
@@ -594,7 +599,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div id="fig-cjs_trace" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cjs_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-cjs_trace-output-1.png" width="854" height="367" class="figure-img">
+<img src="cjs_files/figure-html/fig-cjs_trace-output-1.png" width="854" height="367" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cjs_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: Traceplots for the cormorant CJS model with <span class="math inline">\(p(\cdot)\phi(t)\)</span>. MLEs from <span class="citation" data-cites="mccrea2014">McCrea and Morgan (<a href="#ref-mccrea2014" role="doc-biblioref">2014</a>)</span> shown by vertical and horizontal lines.
@@ -625,332 +630,10 @@ Figure&nbsp;2: Traceplots for the cormorant CJS model with <span class="math inl
 <div id="fig-cjs_surv" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cjs_surv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-cjs_surv-output-1.png" width="584" height="381" class="figure-img">
+<img src="cjs_files/figure-html/fig-cjs_surv-output-1.png" width="584" height="381" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cjs_surv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Violin plots of the posterior for apparent surival over time from the cormorant CJS. Horizontal lines represent the posterior median.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="jolly-seber-shwarz-arnason-jssa" class="level1">
-<h1>Jolly-Seber-Shwarz-Arnason (JSSA)</h1>
-<p>The second modeling framework I explore is the Jolly-Seber-Shwarz-Arnason (JSSA) model. This attempts to model entrants into the population, further permitting the estimation of the superpopulation size. As a demonstration, I use the classic European dipper data of <span class="citation" data-cites="lebreton1992">Lebreton et al. (<a href="#ref-lebreton1992" role="doc-biblioref">1992</a>)</span>. I first convert the dataset into the <span class="math inline">\(M\)</span>-array, since the data is in capture history format.</p>
-<div id="fda56c6c" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dipper <span class="op">=</span> np.loadtxt(<span class="st">'dipper.csv'</span>, delimiter<span class="op">=</span><span class="st">','</span>).astype(<span class="bu">int</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>dipper[:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="8">
-<pre><code>array([[1, 1, 1, 1, 1, 1, 0],
-       [1, 1, 1, 1, 0, 0, 0],
-       [1, 1, 0, 0, 0, 0, 0],
-       [1, 1, 0, 0, 0, 0, 0],
-       [1, 1, 0, 0, 0, 0, 0]])</code></pre>
-</div>
-</div>
-<div id="ff504d9e" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dipper_m <span class="op">=</span> create_m_array(dipper)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>dipper_m</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
-<pre><code>array([[22, 11,  2,  0,  0,  0,  0,  9],
-       [60,  0, 24,  1,  0,  0,  0, 35],
-       [78,  0,  0, 34,  2,  0,  0, 42],
-       [80,  0,  0,  0, 45,  1,  2, 32],
-       [88,  0,  0,  0,  0, 51,  0, 37],
-       [98,  0,  0,  0,  0,  0, 52, 46],
-       [93,  0,  0,  0,  0,  0,  0, 93]])</code></pre>
-</div>
-</div>
-<p>The JSSA model requires modeling the number of unmarked animals that were released during an occasion. We can calculate this using the <span class="math inline">\(m\)</span>-array by subtracting the number of marked animals who were released from the total number of released animals.</p>
-<div id="7d74b4bd" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>recapture_array <span class="op">=</span> create_recapture_array(dipper)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>number_released <span class="op">=</span> dipper_m[:,<span class="dv">0</span>]</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>number_marked_released <span class="op">=</span> recapture_array.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># shift number_released to get the years to align   </span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>number_unmarked_released <span class="op">=</span> number_released[<span class="dv">1</span>:] <span class="op">-</span> number_marked_released</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co"># add the number released on the first occasion </span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>number_unmarked_released <span class="op">=</span> np.concatenate(</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    ([number_released[<span class="dv">0</span>]], number_unmarked_released)</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>number_unmarked_released</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
-<pre><code>array([22, 49, 52, 45, 41, 46, 39])</code></pre>
-</div>
-</div>
-<p>Similar to the CJS model, this model requires a number of tricks to vectorize the operations. Many pertain to the distribution of the unmarked individuals. Similar to <a href="https://philpatton.github.io/occ.html">occupancy notebook</a>, I use a custom distribution to model the entrants into the population. Austin Rochford refers to this as an incomplete multinomial distribution.</p>
-<div id="9e5c1358" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>n, occasion_count <span class="op">=</span> dipper.shape</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>interval_count <span class="op">=</span> occasion_count <span class="op">-</span> <span class="dv">1</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># generate indices for the m_array  </span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>intervals <span class="op">=</span> np.arange(interval_count)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>row_indices <span class="op">=</span> np.reshape(intervals, (interval_count, <span class="dv">1</span>))</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>col_indices <span class="op">=</span> np.reshape(intervals, (<span class="dv">1</span>, interval_count))</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># matrix indicating the number of intervals between sampling occassions</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>intervals_between <span class="op">=</span> np.clip(col_indices <span class="op">-</span> row_indices, <span class="dv">0</span>, np.inf)</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># index for generating sequences like [[0], [0,1], [0,1,2]]</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>alive_yet_unmarked_index <span class="op">=</span> circulant(np.arange(occasion_count))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="729324b6" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logp(x, n, p):</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    x_last <span class="op">=</span> n <span class="op">-</span> x.<span class="bu">sum</span>()</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># calculate thwe logp for the observations</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> factln(n) <span class="op">+</span> pt.<span class="bu">sum</span>(x <span class="op">*</span> pt.log(p) <span class="op">-</span> factln(x)) <span class="op">\</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>            <span class="op">+</span> x_last <span class="op">*</span> pt.log(<span class="dv">1</span> <span class="op">-</span> p.<span class="bu">sum</span>()) <span class="op">-</span> factln(x_last)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ensure that the good conditions are met.</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    good_conditions <span class="op">=</span> pt.<span class="bu">all</span>(x <span class="op">&gt;=</span> <span class="dv">0</span>) <span class="op">&amp;</span> pt.<span class="bu">all</span>(x <span class="op">&lt;=</span> n) <span class="op">&amp;</span> (pt.<span class="bu">sum</span>(x) <span class="op">&lt;=</span> n) <span class="op">&amp;</span> <span class="op">\</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>                        (n <span class="op">&gt;=</span> <span class="dv">0</span>)</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> pm.math.switch(good_conditions, res, <span class="op">-</span>np.inf)</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="ce21438b" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># m-array for the CJS portion of the likelihood</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>cjs_marr <span class="op">=</span> dipper_m[:<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>:]</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>cjs_marr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="13">
-<pre><code>array([[11,  2,  0,  0,  0,  0,  9],
-       [ 0, 24,  1,  0,  0,  0, 35],
-       [ 0,  0, 34,  2,  0,  0, 42],
-       [ 0,  0,  0, 45,  1,  2, 32],
-       [ 0,  0,  0,  0, 51,  0, 37],
-       [ 0,  0,  0,  0,  0, 52, 46]])</code></pre>
-</div>
-</div>
-<p>Aside from the unmarked portion of the model, the JSSA model is essentially identical to the CJS model above. In this version, I also model survival as time-varying, holding other parameters constant <span class="math inline">\(p(\cdot)\phi(t)b_0(\cdot)\)</span></p>
-<div id="cell-fig-jssa" class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># JSSA produces this warning. it's unclear why since it samples well</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ignore"</span>, </span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    message<span class="op">=</span><span class="st">"Failed to infer_shape from Op AdvancedSubtensor"</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> jssa:</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Priors</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># catchability, survival, and pent</span></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.Uniform(<span class="st">'p'</span>, <span class="fl">0.</span>, <span class="fl">1.</span>)</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    phi <span class="op">=</span> pm.Uniform(<span class="st">'phi'</span>, <span class="fl">0.</span>, <span class="fl">1.</span>, shape<span class="op">=</span>interval_count)</span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    b0 <span class="op">=</span> pm.Uniform(<span class="st">'b0'</span>, <span class="fl">0.</span>, <span class="fl">1.</span>)</span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># beta = pm.Dirichlet('beta', np.ones(interval_count))</span></span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># # only estimate first beta, others constant</span></span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    b_other <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> b0) <span class="op">/</span> (interval_count)</span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> pt.concatenate(</span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>        ([b0], pt.repeat(b_other, interval_count))</span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># improper flat prior for N</span></span>
-<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>    flat_dist <span class="op">=</span> pm.Flat.dist()</span>
-<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>    total_captured <span class="op">=</span> number_unmarked_released.<span class="bu">sum</span>()</span>
-<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> pm.Truncated(<span class="st">"N"</span>, flat_dist, lower<span class="op">=</span>total_captured)</span>
-<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">## Entry </span></span>
-<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add [1] to ensure the addition of the raw beta_0</span></span>
-<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>    p_alive_yet_unmarked <span class="op">=</span> pt.concatenate(</span>
-<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>        ([<span class="dv">1</span>], pt.cumprod((<span class="dv">1</span> <span class="op">-</span> p) <span class="op">*</span> phi))</span>
-<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># tril produces the [[0], [0,1], [0,1,2]] patterns for the recursion</span></span>
-<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>    psi <span class="op">=</span> pt.tril(</span>
-<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>        beta <span class="op">*</span> p_alive_yet_unmarked[alive_yet_unmarked_index]</span>
-<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>    ).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># distribution for the unmarked animals</span></span>
-<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>    unmarked <span class="op">=</span> pm.CustomDist(</span>
-<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Unmarked captures'</span>, </span>
-<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>        N, </span>
-<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>        psi <span class="op">*</span> p, </span>
-<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>        logp<span class="op">=</span>logp, </span>
-<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>        observed<span class="op">=</span>number_unmarked_released</span>
-<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>    <span class="co">## CJS</span></span>
-<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>    <span class="co"># broadcast phi into a matrix </span></span>
-<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>    phi_mat <span class="op">=</span> pt.ones_like(recapture_array) <span class="op">*</span> phi</span>
-<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>    phi_mat <span class="op">=</span> fill_lower_diag_ones(phi_mat) <span class="co"># fill irrelevant values </span></span>
-<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># probability of surviving between i and j in the m-array </span></span>
-<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a>    p_alive <span class="op">=</span> pt.cumprod(phi_mat, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a>    p_alive <span class="op">=</span> pt.triu(p_alive) <span class="co"># select relevant (upper triangle) values</span></span>
-<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a>    <span class="co"># p_not_cap: probability of not being captured between i and j</span></span>
-<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a>    p_not_cap <span class="op">=</span> pt.triu((<span class="dv">1</span> <span class="op">-</span> p) <span class="op">**</span> intervals_between)</span>
-<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a>    <span class="co"># nu: probabilities associated with each cell in the m-array</span></span>
-<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a>    nu <span class="op">=</span> p_alive <span class="op">*</span> p_not_cap <span class="op">*</span> p</span>
-<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># probability for the animals that were never recaptured</span></span>
-<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a>    chi <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> nu.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a>    <span class="co"># combine the probabilities into a matrix</span></span>
-<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a>    chi <span class="op">=</span> pt.reshape(chi, (interval_count, <span class="dv">1</span>))</span>
-<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a>    marr_probs <span class="op">=</span> pt.horizontal_stack(nu, chi)</span>
-<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a>    <span class="co"># distribution of the m-array </span></span>
-<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a>    marr <span class="op">=</span> pm.Multinomial(</span>
-<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a>        <span class="st">'M-array'</span>,</span>
-<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a>        n<span class="op">=</span>number_released[:<span class="op">-</span><span class="dv">1</span>], <span class="co"># last count irrelevant for CJS</span></span>
-<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a>        p<span class="op">=</span>marr_probs,</span>
-<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a>        observed<span class="op">=</span>cjs_marr</span>
-<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(jssa)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
-<div id="fig-jssa" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-jssa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-jssa-output-1.svg" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jssa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: Visual representation of the JSSA model
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div id="a36d0932" class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> jssa:</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    jssa_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Auto-assigning NUTS sampler...
-Initializing NUTS using jitter+adapt_diag...
-Multiprocess sampling (4 chains in 4 jobs)
-NUTS: [p, phi, b0, N]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 4 seconds.</code></pre>
-</div>
-<div class="cell-output cell-output-display">
-
-<style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    progress:not([value]), progress:not([value])::-webkit-progress-bar {
-        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
-</style>
-</div>
-<div class="cell-output cell-output-display">
-
-    <div>
-      <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:03&lt;00:00 Sampling 4 chains, 0 divergences]
-    </div>
-    
-</div>
-</div>
-<div id="cell-fig-jssa_trace" class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>phi_mle <span class="op">=</span> [<span class="fl">0.63</span>, <span class="fl">0.46</span>, <span class="fl">0.48</span>, <span class="fl">0.62</span>, <span class="fl">0.61</span>, <span class="fl">0.58</span>]</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>p_mle <span class="op">=</span> [<span class="fl">0.9</span>]</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>b0_mle <span class="op">=</span> [<span class="fl">0.079</span>]</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>N_mle <span class="op">=</span> [<span class="dv">310</span>]</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    jssa_idata, </span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">8</span>),</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    lines<span class="op">=</span>[(<span class="st">"phi"</span>, {}, phi_mle), (<span class="st">"p"</span>, {}, [p_mle]), (<span class="st">"N"</span>, {}, [N_mle]), (<span class="st">"b0"</span>, {}, [b0_mle])] </span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div id="fig-jssa_trace" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-jssa_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-jssa_trace-output-1.png" width="867" height="678" class="figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jssa_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: Traceplots for the dipper JSSA model. MLEs from the openCR package shown by vertical and horizontal lines.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p>The traceplots include the maximum likelihood estimates from the model, which I estimated usingthe openCR package in R. Again, there is high level of agreement between the two methods. I plot the survival estimates over time, and the posterior draws of <span class="math inline">\(N\)</span>, <span class="math inline">\(p\)</span>, and <span class="math inline">\(b\)</span>.</p>
-<div id="cell-fig-jssa_surv" class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">4</span>))</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.arange(<span class="dv">1981</span>, <span class="dv">1987</span>)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>phi_samps <span class="op">=</span> az.extract(jssa_idata, var_names<span class="op">=</span><span class="st">'phi'</span>).values.T</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>phi_median <span class="op">=</span> np.median(phi_samps, axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>ax.plot(t, phi_median, linestyle<span class="op">=</span><span class="st">'dotted'</span>, color<span class="op">=</span><span class="st">'lightgray'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>ax.violinplot(phi_samps, t, showmedians<span class="op">=</span><span class="va">True</span>, showextrema<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>ax.set_ylim((<span class="dv">0</span>,<span class="dv">1</span>))</span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r'Apparent survival $\phi$'</span>)</span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="vs">r'Dipper JSSA'</span>)</span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div id="fig-jssa_surv" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-jssa_surv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-jssa_surv-output-1.png" width="584" height="381" class="figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jssa_surv-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: Violin plots of the posterior for apparent surival over time from the cormorant CJS. Horizontal lines represent the posterior median.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<div id="cell-fig-jssa_post" class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>post <span class="op">=</span> jssa_idata.posterior</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># stack the draws for each chain, creating a (n_draws, n_species) array </span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> post.p.to_numpy().flatten()</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>N_samps <span class="op">=</span> post.N.to_numpy().flatten()</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>b_samps <span class="op">=</span> post.b0.to_numpy().flatten()</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># create the plot</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>fig, (ax0, ax1) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>), sharey<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co"># add the scatter for each species</span></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>alph <span class="op">=</span> <span class="fl">0.2</span></span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>ax0.scatter(p_samps, N_samps, s<span class="op">=</span><span class="dv">5</span>, alpha<span class="op">=</span>alph)</span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>ax0.spines.right.set_visible(<span class="va">False</span>)</span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>ax0.spines.top.set_visible(<span class="va">False</span>)</span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>ax0.set_ylabel(<span class="vs">r'$N$'</span>)</span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>ax0.set_xlabel(<span class="vs">r'$p$'</span>)</span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>ax1.scatter(b_samps, N_samps, s<span class="op">=</span><span class="dv">5</span>, alpha<span class="op">=</span>alph)</span>
-<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>ax1.set_xlabel(<span class="vs">r'$b_0$'</span>)</span>
-<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">'Dipper JSSA posterior draws'</span>)</span>
-<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div id="fig-jssa_post" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-jssa_post-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="surv_files/figure-html/fig-jssa_post-output-1.png" width="771" height="419" class="figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-jssa_post-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7: Posterior draws of <span class="math inline">\(N,\)</span> <span class="math inline">\(b_0,\)</span> and <span class="math inline">\(p\)</span> from the dipper JSSA model.
 </figcaption>
 </figure>
 </div>
@@ -962,9 +645,6 @@ Figure&nbsp;7: Posterior draws of <span class="math inline">\(N,\)</span> <span 
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-lebreton1992" class="csl-entry" role="listitem">
-Lebreton, Jean-Dominique, Kenneth P Burnham, Jean Clobert, and David R Anderson. 1992. <span>“Modeling Survival and Testing Biological Hypotheses Using Marked Animals: A Unified Approach with Case Studies.”</span> <em>Ecological Monographs</em> 62 (1): 67–118.
-</div>
 <div id="ref-mccrea2014" class="csl-entry" role="listitem">
 McCrea, Rachel S, and Byron JT Morgan. 2014. <em>Analysis of Capture-Recapture Data</em>. CRC Press.
 </div>
@@ -1363,8 +1043,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./comparison.html" class="pagination-link" aria-label="Model comparison">
-        <span class="nav-page-text">Model comparison</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./jssa.html" class="pagination-link" aria-label="Jolly-Seber">
+        <span class="nav-page-text">Jolly-Seber</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

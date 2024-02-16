@@ -35,7 +35,7 @@
 <text text-anchor="middle" x="105.72" y="-176.93" font-family="Times,serif" font-size="14.00">Deterministic</text>
 </g>
 <!-- sigma&#45;&gt;p -->
-<g id="edge2" class="edge">
+<g id="edge1" class="edge">
 <title>sigma&#45;&gt;p</title>
 <path fill="none" stroke="black" d="M63.19,-283.02C70.47,-268.72 78.84,-252.28 86.22,-237.79"/>
 <polygon fill="black" stroke="black" points="89.28,-239.49 90.7,-228.99 83.04,-236.31 89.28,-239.49"/>
@@ -71,7 +71,7 @@
 <text text-anchor="middle" x="172.72" y="-298.74" font-family="Times,serif" font-size="14.00">Uniform</text>
 </g>
 <!-- x_unobserved&#45;&gt;p -->
-<g id="edge1" class="edge">
+<g id="edge2" class="edge">
 <title>x_unobserved&#45;&gt;p</title>
 <path fill="none" stroke="black" d="M151.53,-281.38C143.69,-267.37 134.81,-251.49 126.97,-237.47"/>
 <polygon fill="black" stroke="black" points="130.15,-235.98 122.21,-228.96 124.04,-239.4 130.15,-235.98"/>
