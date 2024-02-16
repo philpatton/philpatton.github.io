@@ -9,6 +9,8 @@ author:
 date: 'February 15, 2024'
 bibliography: refs.bib
 jupyter: pymc
+execute:
+  cache: true
 ---
 
 In this notebook, I explore fitting community occupancy models in PyMC. Community occupancy models are a multi-species extension of standard occupancy models. The benefit of these models is that they estimate occupancy and detection better that single species models by treating each species as a random effect. Further, through data augmentation, they can estimate the richness of the supercommunity, that is, the total number of species that use the study area during the surveys.
