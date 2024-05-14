@@ -46,7 +46,7 @@ description: Graduate Research Assistant & NOAA QUEST Fellow
 
 1. **Patton, P.T.** Some hierarchical and machine learning models for wildlife science. Invited talk at University of Natural Resources and Life Sciences, Vienna (BOKU). July 2023.
 2. **Patton, P.T.** et al. The effect of fully automated photo--identification on mark-recapture estimates. Paper presented at the EURING Analytical Meeting. Montpellier, France. April 2023
-3. **Patton, P.T.** Assessing populations of resident cetaceans. HIMB Scholarship Symposium. K\=ane`ohe, Hawai`i. April 2022.
+3. **Patton, P.T.** Assessing populations of resident cetaceans. HIMB Scholarship Symposium. Kāneʻohe, Hawai`i. April 2022.
 4. **Patton, P. T.** & Gardner, B. Misspecifying movement models in spatial capture recapture studies. Paper presented at The Ecological Society of America Conference. Portland, OR, USA. August 2017
 5. **Patton, P. T.** et al. Modeling and estimating co--occurrence between generalist brood parasites and host communities. Paper presented at the EURING Analytical Meeting. Barcelona, Spain. June 2017
 6. **Patton, P. T.** et al. Multi--species occupancy models that incorporate false positive and false negative sampling errors. Paper presented at The Wildlife Society Conference. Raleigh, NC, USA. October 2016
