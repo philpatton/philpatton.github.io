@@ -35,7 +35,7 @@ website:
               text: Occupancy
             - href: closed_cmr.qmd
               text: Closed capture-recapture
-            - href: dist.qmd
+            - href: distance.qmd
               text: Distance sampling
             - href: scr.qmd
               text: Spatial capture-recapture
