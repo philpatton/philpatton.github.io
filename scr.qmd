@@ -11,7 +11,7 @@ bibliography: refs.bib
 jupyter: pymc
 ---
 
-In this notebook, I present an approach to fitting spatial capture-recapture (SCR) models in PyMC. SCR expands upon traditional capture-recapture by incorporating the location of the traps in the analysis. This matters because, typically, animals that live near a particular trap are more likely to be caught in it. In doing so, SCR links individual-level processes to the population-level, expanding the scientific scope of simple designs. 
+In this notebook, I show how to train spatial capture-recapture (SCR) models in PyMC. SCR expands upon traditional capture-recapture by incorporating the location of the traps in the analysis. This matters because, typically, animals that live near a particular trap are more likely to be caught in it. In doing so, SCR links individual-level processes to the population-level, expanding the scientific scope of simple designs. 
 
 In this notebook, I train the simplest possible SCR model, SCR0 [@royle2013,Chapter 5], where the goal is estimating the true population size $N$. Similar to the other closed population notebooks, I do so using parameter-expanded data-augmentation (PX-DA). I also borrow the concept of the *detection function* from the distance sampling notebook.
 
@@ -131,7 +131,7 @@ ovenbird.head(10)
 
 ## Simulation
 
-Before estimating the parameters, I perform a small simulation. The simulation starts with a core idea of SCR: the *activity center*. The activity center $\mathbf{s}_i$ is the most likely place that you'd find an individual $i$ over the course of the trapping study. In this case, I assume that activity centers are uniformly distributed across the sample space. (The study takes place in homogenous habitat.)
+Before estimating the parameters, I perform a small simulation. The simulation starts with a core idea of SCR: the *activity center*. The activity center $\mathbf{s}_i$ is the most likely place that you'd find an individual $i$ over the course of the trapping study. In this case, I assume that activity centers are uniformly distributed across the sample space.
 
 I compute the probability of detection for individual $i$ at trap $j$ as $p_{i,j}=g_0 \exp(-d_{i,j}^2/2\sigma^2),$ where $g_0$ is the probability of detecting an individual when it's activity center is at the trap, $d_{i,j}$ is the euclidean distance between the trap and the activity center, and $\sigma$ is the detection range parameter.
 

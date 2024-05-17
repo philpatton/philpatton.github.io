@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.4.554">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -88,7 +88,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./msom.html" rel="next">
-<link href="./dist.html" rel="prev">
+<link href="./distance.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -246,7 +246,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist.html" class="sidebar-item-text sidebar-link">
+  <a href="./distance.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Distance sampling</span></a>
   </div>
 </li>
@@ -346,7 +346,7 @@ window.Quarto = {
 </header>
 
 
-<p>In this notebook, I present an approach to fitting spatial capture-recapture (SCR) models in PyMC. SCR expands upon traditional capture-recapture by incorporating the location of the traps in the analysis. This matters because, typically, animals that live near a particular trap are more likely to be caught in it. In doing so, SCR links individual-level processes to the population-level, expanding the scientific scope of simple designs.</p>
+<p>In this notebook, I show how to train spatial capture-recapture (SCR) models in PyMC. SCR expands upon traditional capture-recapture by incorporating the location of the traps in the analysis. This matters because, typically, animals that live near a particular trap are more likely to be caught in it. In doing so, SCR links individual-level processes to the population-level, expanding the scientific scope of simple designs.</p>
 <p>In this notebook, I train the simplest possible SCR model, SCR0 <span class="citation" data-cites="royle2013">(<a href="#ref-royle2013" role="doc-biblioref">Royle et al. 2013, chap. 5</a>)</span>, where the goal is estimating the true population size <span class="math inline">\(N\)</span>. Similar to the other closed population notebooks, I do so using parameter-expanded data-augmentation (PX-DA). I also borrow the concept of the <em>detection function</em> from the distance sampling notebook.</p>
 <p>As a motivating example, I use the <a href="https://www.otago.ac.nz/density/examples/index.html">ovenbird mist netting dataset</a> provided by Murray Efford via the secr package in R. The design of the study is outlined in <span class="citation" data-cites="efford2004">Efford, Dawson, and Robbins (<a href="#ref-efford2004" role="doc-biblioref">2004</a>)</span> and <span class="citation" data-cites="borchers2008">Borchers and Efford (<a href="#ref-borchers2008" role="doc-biblioref">2008</a>)</span>. In this dataset, ovenbirds were trapped in 44 mist nets over 8 to 10 consecutive days during the summers of 2005 to 2009.</p>
 <div id="cell-fig-nets" class="cell" data-execution_count="1">
@@ -448,7 +448,7 @@ Figure&nbsp;1: Locations of the mist nets in the ovenbird dataset <span class="c
 </div>
 <p>One difference between spatial and traditional (non-spatial) capture is the addition of the trap identifier in the capture history. Whereas a traditional capture history is <code>[individual, occasion]</code>, a spatial capture history might be <code>[individual, occasion, trap]</code>.</p>
 <p>In the ovenbird example, I ignore the <code>year</code> dimension, pooling parameters across years, which allows for better estimation of the detection parameters. My hack for doing so is treating every band/year combination as a unique individual in a combined year capture history. This is easy to implement, creates an awkward interpretation of <span class="math inline">\(N\)</span> (see below).</p>
-<div id="011c12e7" class="cell" data-execution_count="2">
+<div id="26fdb388" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ovenbird capture history</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>oven_ch <span class="op">=</span> pd.read_csv(<span class="st">'ovenbirdcapt.txt'</span>, delimiter<span class="op">=</span><span class="st">' '</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -466,6 +466,7 @@ Figure&nbsp;1: Locations of the mist nets in the ovenbird dataset <span class="c
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>ovenbird.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
+<div>
 <div>
 
 
@@ -567,11 +568,12 @@ Figure&nbsp;1: Locations of the mist nets in the ovenbird dataset <span class="c
 </div>
 </div>
 </div>
+</div>
 <section id="simulation" class="level2">
 <h2 class="anchored" data-anchor-id="simulation">Simulation</h2>
-<p>Before estimating the parameters, I perform a small simulation. The simulation starts with a core idea of SCR: the <em>activity center</em>. The activity center <span class="math inline">\(\mathbf{s}_i\)</span> is the most likely place that you’d find an individual <span class="math inline">\(i\)</span> over the course of the trapping study. In this case, I assume that activity centers are uniformly distributed across the sample space. (The study takes place in homogenous habitat.)</p>
+<p>Before estimating the parameters, I perform a small simulation. The simulation starts with a core idea of SCR: the <em>activity center</em>. The activity center <span class="math inline">\(\mathbf{s}_i\)</span> is the most likely place that you’d find an individual <span class="math inline">\(i\)</span> over the course of the trapping study. In this case, I assume that activity centers are uniformly distributed across the sample space.</p>
 <p>I compute the probability of detection for individual <span class="math inline">\(i\)</span> at trap <span class="math inline">\(j\)</span> as <span class="math inline">\(p_{i,j}=g_0 \exp(-d_{i,j}^2/2\sigma^2),\)</span> where <span class="math inline">\(g_0\)</span> is the probability of detecting an individual when it’s activity center is at the trap, <span class="math inline">\(d_{i,j}\)</span> is the euclidean distance between the trap and the activity center, and <span class="math inline">\(\sigma\)</span> is the detection range parameter.</p>
-<div id="7d52e091" class="cell" data-execution_count="3">
+<div id="bf76025f" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># true population size</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">150</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -638,7 +640,7 @@ Figure&nbsp;2: Visual representation of the model where <span class="math inline
 </div>
 </div>
 </div>
-<div id="d01d91a9" class="cell" data-execution_count="5">
+<div id="44141e05" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> known:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    known_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -670,14 +672,15 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:25&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:26&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
 </div>
-<div id="c66b88b0" class="cell" data-execution_count="6">
+<div id="3e032afd" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>az.summary(known_idata, var_names<span class="op">=</span>[<span class="st">'g0'</span>, <span class="st">'sigma'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
+<div>
 <div>
 
 
@@ -699,31 +702,32 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">g0</td>
-<td>0.033</td>
+<td>0.034</td>
 <td>0.004</td>
-<td>0.026</td>
+<td>0.027</td>
 <td>0.041</td>
 <td>0.000</td>
 <td>0.000</td>
-<td>1735.0</td>
-<td>2548.0</td>
+<td>1589.0</td>
+<td>2642.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">sigma</td>
-<td>79.366</td>
-<td>5.218</td>
-<td>69.491</td>
-<td>88.931</td>
-<td>0.174</td>
-<td>0.123</td>
-<td>892.0</td>
-<td>1932.0</td>
+<td>78.940</td>
+<td>5.087</td>
+<td>69.510</td>
+<td>88.420</td>
+<td>0.173</td>
+<td>0.122</td>
+<td>866.0</td>
+<td>1694.0</td>
 <td>1.0</td>
 </tr>
 </tbody>
 </table>
 
+</div>
 </div>
 </div>
 </div>
@@ -738,7 +742,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div id="fig-known_trace" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-known_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="scr_files/figure-html/fig-known_trace-output-1.png" width="687" height="367" class="figure-img">
+<img src="scr_files/figure-html/fig-known_trace-output-1.png" width="703" height="367" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-known_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Trace plots for model where <span class="math inline">\(N\)</span> is known. The true parameter values are shown by vertical and horizontal lines.
@@ -752,7 +756,7 @@ Figure&nbsp;3: Trace plots for model where <span class="math inline">\(N\)</span
 <section id="ovenbird-density" class="level2">
 <h2 class="anchored" data-anchor-id="ovenbird-density">Ovenbird density</h2>
 <p>Now, I estimate the density <span class="math inline">\(D\)</span> for the ovenbird population. Like distance sampling, SCR can robustly estimate the density of the population, regardless of the size of the state space. The difference between the model above and this one is that we use PX-DA to estimate the inclusion probability <span class="math inline">\(\psi,\)</span> and subsequently <span class="math inline">\(N.\)</span> First, I convert the <code>DataFrame</code> to a <code>(n_detected, n_traps)</code> array of binomial counts.</p>
-<div id="0efb6373" class="cell" data-execution_count="8">
+<div id="13264cc0" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_Y(ch):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Get a (individual_count, trap_count) array of detections.'''</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -831,7 +835,7 @@ Figure&nbsp;4: Visual representation of the ovenbird model using data augmentati
 </div>
 </div>
 </div>
-<div id="34cf5b5d" class="cell" data-execution_count="10">
+<div id="e3ee5f8b" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> oven:</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    oven_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -839,7 +843,7 @@ Figure&nbsp;4: Visual representation of the ovenbird model using data augmentati
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [sx, sy, g0, sigma, psi]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 48 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 50 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -863,14 +867,15 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:48&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:49&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
 </div>
-<div id="c90de47a" class="cell" data-execution_count="11">
+<div id="fa93ecd4" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>az.summary(oven_idata, var_names<span class="op">=</span>[<span class="st">'g0'</span>, <span class="st">'sigma'</span>, <span class="st">'psi'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
+<div>
 <div>
 
 
@@ -898,37 +903,38 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <td>0.036</td>
 <td>0.000</td>
 <td>0.000</td>
-<td>1678.0</td>
-<td>2463.0</td>
+<td>1682.0</td>
+<td>2575.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">sigma</td>
-<td>71.117</td>
-<td>4.668</td>
-<td>62.261</td>
-<td>79.867</td>
-<td>0.147</td>
-<td>0.104</td>
-<td>1011.0</td>
-<td>1764.0</td>
+<td>71.114</td>
+<td>4.651</td>
+<td>62.763</td>
+<td>80.019</td>
+<td>0.148</td>
+<td>0.105</td>
+<td>972.0</td>
+<td>1848.0</td>
 <td>1.0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">psi</td>
-<td>0.705</td>
-<td>0.056</td>
-<td>0.602</td>
-<td>0.814</td>
+<td>0.704</td>
+<td>0.055</td>
+<td>0.606</td>
+<td>0.812</td>
 <td>0.001</td>
 <td>0.001</td>
-<td>3321.0</td>
-<td>2507.0</td>
+<td>3082.0</td>
+<td>2321.0</td>
 <td>1.0</td>
 </tr>
 </tbody>
 </table>
 
+</div>
 </div>
 </div>
 </div>
@@ -957,7 +963,7 @@ Figure&nbsp;5: Trace plots for the ovenbird model using data augmentation. Maxim
 </div>
 <p>The estimates are quite close to the maximum likelihood estimates, which I estimated using the secr package in R.</p>
 <p>Finally, I estimate density <span class="math inline">\(D\)</span> using the results. As in the closed capture-recapture and distance sampling notebooks, I use the posterior samples of <span class="math inline">\(\psi\)</span> and <span class="math inline">\(M\)</span> to sample the posterior of <span class="math inline">\(N.\)</span> This <span class="math inline">\(N,\)</span> however, has an awkward interpretation because I pooled across the years by combining all the detection histories. To get around this, I compute the average annual abundance by dividing by the total number of years in the sample. Then, I divide by the area of the state space.</p>
-<div id="e95a3e5c" class="cell" data-execution_count="13">
+<div id="dd0427f6" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sim_N(idata, n, K):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    psi_samps <span class="op">=</span> az.extract(idata).psi.to_numpy()</span>
@@ -1207,6 +1213,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1241,7 +1265,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -1517,7 +1545,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./dist.html" class="pagination-link  aria-label=" distance="" sampling"="">
+      <a href="./distance.html" class="pagination-link" aria-label="Distance sampling">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Distance sampling</span>
       </a>          
   </div>

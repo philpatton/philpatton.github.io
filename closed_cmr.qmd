@@ -37,25 +37,22 @@ import pandas as pd
 import pymc as pm
 import arviz as az
 import matplotlib.pyplot as plt 
-import seaborn as sns
 from pymc.distributions.dist_math import binomln, logpow
 
+# plotting parameters
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
-# pal = sns.color_palette("Set2")
-# sns.set_palette(pal)
 
 # hyperparameters 
 SEED = 808
 RNG = np.random.default_rng(SEED)
-M = 1500
 ```
 
 I explore fitting the simplest closed capture-recapture model, Model $M_0,$ through parameter-expanded data-augmentation [PX-DA, @royle2008]. The idea with PX-DA is to augment the capture histories with $M-n$ all zero capture-histories, where $M$ is a hyperparameter that should be much greater than the true population size $N,$ and $n$ is the total number of individuals that were captured during the study. This allows us to treat the data as a zero-inflated binomial distribution (see below).
 
 ```{python}
-def augment_history(history):
+def augment_history(history, M):
     '''Augment a capture history with all-zero histories.'''
     
     animals_captured, T = history.shape
@@ -70,7 +67,7 @@ def augment_history(history):
     return augmented 
 ```
 
-To demonstrate this approach, I use the salamander dataset from @bailey2004, as demonstrated in @hooten2019, Chapter 24. These data were collected on two salamander species, the red-cheeked salamander (*Plethodon jordani*) and the pygmy salamander (*Desmognathus wrighti*), in Great Smoky Mountains National Park. The salamanders were counted in 15m by 15m square plots. In this case, we augment the history by setting $M=1500$ (see above). There were $n=92$ individual red-cheeked and $n=132$ pygmy salamanders captured during the course of the survey.
+To demonstrate this approach, I use the salamander dataset from @bailey2004, as demonstrated in @hooten2019, Chapter 24. These data were collected on two salamander species, the red-cheeked salamander (*Plethodon jordani*) and the pygmy salamander (*Desmognathus wrighti*), in Great Smoky Mountains National Park. The salamanders were counted in 15m by 15m square plots. In this case, we augment the history by setting $M=1500$. There were $n=92$ individual red-cheeked and $n=132$ pygmy salamanders captured during the course of the survey.
 
 ```{python}
 def get_histories():
@@ -89,19 +86,12 @@ def get_histories():
     pyg = sal_data.loc[is_pyg, col_labs].to_numpy()
     red = sal_data.loc[is_red, col_labs].to_numpy()
 
-    # # augment each set separately since they differ in length
-    # pyg_augmented = augment_history(pyg)
-    # red_augmented = augment_history(red)
-
-    # # recombine into one history 
-    # history = np.concatenate((pyg_augmented, red_augmented))
-
     return {'pyg': pyg, 'red': red}
 
-def augment_histories(histories):
+def augment_histories(histories, M):
 
-    pyg_augmented = augment_history(histories['pyg'])
-    red_augmented = augment_history(histories['red'])
+    pyg_augmented = augment_history(histories['pyg'], M=M)
+    red_augmented = augment_history(histories['red'], M=M)
 
     # recombine into one history 
     history = np.concatenate((pyg_augmented, red_augmented))
@@ -114,11 +104,12 @@ n_red, T = histories['red'].shape
 n_pyg, T = histories['pyg'].shape
 
 # # summarize into binomial data
-history_augmented = augment_histories(histories)
+M = 1500
+history_augmented = augment_histories(histories, M=M)
 history_summarized = history_augmented.sum(axis=1)
 ```
 
-For this model, I use the `pm.ZeroInflatedBinomial` class, just as I did in the [occupancy notebook](https://philpatton.github.io/occ.html). That said, the parameters here are different. First, $p$ represents the probability of capturing a given individual during the survey. Second, $\psi$ represents a mysterious entity known as the inclusion probability. That is, the probability that an individual from the hypothetical superpopulation $M$ is included in the population of interest $N.$ Then, we can estimate the population size as $\hat{N}=M\hat{\psi},$ or generate posterior draws of $N,$ e.g., $N^{(s)} \sim \text{Bin}(M,\psi^{(s)})$
+For this model, I use the `pm.ZeroInflatedBinomial` class, just as I did in the [occupancy notebook](https://philpatton.github.io/occ.html). That said, the parameters here are different. First, $p$ represents the probability of capturing a given individual during the survey. Second, $\psi$ represents a mysterious entity known as the inclusion probability. That is, the probability that an individual from the hypothetical superpopulation $M$ is included in the population of interest $N.$ Then, we can simulate the posterior distribution for $N$ using $M$ and the posterior distributions of $\psi.$
 
 In this example, I combine the two species into one `pm.Model` object, making use of `coords`. That said, the parameters for each species are treated as independent. In other words, this is a "no-pooling" model. 
 
@@ -164,7 +155,7 @@ az.plot_trace(M0_idata, figsize=(8,4));
 
 For faster sampling, it's better to separate the two species into two separate models. On my machine, the individual species models finish sampling in 2-3 seconds, compared to 15-20 seconds for the two species model. That said, the two species model is somewhat more convenient.
 
-Of course, the trace plots lack our true parameter of interest: the population size $N.$ We can simulate the posterior of $N$ as a *derived quantity*, using the posterior distribution of $\psi$ and $p.$ 
+Of course, the trace plots lack our true parameter of interest: the population size $N.$ We can simulate the posterior of $N$ as a *derived quantity*, using $M$ and the posterior distribution of $\psi$.
 
 ```{python}
 # az.extract flattens the chains
@@ -203,7 +194,7 @@ ax.legend()
 plt.show()
 ```
 
-We might expect estimates of capture probability $p$ and the abundance $N$ to be somewhat correlated. We can explore this relationship visually by plotting the posterior draws. For a more custom look to the plots, I plot the draws using matplotlib.
+We might expect estimates of capture probability $p$ and the abundance $N$ to be somewhat correlated. We can explore this relationship visually by plotting the posterior draws. 
 
 ```{python}
 #| fig-cap: Posterior draws of $N$ and $p$ for both species of salamander.
@@ -250,7 +241,7 @@ n, T = micro_hist.shape
 
 # augment with all zero histories
 M = 100
-micro_augmented = augment_history(micro_hist)
+micro_augmented = augment_history(micro_hist, M=M)
 
 # note the occasion when each individual was first seen
 first_seen = (micro_hist != 0).argmax(axis=1)
