@@ -29,26 +29,29 @@ which assumes a constant occurrence probability across sites and a constant dete
 To start, I demonstrate how to simulate this zero-inflated model using numpy. Throughout this section, I use hyperparameter values similar to those of @kery2011.
 
 ```{python}
+
+# relevant libraries
 import numpy as np
 import pymc as pm
 import arviz as az
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# plotting styles
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
-# pal = sns.color_palette('Set2')
-# sns.set_palette(pal)ß
 
 def scale(x):
+    '''Scale x: 0 is the mean and 1 is one standard deviation from the mean.'''
     return (x - np.nanmean(x)) / np.nanstd(x)
 
 def invlogit(x):
+    '''Compute inverse logit of x.'''
     return 1 / (1 + np.exp(-x))
 
 def sim_y(p, z, site_count, visit_count):
-    
+    '''Simulate detections given detection probability p and occurrence state z.'''
     ones = np.ones((site_count, visit_count))
     p_array = p * ones 
 
@@ -261,7 +264,7 @@ y = sim_y(p_true, z_true, site_count, visit_count)
 y[:5]
 ```
 
-Our PyMC code will need to be a little uglier now. I could write the model in terms of the latent occurrence state $z_j.$ The NUTS sampler, however, does not jive with discrete latent states. As such, PyMC will assign it to a binary Gibbs sampler by default, which works, albeit painfully slowly.
+Our PyMC code will need to be a little uglier now. I could write the model in terms of the latent occurrence state $z_j.$ The NUTS sampler, however, does not jive with discrete latent states. As such, PyMC will assign it to a binary Gibbs sampler by default, which works, albeit slowly.
 
 Since I am impatient, I instead use the [marginalized version of the model](https://mbjoseph.github.io/posts/2020-04-28-a-step-by-step-guide-to-marginalizing-over-discrete-parameters-for-ecologists-using-stan/), that is, a model that does not include the discrete latent states. To do this in PyMC, I use the `CustomDist` class. This requires, first, defining the log probability of the distribution, `logp`, given the data and it's parameters. We can write `logp` using the likelihood of the occupancy model, 
 $$
@@ -271,7 +274,7 @@ P(\mathbf{y}_j)=
     P(\mathbf{y}_j | z_j = 1)\; \psi_j,  & \text{otherwise}
 \end{cases}
 $$
-where $P(\mathbf{y}_j | z_j = 1) = \prod_j p_{j,k}^{y_{j,k}} (1-p_{j,k})^{(1-y_{j,k})}$ [@royle2008]. To do this in PyMC, I rely on the `pm.math.switch` function, which is similar to `ifelse()` in R or `np.where()`.
+where $P(\mathbf{y}_j | z_j = 1) = \prod_j p_{j,k}^{y_{j,k}} (1-p_{j,k})^{(1-y_{j,k})}$ [@royle2008]. To do this in PyMC, I rely on the `pm.math.switch` function, which is like the `ifelse()` function in R or `np.where()`.
 
 ```{python}
 # likelihood for y data

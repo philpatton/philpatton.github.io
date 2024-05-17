@@ -116,16 +116,6 @@ az.plot_trace(
 This model samples slower than the models in the other notebooks, presumably because of the unobserved $x.$ As in the closed capture-recapture notebook, we will have to simulate the posterior for $N$ using the posterior distribution of $\psi$ and $M.$ 
 
 ```{python}
-# RNG = np.random.default_rng()
-
-# this does not make a copy of the posterior
-# post = distance_idata.posterior
-
-# # simulate draws of N using the posterior of psi 
-# N_samples = RNG.binomial(M, post.psi)
-# N_samples = N_samples.flatten()
-# N_hat = N_samples.mean()
-
 RNG = np.random.default_rng()
 
 posterior = az.extract(distance_idata)

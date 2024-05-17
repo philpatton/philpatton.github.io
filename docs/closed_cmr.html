@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.4.554">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -87,7 +87,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./dist.html" rel="next">
+<link href="./distance.html" rel="next">
 <link href="./occupancy.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -246,7 +246,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dist.html" class="sidebar-item-text sidebar-link">
+  <a href="./distance.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Distance sampling</span></a>
   </div>
 </li>
@@ -394,30 +394,27 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <p>This produces a capture history for each individual, which allows us to estimate the probability of capture and the number of individuals in the population <span class="math inline">\(N\)</span>.</p>
 <section id="model-m_0" class="level1">
 <h1>Model <span class="math inline">\(M_0\)</span></h1>
-<div id="9522f8bc" class="cell" data-execution_count="1">
+<div id="6c03f573" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># libraries </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt </span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymc.distributions.dist_math <span class="im">import</span> binomln, logpow</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymc.distributions.dist_math <span class="im">import</span> binomln, logpow</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting parameters</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">'fivethirtyeight'</span>)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># pal = sns.color_palette("Set2")</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># sns.set_palette(pal)</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># hyperparameters </span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> <span class="dv">808</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>RNG <span class="op">=</span> np.random.default_rng(SEED)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">1500</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># hyperparameters </span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> <span class="dv">808</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>RNG <span class="op">=</span> np.random.default_rng(SEED)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I explore fitting the simplest closed capture-recapture model, Model <span class="math inline">\(M_0,\)</span> through parameter-expanded data-augmentation <span class="citation" data-cites="royle2008">(PX-DA, <a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008</a>)</span>. The idea with PX-DA is to augment the capture histories with <span class="math inline">\(M-n\)</span> all zero capture-histories, where <span class="math inline">\(M\)</span> is a hyperparameter that should be much greater than the true population size <span class="math inline">\(N,\)</span> and <span class="math inline">\(n\)</span> is the total number of individuals that were captured during the study. This allows us to treat the data as a zero-inflated binomial distribution (see below).</p>
-<div id="cb34d84c" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> augment_history(history):</span>
+<div id="ae74bc57" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> augment_history(history, M):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Augment a capture history with all-zero histories.'''</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    animals_captured, T <span class="op">=</span> history.shape</span>
@@ -431,8 +428,8 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> augmented </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>To demonstrate this approach, I use the salamander dataset from <span class="citation" data-cites="bailey2004">Bailey, Simons, and Pollock (<a href="#ref-bailey2004" role="doc-biblioref">2004</a>)</span>, as demonstrated in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 24. These data were collected on two salamander species, the red-cheeked salamander (<em>Plethodon jordani</em>) and the pygmy salamander (<em>Desmognathus wrighti</em>), in Great Smoky Mountains National Park. The salamanders were counted in 15m by 15m square plots. In this case, we augment the history by setting <span class="math inline">\(M=1500\)</span> (see above). There were <span class="math inline">\(n=92\)</span> individual red-cheeked and <span class="math inline">\(n=132\)</span> pygmy salamanders captured during the course of the survey.</p>
-<div id="c8417415" class="cell" data-execution_count="3">
+<p>To demonstrate this approach, I use the salamander dataset from <span class="citation" data-cites="bailey2004">Bailey, Simons, and Pollock (<a href="#ref-bailey2004" role="doc-biblioref">2004</a>)</span>, as demonstrated in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 24. These data were collected on two salamander species, the red-cheeked salamander (<em>Plethodon jordani</em>) and the pygmy salamander (<em>Desmognathus wrighti</em>), in Great Smoky Mountains National Park. The salamanders were counted in 15m by 15m square plots. In this case, we augment the history by setting <span class="math inline">\(M=1500\)</span>. There were <span class="math inline">\(n=92\)</span> individual red-cheeked and <span class="math inline">\(n=132\)</span> pygmy salamanders captured during the course of the survey.</p>
+<div id="8dab4ba5" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_histories():</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Read, augment, and recombine the salamander histories.'''</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -449,35 +446,29 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    pyg <span class="op">=</span> sal_data.loc[is_pyg, col_labs].to_numpy()</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    red <span class="op">=</span> sal_data.loc[is_red, col_labs].to_numpy()</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># # augment each set separately since they differ in length</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># pyg_augmented = augment_history(pyg)</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># red_augmented = augment_history(red)</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">'pyg'</span>: pyg, <span class="st">'red'</span>: red}</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> augment_histories(histories, M):</span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># # recombine into one history </span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># history = np.concatenate((pyg_augmented, red_augmented))</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    pyg_augmented <span class="op">=</span> augment_history(histories[<span class="st">'pyg'</span>], M<span class="op">=</span>M)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    red_augmented <span class="op">=</span> augment_history(histories[<span class="st">'red'</span>], M<span class="op">=</span>M)</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">'pyg'</span>: pyg, <span class="st">'red'</span>: red}</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> augment_histories(histories):</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    pyg_augmented <span class="op">=</span> augment_history(histories[<span class="st">'pyg'</span>])</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    red_augmented <span class="op">=</span> augment_history(histories[<span class="st">'red'</span>])</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># recombine into one history </span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    history <span class="op">=</span> np.concatenate((pyg_augmented, red_augmented))</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> history</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>histories <span class="op">=</span> get_histories()</span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># recombine into one history </span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    history <span class="op">=</span> np.concatenate((pyg_augmented, red_augmented))</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>n_red, T <span class="op">=</span> histories[<span class="st">'red'</span>].shape</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>n_pyg, T <span class="op">=</span> histories[<span class="st">'pyg'</span>].shape</span>
 <span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> history</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>histories <span class="op">=</span> get_histories()</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>n_red, T <span class="op">=</span> histories[<span class="st">'red'</span>].shape</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>n_pyg, T <span class="op">=</span> histories[<span class="st">'pyg'</span>].shape</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="co"># # summarize into binomial data</span></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>history_augmented <span class="op">=</span> augment_histories(histories)</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>history_summarized <span class="op">=</span> history_augmented.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co"># # summarize into binomial data</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">1500</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>history_augmented <span class="op">=</span> augment_histories(histories, M<span class="op">=</span>M)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>history_summarized <span class="op">=</span> history_augmented.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>For this model, I use the <code>pm.ZeroInflatedBinomial</code> class, just as I did in the <a href="https://philpatton.github.io/occ.html">occupancy notebook</a>. That said, the parameters here are different. First, <span class="math inline">\(p\)</span> represents the probability of capturing a given individual during the survey. Second, <span class="math inline">\(\psi\)</span> represents a mysterious entity known as the inclusion probability. That is, the probability that an individual from the hypothetical superpopulation <span class="math inline">\(M\)</span> is included in the population of interest <span class="math inline">\(N.\)</span> Then, we can estimate the population size as <span class="math inline">\(\hat{N}=M\hat{\psi},\)</span> or generate posterior draws of <span class="math inline">\(N,\)</span> e.g., <span class="math inline">\(N^{(s)} \sim \text{Bin}(M,\psi^{(s)})\)</span></p>
+<p>For this model, I use the <code>pm.ZeroInflatedBinomial</code> class, just as I did in the <a href="https://philpatton.github.io/occ.html">occupancy notebook</a>. That said, the parameters here are different. First, <span class="math inline">\(p\)</span> represents the probability of capturing a given individual during the survey. Second, <span class="math inline">\(\psi\)</span> represents a mysterious entity known as the inclusion probability. That is, the probability that an individual from the hypothetical superpopulation <span class="math inline">\(M\)</span> is included in the population of interest <span class="math inline">\(N.\)</span> Then, we can simulate the posterior distribution for <span class="math inline">\(N\)</span> using <span class="math inline">\(M\)</span> and the posterior distributions of <span class="math inline">\(\psi.\)</span></p>
 <p>In this example, I combine the two species into one <code>pm.Model</code> object, making use of <code>coords</code>. That said, the parameters for each species are treated as independent. In other words, this is a “no-pooling” model.</p>
 <div id="cell-fig-m0" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># index for each species</span></span>
@@ -502,7 +493,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(M0)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="cell-output cell-output-display" data-execution_count="21">
 <div id="fig-m0" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-m0-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -515,7 +506,7 @@ Figure&nbsp;1: Visual representation of model <span class="math inline">\(M_0.\)
 </div>
 </div>
 </div>
-<div id="e32df492" class="cell" data-execution_count="5">
+<div id="c2ab43f7" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> M0:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    M0_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -523,7 +514,7 @@ Figure&nbsp;1: Visual representation of model <span class="math inline">\(M_0.\)
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [psi, p]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 17 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 19 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 
@@ -547,7 +538,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 
     <div>
       <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:16&lt;00:00 Sampling 4 chains, 0 divergences]
+      100.00% [8000/8000 00:18&lt;00:00 Sampling 4 chains, 0 divergences]
     </div>
     
 </div>
@@ -568,8 +559,8 @@ Figure&nbsp;2: Traceplots for the salamander <span class="math inline">\(M_0\)</
 </div>
 </div>
 <p>For faster sampling, it’s better to separate the two species into two separate models. On my machine, the individual species models finish sampling in 2-3 seconds, compared to 15-20 seconds for the two species model. That said, the two species model is somewhat more convenient.</p>
-<p>Of course, the trace plots lack our true parameter of interest: the population size <span class="math inline">\(N.\)</span> We can simulate the posterior of <span class="math inline">\(N\)</span> as a <em>derived quantity</em>, using the posterior distribution of <span class="math inline">\(\psi\)</span> and <span class="math inline">\(p.\)</span></p>
-<div id="9b036652" class="cell" data-execution_count="7">
+<p>Of course, the trace plots lack our true parameter of interest: the population size <span class="math inline">\(N.\)</span> We can simulate the posterior of <span class="math inline">\(N\)</span> as a <em>derived quantity</em>, using <span class="math inline">\(M\)</span> and the posterior distribution of <span class="math inline">\(\psi\)</span>.</p>
+<div id="79bd2788" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># az.extract flattens the chains</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> az.extract(M0_idata)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>psi_samps <span class="op">=</span> posterior.psi.values</span>
@@ -603,7 +594,7 @@ Figure&nbsp;2: Traceplots for the salamander <span class="math inline">\(M_0\)</
 <div id="fig-n_trace" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-n_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="closed_cmr_files/figure-html/fig-n_trace-output-1.png" width="600" height="381" class="figure-img">
+<img src="closed_cmr_files/figure-html/fig-n_trace-output-1.png" width="587" height="381" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-n_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Posterior distributions of <span class="math inline">\(N\)</span> from the <span class="math inline">\(M_0\)</span> model. Estimates from <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span> are shown by the vertical lines’
@@ -612,7 +603,7 @@ Figure&nbsp;3: Posterior distributions of <span class="math inline">\(N\)</span>
 </div>
 </div>
 </div>
-<p>We might expect estimates of capture probability <span class="math inline">\(p\)</span> and the abundance <span class="math inline">\(N\)</span> to be somewhat correlated. We can explore this relationship visually by plotting the posterior draws. For a more custom look to the plots, I plot the draws using matplotlib.</p>
+<p>We might expect estimates of capture probability <span class="math inline">\(p\)</span> and the abundance <span class="math inline">\(N\)</span> to be somewhat correlated. We can explore this relationship visually by plotting the posterior draws.</p>
 <div id="cell-fig-posterior" class="cell" data-fig-lab="post" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the plot</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
@@ -654,7 +645,7 @@ Figure&nbsp;4: Posterior draws of <span class="math inline">\(N\)</span> and <sp
 <h1>Model <span class="math inline">\(M_b\)</span></h1>
 <p>Next, I fit model <span class="math inline">\(M_b,\)</span> which accounts for the possibility that the capture probability changes after the animal is first caught. This could be from trap happiness, whereby animals are more likely to be trapped after their first time. Conversely, this could be from subsequent trap avoidance.</p>
 <p>Mirroring <span class="citation" data-cites="royle2008">(<a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008, chap. 5</a>)</span>, I fit this model to the <em>Microtus</em> dataset reported in <span class="citation" data-cites="williams2002">(<a href="#ref-williams2002" role="doc-biblioref">Williams, Nichols, and Conroy 2002, 525</a>)</span>. This version of the <a href="https://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/chapters.htm">dataset</a> includes encounter histories of <span class="math inline">\(n=56\)</span> adult males that were captured on <span class="math inline">\(T=5\)</span> consecutive days.</p>
-<div id="68041eba" class="cell" data-execution_count="10">
+<div id="68a42337" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the microtus data</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>microtus <span class="op">=</span> np.loadtxt(<span class="st">'microtus.data.txt'</span>).astype(<span class="bu">int</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -664,7 +655,7 @@ Figure&nbsp;4: Posterior draws of <span class="math inline">\(N\)</span> and <sp
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># augment with all zero histories</span></span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">100</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>micro_augmented <span class="op">=</span> augment_history(micro_hist)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>micro_augmented <span class="op">=</span> augment_history(micro_hist, M<span class="op">=</span>M)</span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co"># note the occasion when each individual was first seen</span></span>
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>first_seen <span class="op">=</span> (micro_hist <span class="op">!=</span> <span class="dv">0</span>).argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
@@ -715,7 +706,7 @@ Figure&nbsp;4: Posterior draws of <span class="math inline">\(N\)</span> and <sp
 <span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(mb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div class="cell-output cell-output-display" data-execution_count="28">
 <div id="fig-mb" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-mb-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -728,7 +719,7 @@ Figure&nbsp;5: Visual representation of model <span class="math inline">\(M_b.\)
 </div>
 </div>
 </div>
-<div id="7fb464cb" class="cell" data-execution_count="12">
+<div id="78ec8d9f" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mb:</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    mb_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -765,9 +756,10 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
     
 </div>
 </div>
-<div id="ea6b5470" class="cell" data-execution_count="13">
+<div id="943a495a" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>az.summary(mb_idata, var_names<span class="op">=</span>[<span class="st">'Alpha'</span>, <span class="st">'psi'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="13">
+<div class="cell-output cell-output-display" data-execution_count="30">
+<div>
 <div>
 
 
@@ -789,43 +781,44 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">Alpha[Intercept]</td>
-<td>0.103</td>
-<td>0.249</td>
-<td>-0.347</td>
-<td>0.567</td>
+<td>0.095</td>
+<td>0.257</td>
+<td>-0.388</td>
+<td>0.561</td>
 <td>0.006</td>
 <td>0.004</td>
-<td>1954.0</td>
-<td>2046.0</td>
-<td>1.00</td>
+<td>1861.0</td>
+<td>1800.0</td>
+<td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">Alpha[B_Response]</td>
-<td>0.626</td>
-<td>0.296</td>
-<td>0.074</td>
-<td>1.186</td>
+<td>0.632</td>
+<td>0.300</td>
+<td>0.079</td>
+<td>1.217</td>
 <td>0.007</td>
 <td>0.005</td>
-<td>1895.0</td>
-<td>1883.0</td>
-<td>1.00</td>
+<td>1898.0</td>
+<td>1827.0</td>
+<td>1.0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">psi</td>
-<td>0.575</td>
+<td>0.576</td>
 <td>0.051</td>
-<td>0.470</td>
-<td>0.666</td>
+<td>0.486</td>
+<td>0.678</td>
 <td>0.001</td>
 <td>0.001</td>
-<td>2446.0</td>
-<td>2479.0</td>
-<td>1.01</td>
+<td>2292.0</td>
+<td>2250.0</td>
+<td>1.0</td>
 </tr>
 </tbody>
 </table>
 
+</div>
 </div>
 </div>
 </div>
@@ -1054,6 +1047,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1088,7 +1099,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -1364,12 +1379,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./occupancy.html" class="pagination-link  aria-label=" occupancy"="">
+      <a href="./occupancy.html" class="pagination-link" aria-label="Occupancy">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Occupancy</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./dist.html" class="pagination-link" aria-label="Distance sampling">
+      <a href="./distance.html" class="pagination-link" aria-label="Distance sampling">
         <span class="nav-page-text">Distance sampling</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>

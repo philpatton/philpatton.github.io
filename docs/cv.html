@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.4.554">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -213,7 +213,7 @@ ul.task-list li input[type="checkbox"] {
 <ol type="1">
 <li><strong>Patton, P.T.</strong> Some hierarchical and machine learning models for wildlife science. Invited talk at University of Natural Resources and Life Sciences, Vienna (BOKU). July 2023.</li>
 <li><strong>Patton, P.T.</strong> et al.&nbsp;The effect of fully automated photo–identification on mark-recapture estimates. Paper presented at the EURING Analytical Meeting. Montpellier, France. April 2023</li>
-<li><strong>Patton, P.T.</strong> Assessing populations of resident cetaceans. HIMB Scholarship Symposium. K=ane<code>ohe, Hawai</code>i. April 2022.</li>
+<li><strong>Patton, P.T.</strong> Assessing populations of resident cetaceans. HIMB Scholarship Symposium. Kāneʻohe, Hawaiʻi. April 2022.</li>
 <li><strong>Patton, P. T.</strong> &amp; Gardner, B. Misspecifying movement models in spatial capture recapture studies. Paper presented at The Ecological Society of America Conference. Portland, OR, USA. August 2017</li>
 <li><strong>Patton, P. T.</strong> et al.&nbsp;Modeling and estimating co–occurrence between generalist brood parasites and host communities. Paper presented at the EURING Analytical Meeting. Barcelona, Spain. June 2017</li>
 <li><strong>Patton, P. T.</strong> et al.&nbsp;Multi–species occupancy models that incorporate false positive and false negative sampling errors. Paper presented at The Wildlife Society Conference. Raleigh, NC, USA. October 2016</li>
@@ -243,8 +243,8 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>Referee: <em>Wildlife Society Bulletin</em>, <em>Marine Mammal Science</em></li>
 <li>Member: British Ecological Society, The Wildlife Society (biometrics working group), The Ecological Society of America (statistical ecology section)</li>
-<li>Representative to the Faculty, Marine Biology Graduate Program, University of Hawai`i at Mānoa</li>
-<li>Representative to the Graduate Student Organization, Marine Biology Graduate Program, University of Hawai`i at Mānoa</li>
+<li>Representative to the Faculty, Marine Biology Graduate Program, University of Hawaiʻi at Mānoa</li>
+<li>Representative to the Graduate Student Organization, Marine Biology Graduate Program, University of Hawaiʻi at Mānoa</li>
 </ul>
 <hr>
 
@@ -331,6 +331,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -365,7 +383,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');

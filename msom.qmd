@@ -13,7 +13,7 @@ execute:
   cache: true
 ---
 
-In this notebook, I explore fitting community occupancy models in PyMC. Community occupancy models are a multi-species extension of standard occupancy models. The benefit of these models is that they estimate occupancy and detection better that single species models by treating each species as a random effect. Further, through data augmentation, they can estimate the richness of the supercommunity, that is, the total number of species that use the study area during the surveys.
+In this notebook, I explore fitting community occupancy models in PyMC. Community occupancy models are a multi-species extension of standard occupancy models. The benefit of these models is that, by treating each species as a random effect, they can estimate occupancy and detection more precisely than single species models. Further, through data augmentation, they can estimate the richness of the supercommunity, that is, the total number of species that use the study area during the surveys.
 
 # US Breeding Bird Survey
 
