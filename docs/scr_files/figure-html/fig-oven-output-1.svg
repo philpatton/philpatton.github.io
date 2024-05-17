@@ -35,7 +35,7 @@
 <text text-anchor="middle" x="221" y="-176.93" font-family="Times,serif" font-size="14.00">Deterministic</text>
 </g>
 <!-- sy&#45;&gt;p -->
-<g id="edge2" class="edge">
+<g id="edge1" class="edge">
 <title>sy&#45;&gt;p</title>
 <path fill="none" stroke="black" d="M184.48,-282.04C190.68,-268.02 197.73,-252.07 203.98,-237.95"/>
 <polygon fill="black" stroke="black" points="207.12,-239.51 207.96,-228.95 200.72,-236.68 207.12,-239.51"/>
@@ -49,13 +49,41 @@
 <text text-anchor="middle" x="61" y="-298.74" font-family="Times,serif" font-size="14.00">Uniform</text>
 </g>
 <!-- sx&#45;&gt;p -->
-<g id="edge1" class="edge">
+<g id="edge3" class="edge">
 <title>sx&#45;&gt;p</title>
 <path fill="none" stroke="black" d="M81.55,-283.91C90.3,-271.09 101.41,-257.28 114,-247.13 128.95,-235.09 147.43,-225.45 164.79,-218.07"/>
 <polygon fill="black" stroke="black" points="166.06,-221.34 174.02,-214.34 163.44,-214.85 166.06,-221.34"/>
 </g>
-<!-- psi -->
+<!-- sigma -->
 <g id="node3" class="node">
+<title>sigma</title>
+<ellipse fill="none" stroke="black" cx="275" cy="-320.29" rx="44.72" ry="40.66"/>
+<text text-anchor="middle" x="275" y="-331.74" font-family="Times,serif" font-size="14.00">sigma</text>
+<text text-anchor="middle" x="275" y="-315.24" font-family="Times,serif" font-size="14.00">~</text>
+<text text-anchor="middle" x="275" y="-298.74" font-family="Times,serif" font-size="14.00">Uniform</text>
+</g>
+<!-- sigma&#45;&gt;p -->
+<g id="edge2" class="edge">
+<title>sigma&#45;&gt;p</title>
+<path fill="none" stroke="black" d="M258.36,-282.37C252.04,-268.34 244.82,-252.33 238.43,-238.15"/>
+<polygon fill="black" stroke="black" points="241.65,-236.78 234.35,-229.1 235.27,-239.65 241.65,-236.78"/>
+</g>
+<!-- g0 -->
+<g id="node4" class="node">
+<title>g0</title>
+<ellipse fill="none" stroke="black" cx="382" cy="-320.29" rx="44.72" ry="40.66"/>
+<text text-anchor="middle" x="382" y="-331.74" font-family="Times,serif" font-size="14.00">g0</text>
+<text text-anchor="middle" x="382" y="-315.24" font-family="Times,serif" font-size="14.00">~</text>
+<text text-anchor="middle" x="382" y="-298.74" font-family="Times,serif" font-size="14.00">Uniform</text>
+</g>
+<!-- g0&#45;&gt;p -->
+<g id="edge4" class="edge">
+<title>g0&#45;&gt;p</title>
+<path fill="none" stroke="black" d="M362.89,-283.36C354.19,-270.15 342.74,-256.22 329,-247.13 316.05,-238.57 309.52,-244.63 295,-239.13 288.89,-236.82 282.64,-234.1 276.5,-231.19"/>
+<polygon fill="black" stroke="black" points="278.18,-228.12 267.67,-226.82 275.08,-234.39 278.18,-228.12"/>
+</g>
+<!-- psi -->
+<g id="node5" class="node">
 <title>psi</title>
 <ellipse fill="none" stroke="black" cx="349" cy="-198.48" rx="44.72" ry="40.66"/>
 <text text-anchor="middle" x="349" y="-209.93" font-family="Times,serif" font-size="14.00">psi</text>
@@ -75,34 +103,6 @@
 <title>psi&#45;&gt;y</title>
 <path fill="none" stroke="black" d="M317.69,-169.27C302.17,-155.28 283.14,-138.14 266.09,-122.78"/>
 <polygon fill="black" stroke="black" points="268.79,-120.51 259.02,-116.41 264.11,-125.71 268.79,-120.51"/>
-</g>
-<!-- sigma -->
-<g id="node4" class="node">
-<title>sigma</title>
-<ellipse fill="none" stroke="black" cx="275" cy="-320.29" rx="44.72" ry="40.66"/>
-<text text-anchor="middle" x="275" y="-331.74" font-family="Times,serif" font-size="14.00">sigma</text>
-<text text-anchor="middle" x="275" y="-315.24" font-family="Times,serif" font-size="14.00">~</text>
-<text text-anchor="middle" x="275" y="-298.74" font-family="Times,serif" font-size="14.00">Uniform</text>
-</g>
-<!-- sigma&#45;&gt;p -->
-<g id="edge3" class="edge">
-<title>sigma&#45;&gt;p</title>
-<path fill="none" stroke="black" d="M258.36,-282.37C252.04,-268.34 244.82,-252.33 238.43,-238.15"/>
-<polygon fill="black" stroke="black" points="241.65,-236.78 234.35,-229.1 235.27,-239.65 241.65,-236.78"/>
-</g>
-<!-- g0 -->
-<g id="node5" class="node">
-<title>g0</title>
-<ellipse fill="none" stroke="black" cx="382" cy="-320.29" rx="44.72" ry="40.66"/>
-<text text-anchor="middle" x="382" y="-331.74" font-family="Times,serif" font-size="14.00">g0</text>
-<text text-anchor="middle" x="382" y="-315.24" font-family="Times,serif" font-size="14.00">~</text>
-<text text-anchor="middle" x="382" y="-298.74" font-family="Times,serif" font-size="14.00">Uniform</text>
-</g>
-<!-- g0&#45;&gt;p -->
-<g id="edge4" class="edge">
-<title>g0&#45;&gt;p</title>
-<path fill="none" stroke="black" d="M362.89,-283.36C354.19,-270.15 342.74,-256.22 329,-247.13 316.05,-238.57 309.52,-244.63 295,-239.13 288.89,-236.82 282.64,-234.1 276.5,-231.19"/>
-<polygon fill="black" stroke="black" points="278.18,-228.12 267.67,-226.82 275.08,-234.39 278.18,-228.12"/>
 </g>
 <!-- p&#45;&gt;y -->
 <g id="edge5" class="edge">
