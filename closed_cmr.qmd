@@ -32,17 +32,25 @@ This produces a capture history for each individual, which allows us to estimate
 
 ```{python}
 # libraries 
+from pymc.distributions.dist_math import binomln, logpow
+
+import vapeplot
+import seaborn as sns
 import numpy as np
 import pandas as pd
 import pymc as pm
 import arviz as az
 import matplotlib.pyplot as plt 
-from pymc.distributions.dist_math import binomln, logpow
 
 # plotting parameters
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['axes.spines.left'] = False
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['axes.spines.bottom'] = False
+sns.set_palette("tab10")
 
 # hyperparameters 
 SEED = 808
@@ -126,7 +134,7 @@ coords = {'species': ['pygmy', 'red_cheeked']}
 with pm.Model(coords=coords) as M0:
 
     # priors for the capture and inclusion probabilities
-    psi = pm.Uniform('psi', 0, 1, dims='species')
+    psi = pm.Beta('psi', 0.001, 1, dims='species')
     p = pm.Uniform('p', 0, 1, dims='species')
 
     # likelihood for the summarized data
@@ -280,7 +288,7 @@ coords = {'alpha_coeffs': ['Intercept', 'B_Response']}
 with pm.Model(coords=coords) as mb:
 
     # priors for the capture and inclusion probabilities
-    psi = pm.Uniform('psi', 0, 1)
+    psi = pm.Beta('psi', 0.001, 1)
     Alpha = pm.Normal('Alpha', 0, 2, dims='alpha_coeffs')
 
     nu = pm.math.dot(X, Alpha)

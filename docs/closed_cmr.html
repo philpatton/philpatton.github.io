@@ -128,6 +128,7 @@ div.csl-indent {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -394,26 +395,34 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <p>This produces a capture history for each individual, which allows us to estimate the probability of capture and the number of individuals in the population <span class="math inline">\(N\)</span>.</p>
 <section id="model-m_0" class="level1">
 <h1>Model <span class="math inline">\(M_0\)</span></h1>
-<div id="ba1d63a1" class="cell" data-execution_count="1">
+<div id="543c7d61" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># libraries </span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt </span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymc.distributions.dist_math <span class="im">import</span> binomln, logpow</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting parameters</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">'fivethirtyeight'</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># hyperparameters </span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> <span class="dv">808</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>RNG <span class="op">=</span> np.random.default_rng(SEED)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pymc.distributions.dist_math <span class="im">import</span> binomln, logpow</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> vapeplot</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting parameters</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">'fivethirtyeight'</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.left'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.right'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.top'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.bottom'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">"tab10"</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># hyperparameters </span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> <span class="dv">808</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>RNG <span class="op">=</span> np.random.default_rng(SEED)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I explore fitting the simplest closed capture-recapture model, Model <span class="math inline">\(M_0,\)</span> through parameter-expanded data-augmentation <span class="citation" data-cites="royle2008">(PX-DA, <a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008</a>)</span>. The idea with PX-DA is to augment the capture histories with <span class="math inline">\(M-n\)</span> all zero capture-histories, where <span class="math inline">\(M\)</span> is a hyperparameter that should be much greater than the true population size <span class="math inline">\(N,\)</span> and <span class="math inline">\(n\)</span> is the total number of individuals that were captured during the study. This allows us to treat the data as a zero-inflated binomial distribution (see below).</p>
-<div id="36c9846d" class="cell" data-execution_count="2">
+<div id="ba8b8453" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> augment_history(history, M):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Augment a capture history with all-zero histories.'''</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -429,7 +438,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> augmented </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To demonstrate this approach, I use the salamander dataset from <span class="citation" data-cites="bailey2004">Bailey, Simons, and Pollock (<a href="#ref-bailey2004" role="doc-biblioref">2004</a>)</span>, as demonstrated in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 24. These data were collected on two salamander species, the red-cheeked salamander (<em>Plethodon jordani</em>) and the pygmy salamander (<em>Desmognathus wrighti</em>), in Great Smoky Mountains National Park. The salamanders were counted in 15m by 15m square plots. In this case, we augment the history by setting <span class="math inline">\(M=1500\)</span>. There were <span class="math inline">\(n=92\)</span> individual red-cheeked and <span class="math inline">\(n=132\)</span> pygmy salamanders captured during the course of the survey.</p>
-<div id="3327d688" class="cell" data-execution_count="3">
+<div id="7dd8fa3c" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_histories():</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Read, augment, and recombine the salamander histories.'''</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -480,7 +489,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model(coords<span class="op">=</span>coords) <span class="im">as</span> M0:</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for the capture and inclusion probabilities</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    psi <span class="op">=</span> pm.Uniform(<span class="st">'psi'</span>, <span class="dv">0</span>, <span class="dv">1</span>, dims<span class="op">=</span><span class="st">'species'</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    psi <span class="op">=</span> pm.Beta(<span class="st">'psi'</span>, <span class="fl">0.001</span>, <span class="dv">1</span>, dims<span class="op">=</span><span class="st">'species'</span>)</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.Uniform(<span class="st">'p'</span>, <span class="dv">0</span>, <span class="dv">1</span>, dims<span class="op">=</span><span class="st">'species'</span>)</span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># likelihood for the summarized data</span></span>
@@ -506,7 +515,7 @@ Figure&nbsp;1: Visual representation of model <span class="math inline">\(M_0.\)
 </div>
 </div>
 </div>
-<div id="958c45a7" class="cell" data-execution_count="5">
+<div id="c8459d0b" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> M0:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    M0_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -514,33 +523,18 @@ Figure&nbsp;1: Visual representation of model <span class="math inline">\(M_0.\)
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [psi, p]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 8 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 18 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-
-<style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    progress:not([value]), progress:not([value])::-webkit-progress-bar {
-        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
-</style>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"63c93834a18f46d9a0a232a40088948b","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
 </div>
 <div class="cell-output cell-output-display">
-
-    <div>
-      <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:07&lt;00:00 Sampling 4 chains, 0 divergences]
-    </div>
-    
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
 </div>
 </div>
 <div id="cell-fig-trace" class="cell" data-execution_count="6">
@@ -560,7 +554,7 @@ Figure&nbsp;2: Traceplots for the salamander <span class="math inline">\(M_0\)</
 </div>
 <p>For faster sampling, it’s better to separate the two species into two separate models. On my machine, the individual species models finish sampling in 2-3 seconds, compared to 15-20 seconds for the two species model. That said, the two species model is somewhat more convenient.</p>
 <p>Of course, the trace plots lack our true parameter of interest: the population size <span class="math inline">\(N.\)</span> We can simulate the posterior of <span class="math inline">\(N\)</span> as a <em>derived quantity</em>, using <span class="math inline">\(M\)</span> and the posterior distribution of <span class="math inline">\(\psi\)</span>.</p>
-<div id="3367c4ec" class="cell" data-execution_count="7">
+<div id="021cd4fd" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># az.extract flattens the chains</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> az.extract(M0_idata)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>psi_samps <span class="op">=</span> posterior.psi.values</span>
@@ -631,7 +625,7 @@ Figure&nbsp;3: Posterior distributions of <span class="math inline">\(N\)</span>
 <div id="fig-posterior" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-posterior-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="closed_cmr_files/figure-html/fig-posterior-output-1.png" width="438" height="408" class="figure-img">
+<img src="closed_cmr_files/figure-html/fig-posterior-output-1.png" width="420" height="408" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-posterior-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;4: Posterior draws of <span class="math inline">\(N\)</span> and <span class="math inline">\(p\)</span> for both species of salamander.
@@ -645,7 +639,7 @@ Figure&nbsp;4: Posterior draws of <span class="math inline">\(N\)</span> and <sp
 <h1>Model <span class="math inline">\(M_b\)</span></h1>
 <p>Next, I fit model <span class="math inline">\(M_b,\)</span> which accounts for the possibility that the capture probability changes after the animal is first caught. This could be from trap happiness, whereby animals are more likely to be trapped after their first time. Conversely, this could be from subsequent trap avoidance.</p>
 <p>Mirroring <span class="citation" data-cites="royle2008">(<a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008, chap. 5</a>)</span>, I fit this model to the <em>Microtus</em> dataset reported in <span class="citation" data-cites="williams2002">(<a href="#ref-williams2002" role="doc-biblioref">Williams, Nichols, and Conroy 2002, 525</a>)</span>. This version of the <a href="https://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/chapters.htm">dataset</a> includes encounter histories of <span class="math inline">\(n=56\)</span> adult males that were captured on <span class="math inline">\(T=5\)</span> consecutive days.</p>
-<div id="5d85060b" class="cell" data-execution_count="10">
+<div id="7223e769" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the microtus data</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>microtus <span class="op">=</span> np.loadtxt(<span class="st">'microtus.data.txt'</span>).astype(<span class="bu">int</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -689,7 +683,7 @@ Figure&nbsp;4: Posterior draws of <span class="math inline">\(N\)</span> and <sp
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model(coords<span class="op">=</span>coords) <span class="im">as</span> mb:</span>
 <span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for the capture and inclusion probabilities</span></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    psi <span class="op">=</span> pm.Uniform(<span class="st">'psi'</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    psi <span class="op">=</span> pm.Beta(<span class="st">'psi'</span>, <span class="fl">0.001</span>, <span class="dv">1</span>)</span>
 <span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    Alpha <span class="op">=</span> pm.Normal(<span class="st">'Alpha'</span>, <span class="dv">0</span>, <span class="dv">2</span>, dims<span class="op">=</span><span class="st">'alpha_coeffs'</span>)</span>
 <span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    nu <span class="op">=</span> pm.math.dot(X, Alpha)</span>
@@ -719,7 +713,7 @@ Figure&nbsp;5: Visual representation of model <span class="math inline">\(M_b.\)
 </div>
 </div>
 </div>
-<div id="d842c749" class="cell" data-execution_count="12">
+<div id="f491e4e2" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mb:</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    mb_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -727,36 +721,21 @@ Figure&nbsp;5: Visual representation of model <span class="math inline">\(M_b.\)
 Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
 NUTS: [psi, Alpha]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 1 seconds.</code></pre>
+Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 3 seconds.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-
-<style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    progress:not([value]), progress:not([value])::-webkit-progress-bar {
-        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
-</style>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"472bef98dfb04f27a27bb30d09b3d643","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
 </div>
 <div class="cell-output cell-output-display">
-
-    <div>
-      <progress value="8000" class="" max="8000" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.00% [8000/8000 00:01&lt;00:00 Sampling 4 chains, 0 divergences]
-    </div>
-    
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
 </div>
 </div>
-<div id="f0e1825e" class="cell" data-execution_count="13">
+<div id="ba832a48" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>az.summary(mb_idata, var_names<span class="op">=</span>[<span class="st">'Alpha'</span>, <span class="st">'psi'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <div>
@@ -781,38 +760,38 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">Alpha[Intercept]</td>
-<td>0.103</td>
-<td>0.234</td>
-<td>-0.340</td>
-<td>0.530</td>
-<td>0.005</td>
+<td>0.119</td>
+<td>0.249</td>
+<td>-0.347</td>
+<td>0.579</td>
+<td>0.006</td>
 <td>0.004</td>
-<td>2056.0</td>
-<td>2261.0</td>
+<td>2001.0</td>
+<td>1977.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">Alpha[B_Response]</td>
-<td>0.624</td>
-<td>0.276</td>
-<td>0.118</td>
-<td>1.136</td>
-<td>0.006</td>
+<td>0.606</td>
+<td>0.290</td>
+<td>0.023</td>
+<td>1.103</td>
+<td>0.007</td>
 <td>0.005</td>
-<td>1979.0</td>
-<td>1999.0</td>
+<td>1941.0</td>
+<td>1951.0</td>
 <td>1.0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">psi</td>
-<td>0.576</td>
-<td>0.051</td>
-<td>0.478</td>
-<td>0.666</td>
+<td>0.570</td>
+<td>0.053</td>
+<td>0.464</td>
+<td>0.663</td>
 <td>0.001</td>
 <td>0.001</td>
-<td>2060.0</td>
-<td>2181.0</td>
+<td>2453.0</td>
+<td>2129.0</td>
 <td>1.0</td>
 </tr>
 </tbody>
@@ -828,7 +807,7 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <div id="fig-forest" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-forest-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="closed_cmr_files/figure-html/fig-forest-output-1.png" width="700" height="222" class="figure-img">
+<img src="closed_cmr_files/figure-html/fig-forest-output-1.png" width="681" height="222" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-forest-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6: Forest plot showing the catchability parameters from model <span class="math inline">\(M_b.\)</span>
@@ -968,6 +947,9 @@ Royle, J Andrew, and Robert M Dorazio. 2008. <em>Hierarchical Modeling and Infer
 Williams, Byron K, James D Nichols, and Michael J Conroy. 2002. <em>Analysis and Management of Animal Populations</em>. Academic press.
 </div>
 </div></section></div></main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{"state":{"472bef98dfb04f27a27bb30d09b3d643":{"model_module":"@jupyter-widgets/output","model_module_version":"1.0.0","model_name":"OutputModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/output","_model_module_version":"1.0.0","_model_name":"OutputModel","_view_count":null,"_view_module":"@jupyter-widgets/output","_view_module_version":"1.0.0","_view_name":"OutputView","layout":"IPY_MODEL_ae05c24f3f5d45eda34991e92fce09dd","msg_id":"","outputs":[{"data":{"text/html":"<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Sampling 4 chains, 0 divergences <span style=\"color: #008000; text-decoration-color: #008000\">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span style=\"color: #800080; text-decoration-color: #800080\">100%</span> <span style=\"color: #008080; text-decoration-color: #008080\">0:00:00</span> / <span style=\"color: #808000; text-decoration-color: #808000\">0:00:02</span>\n</pre>\n","text/plain":"Sampling 4 chains, 0 divergences \u001b[32m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[35m100%\u001b[0m \u001b[36m0:00:00\u001b[0m / \u001b[33m0:00:02\u001b[0m\n"},"metadata":{},"output_type":"display_data"}],"tabbable":null,"tooltip":null}},"63c93834a18f46d9a0a232a40088948b":{"model_module":"@jupyter-widgets/output","model_module_version":"1.0.0","model_name":"OutputModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/output","_model_module_version":"1.0.0","_model_name":"OutputModel","_view_count":null,"_view_module":"@jupyter-widgets/output","_view_module_version":"1.0.0","_view_name":"OutputView","layout":"IPY_MODEL_9e9d1b877730469ca81b655d30c1d0ae","msg_id":"","outputs":[{"data":{"text/html":"<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">Sampling 4 chains, 0 divergences <span style=\"color: #008000; text-decoration-color: #008000\">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span style=\"color: #800080; text-decoration-color: #800080\">100%</span> <span style=\"color: #008080; text-decoration-color: #008080\">0:00:00</span> / <span style=\"color: #808000; text-decoration-color: #808000\">0:00:17</span>\n</pre>\n","text/plain":"Sampling 4 chains, 0 divergences \u001b[32m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[35m100%\u001b[0m \u001b[36m0:00:00\u001b[0m / \u001b[33m0:00:17\u001b[0m\n"},"metadata":{},"output_type":"display_data"}],"tabbable":null,"tooltip":null}},"9e9d1b877730469ca81b655d30c1d0ae":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"ae05c24f3f5d45eda34991e92fce09dd":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}}},"version_major":2,"version_minor":0}
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

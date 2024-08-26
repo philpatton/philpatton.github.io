@@ -21,6 +21,7 @@ As a motivating example, I use the [ovenbird mist netting dataset](https://www.o
 #| fig-cap: 'Locations of the mist nets in the ovenbird dataset [@efford2004]'
 #| label: fig-nets
 
+import seaborn as sns
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -39,6 +40,11 @@ M = 200
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['axes.spines.left'] = False
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['axes.spines.bottom'] = False
+sns.set_palette("tab10")
 
 def invlogit(x):
     '''Inverse logit function'''
@@ -85,8 +91,13 @@ y_max = trap_y.max() + BUFFER
 x_min = trap_x.min() - BUFFER
 y_min = trap_y.min() - BUFFER
 
+# scale for plotting
+scale = (y_max - y_min) / (x_max - x_min)
+
 # plot the trap locations
-fig, ax = plt.subplots(figsize=(4, 4))
+plot_width = 2
+plot_height = plot_width * scale
+fig, ax = plt.subplots(figsize=(plot_width, plot_height))
 
 # plot the traps
 ax.scatter(trap_x, trap_y, marker='x', s=40, linewidth=1.5, color='C1')
@@ -277,7 +288,7 @@ with pm.Model() as oven:
     sigma = pm.Uniform('sigma', 0, U_SIGMA)
 
     # inclusion probability 
-    psi = pm.Uniform('psi', 0, 1)
+    psi = pm.Beta('psi', 0.001, 1)
 
     # compute the capture probability 
     distance = euclid_dist(X, S, 'pm')
@@ -365,22 +376,46 @@ ax.hist(D_samples, edgecolor='white', bins=13)
 ax.axvline(D_mle, linestyle='--',color='C1')
 ax.set_xlabel('Ovenbirds per hectare')
 ax.set_ylabel('Number of samples')
-ax.text(1.4, 800, f'$\hat{{D}}$={D_samples.mean():.2f}', va='bottom', ha='left')
+ax.text(1.4, 800, rf'$\hat{{D}}$={D_samples.mean():.2f}', va='bottom', ha='left')
 plt.show()
 ```
 
-I also plot the estimated activity centers for every detected individual, as well as the posterior distribution for two of the detected individuals. 
+Sometimes, the location of the activity centers is of interest. Below, I plot the posterior median for the activity centers for the detected individuals,
 
 ```{python}
-#| fig-cap: 'Estimated activity centers for the detected individuals, and posterior distributions for two of them.'
+#| fig-cap: 'Estimated activity centers for the detected individuals'
 #| label: fig-activity
 
 sx_samps = az.extract(oven_idata).sx
 sy_samps = az.extract(oven_idata).sy
 
-sx_mean = sx_samps[:detected_count].mean(axis=1)
-sy_mean = sy_samps[:detected_count].mean(axis=1)
+sx_mean = np.median(sx_samps[:detected_count], axis=1)
+sy_mean = np.median(sy_samps[:detected_count], axis=1)
 
+# plot the trap locations
+plot_width = 3 
+plot_height = plot_width * scale
+fig, ax = plt.subplots(figsize=(plot_width, plot_height))
+
+# plot the traps
+ax.scatter(trap_x, trap_y, marker='x', s=40, linewidth=1.5, color='C1')
+ax.set_ylim((y_min, y_max))
+ax.set_xlim((x_min, x_max))
+
+# plot the mean activity centers
+ax.scatter(sx_mean, sy_mean, marker='o', s=4, color='C0')
+
+# aesthetics 
+ax.set_title('Estimated activity centers')
+ax.grid(False)
+
+```
+
+We can also look at the uncertainty around those estimates. Below, I plot the posterior distribution of the activity centers for two individuals.
+
+```{python}
+#| fig-cap: 'Posterior distributions for two activity centers.'
+#| label: fig-activity-post
 one = 49
 sx1 = sx_samps[one]
 sy1 = sy_samps[one]
@@ -389,42 +424,28 @@ two = 2
 sx2 = sx_samps[two]
 sy2 = sy_samps[two]
 
-# plot the trap locations
-fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True, sharey=True, figsize=(5, 10),
-                               tight_layout=True)
+fig, ax = plt.subplots(figsize=(plot_width, plot_height))
 
 # plot the traps
-ax0.scatter(trap_x, trap_y, marker='x', s=40, linewidth=1.5, color='C1')
-ax0.set_ylim((y_min, y_max))
-ax0.set_xlim((x_min, x_max))
-
-# plot the mean activity centers
-ax0.scatter(sx_mean, sy_mean, marker='o', s=4, color='black')
-
-# aesthetics 
-ax0.set_title('Estimated activity centers')
-ax0.grid(False)
-
-# plot the traps
-ax1.scatter(trap_x, trap_y, marker='x', s=40, linewidth=1.5, color='C1')
-ax1.set_ylim((y_min, y_max))
-ax1.set_xlim((x_min, x_max))
+ax.scatter(trap_x, trap_y, marker='x', s=40, linewidth=1.5, color='C1')
+ax.set_ylim((y_min, y_max))
+ax.set_xlim((x_min, x_max))
 
 # plot the distributions of the activity centers
-ax1.scatter(sx1, sy1, marker='o', s=1, color='gray', alpha=0.2)
-ax1.scatter(sx2, sy2, marker='o', s=1, color='gray', alpha=0.2)
+ax.scatter(sx1, sy1, marker='o', s=1, color='C0', alpha=0.2)
+ax.scatter(sx2, sy2, marker='o', s=1, color='C0', alpha=0.2)
 
 # plot the mean
-ax1.scatter(sx1.mean(), sy1.mean(), marker='o', s=20, color='black')
-ax1.scatter(sx2.mean(), sy2.mean(), marker='o', s=20, color='black')
+ax.scatter(sx1.mean(), sy1.mean(), marker='o', s=20, color='C0')
+ax.scatter(sx2.mean(), sy2.mean(), marker='o', s=20, color='C0')
 
 # add the label
-ax1.text(sx1.mean(), sy1.mean() + 5, f'{one}', ha='center', va='bottom')
-ax1.text(sx2.mean(), sy2.mean() + 5, f'{two}', ha='center', va='bottom')
+ax.text(sx1.mean(), sy1.mean() + 5, f'{one}', ha='center', va='bottom')
+ax.text(sx2.mean(), sy2.mean() + 5, f'{two}', ha='center', va='bottom')
 
 # aesthetics 
-ax1.set_title('Posterior of two activity centers')
-ax1.grid(False)
+ax.set_title('Posterior of two activity centers')
+ax.grid(False)
 plt.show()
 ```
 

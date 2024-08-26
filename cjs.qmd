@@ -30,18 +30,25 @@ The goal of the CJS model is to estimate survival, accounting for capture probab
 : An example of the M-array from a four year capture-recapture survey. The number recaptured, $m_{i,j}$ refers to the number of individuals released at $i$ who were first recaptured at time $j$.
 
 ```{python}
+
+from pymc.distributions.dist_math import factln
+from scipy.linalg import circulant
+
+import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 import arviz as az
 import pymc as pm 
 import pytensor.tensor as pt
 
-from pymc.distributions.dist_math import factln
-from scipy.linalg import circulant
-
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['axes.spines.left'] = False
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['axes.spines.bottom'] = False
+sns.set_palette("tab10")
 
 def create_recapture_array(history):
     """Create the recapture array from a capture history."""

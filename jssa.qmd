@@ -20,18 +20,24 @@ In this notebook, I explore the Jolly-Seber-Schwarz-Arnason (JSSA) model for est
 As a demonstration of the JSSA framework, I use the classic European dipper data of @lebreton1992. I first convert the dataset into the $M$-array, since the data is in capture history format.
 
 ```{python}
+from pymc.distributions.dist_math import factln
+from scipy.linalg import circulant
+
+import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 import arviz as az
 import pymc as pm 
 import pytensor.tensor as pt
 
-from pymc.distributions.dist_math import factln
-from scipy.linalg import circulant
-
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['axes.spines.left'] = False
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['axes.spines.bottom'] = False
+sns.set_palette("tab10")
 
 def create_recapture_array(history):
     """Create the recapture array from a capture history."""

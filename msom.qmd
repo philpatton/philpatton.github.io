@@ -23,6 +23,7 @@ As a motivating example, I use the breeding bird survey (BBS) data used by @dora
 #| fig-cap: Number of detections for each species at each site along this BBS route.
 #| label: fig-bbs
 
+import seaborn as sns
 import numpy as np
 import pandas as pd
 import pymc as pm
@@ -37,6 +38,11 @@ RNG = np.random.default_rng(SEED)
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['axes.spines.left'] = False
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['axes.spines.bottom'] = False
+sns.set_palette("tab10")
 
 def invlogit(x):
     return 1 / (1 + np.exp(-x))
@@ -181,7 +187,7 @@ def logp(x, psi, n, p, omega):
 with pm.Model(coords=coords) as unknown:
 
     # priors for inclusion
-    omega = pm.Uniform('omega', 0, 1)
+    omega = pm.Beta('omega', 0.001, 1)
     
     # priors for community-level means for detection and occurrence
     mu = pm.Normal('mu', 0, 2, dims='process')
@@ -220,6 +226,12 @@ pm.model_to_graphviz(unknown)
 ```{python}
 with unknown:
     unknown_idata = pm.sample()
+```
+
+We see some warnings about the effective sample size and the $\hat{R}$ statistic. Some of these warnings may just relate to the individual random effects.
+
+```{python}
+az.summary(unknown_idata, var_names=['omega', 'cov', 'mu'])
 ```
 
 ```{python}

@@ -20,6 +20,8 @@ Following @hooten2019, Chapter 24 and @royle2008, Chapter 7, I use the impala da
 ```{python}
 #| fig-cap: Histogram of the number of detected impalas at varying distances.
 #| label: fig-hist
+
+import seaborn as sns
 import pymc as pm
 import pytensor.tensor as pt
 import matplotlib.pyplot as plt
@@ -30,6 +32,11 @@ import numpy as np
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['axes.spines.left'] = False
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['axes.spines.bottom'] = False
+sns.set_palette("tab10")
 
 # hyper parameters
 M = 500
@@ -84,7 +91,7 @@ The issue is that $x$ is unobserved for the undetected individuals. To work arou
 
 with pm.Model() as distance:
     
-    psi = pm.Uniform('psi', 0, 1)
+    psi = pm.Beta('psi', 0.001, 1)
     sigma = pm.Uniform('sigma', 0, U_SIGMA)
     
     x_unobserved = pm.Uniform('x_unobserved', 0, U_X, shape=unobserved_count)
@@ -145,15 +152,15 @@ ax1.hist(sigma_samples, edgecolor='white', bins=30)
 # ax0.set_xlim((100, M))
 
 # axes labels 
-ax0.set_xlabel('Abundance $N$')
+ax0.set_xlabel(r'Abundance $N$')
 ax0.set_ylabel('Number of samples')
-ax1.set_xlabel('Detection range $\sigma$')
+ax1.set_xlabel(r'Detection range $\sigma$')
 
 # add the point estimates
 N_hat = N_samples.mean()
 sigma_hat = sigma_samples.mean()
-ax0.text(200, 350, f'$\hat{{N}}$={N_hat:.1f}', ha='left', va='center')
-ax1.text(205, 350, f'$\hat{{\sigma}}$={sigma_hat:.1f}', ha='left', va='center')
+ax0.text(200, 350, rf'$\hat{{N}}$={N_hat:.1f}', ha='left', va='center')
+ax1.text(205, 350, rf'$\hat{{\sigma}}$={sigma_hat:.1f}', ha='left', va='center')
 
 # the results from royle and dorazio (2008) for comparison
 N_hat_royle = 179.9
