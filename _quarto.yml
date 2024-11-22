@@ -15,13 +15,13 @@ website:
       - href: notebooks.qmd
         text: Notebooks
 
-    tools:
-      - icon: twitter
-        href: https://twitter.com/philip_patton_
-      - icon: github
+    right:
+      - text: "{{< fa brands github>}}"
         href: https://github.com/philpatton
-      - icon: book
+      - text: "{{< fa brands google-scholar>}}"
         href: https://scholar.google.com/citations?user=4TUtf04AAAAJ&hl=en&oi=ao
+      - text: "{{< fa brands bluesky>}}"
+        href: https://bsky.app/profile/ptpatton.bsky.social
 
   sidebar:
     - title: "Notebooks"
