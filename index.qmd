@@ -4,9 +4,8 @@ about:
   template: solana
   image: biopic.png
   links:
-    - icon: twitter
-      text: twitter
-      href: https://twitter.com/philip_patton_
+    - icon: "{{< fa brands bluesky}}"
+      href: https://bsky.app/profile/ptpatton.bsky.social
     - icon: github
       text: Github
       href: https://github.com/philpatton
