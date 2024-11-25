@@ -4,16 +4,12 @@ about:
   template: solana
   image: biopic.png
   links:
-    - icon: twitter
-      text: twitter
-      href: https://twitter.com/philip_patton_
-    - icon: github
-      text: Github
+    - text: "{{< fa brands github>}} GitHub"
       href: https://github.com/philpatton
-    - icon: book
-      text: Google Scholar
+    - text: "{{< fa brands google-scholar>}} Google Scholar"
       href: https://scholar.google.com/citations?user=4TUtf04AAAAJ&hl=en&oi=ao
-
+    - text: "{{< fa brands bluesky>}} Bluesky"
+      href: https://bsky.app/profile/ptpatton.bsky.social
 ---
 
 Phil is a PhD candidate in the [Marine Mammal Research Program](https://www.mmrphawaii.org) at the [Hawaiʻi Institute of Marine Biology](https://www.himb.hawaii.edu), and a [NOAA QUEST Fellow](https://www.fisheries.noaa.gov/content/quantitative-ecology-and-socioeconomics-training-quest-program) with the [Cetacean Research Program](https://www.fisheries.noaa.gov/pacific-islands/science-data/whale-and-dolphin-surveys-pacific-islands) at the Pacific Islands Fisheries Science Center.
