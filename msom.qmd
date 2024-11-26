@@ -6,11 +6,11 @@ author:
   affiliation:
     - Marine Mammal Research Program
     - Hawaiʻi Institute of Marine Biology
-date: 'February 15, 2024'
+date: today
 bibliography: refs.bib
-jupyter: pymc
 execute:
   cache: true
+jupyter: pymc
 ---
 
 In this notebook, I explore fitting community occupancy models in PyMC. Community occupancy models are a multi-species extension of standard occupancy models. The benefit of these models is that, by treating each species as a random effect, they can estimate occupancy and detection more precisely than single species models. Further, through data augmentation, they can estimate the richness of the supercommunity, that is, the total number of species that use the study area during the surveys.
@@ -35,6 +35,7 @@ from matplotlib.patches import Patch
 SEED = 808
 RNG = np.random.default_rng(SEED)
 
+plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
@@ -83,6 +84,8 @@ First, I fit the the known $N$ version of the model. The goal of this version is
 
 This notebook makes extensive use of the `coords` feature in PyMC. `Coords` makes it easier to incorporate the species-level effects via the multivariate normal. I use a $\text{Normal}(0, 2)$ prior for both $\mu$ parameters, and a LKJ Cholesky covariance prior for $\mathbf{\Sigma}.$
 
+Throughout the notebook, I use the [nutpie](https://github.com/pymc-devs/nutpie) sampler within PyMC. Nutpie is a NUTS sampler written in Rust, and is often [faster than PyMC](https://discourse.pymc.io/t/new-sampler-library-nutpie/9765). 
+
 ```{python}
 #| fig-cap: Visual representation of the known $N$ version of the community occupancy model.
 #| label: fig-known
@@ -121,7 +124,7 @@ pm.model_to_graphviz(known)
 
 ```{python}
 with known:
-    known_idata = pm.sample()
+    known_idata = pm.sample(nuts_sampler='nutpie')
 ```
 
 ```{python}
@@ -225,7 +228,7 @@ pm.model_to_graphviz(unknown)
 
 ```{python}
 with unknown:
-    unknown_idata = pm.sample()
+    unknown_idata = pm.sample(nuts_sampler='nutpie')
 ```
 
 We see some warnings about the effective sample size and the $\hat{R}$ statistic. Some of these warnings may just relate to the individual random effects.
@@ -277,3 +280,10 @@ ax.axvline(N_hat_royle, linestyle='--', color='C1')
 ax.axvline(N_samps.mean(), linestyle='--', color='C2')
 plt.show()
 ```
+
+```{python}
+%load_ext watermark
+
+%watermark -n -u -v -iv -w  
+```
+

@@ -6,7 +6,7 @@ author:
   affiliation:
     - Marine Mammal Research Program
     - Hawaiʻi Institute of Marine Biology
-date: 'January 18, 2023'
+date: today
 bibliography: refs.bib
 jupyter: pymc
 ---
@@ -29,7 +29,6 @@ which assumes a constant occurrence probability across sites and a constant dete
 To start, I demonstrate how to simulate this zero-inflated model using numpy. Throughout this section, I use hyperparameter values similar to those of @kery2011.
 
 ```{python}
-
 # relevant libraries
 import numpy as np
 import pymc as pm
@@ -38,6 +37,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # plotting styles
+plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
@@ -261,6 +261,7 @@ p_true = invlogit(nu_true)
 # simulate detection
 y = sim_y(p_true, z_true, site_count, visit_count)
 
+print(y.shape)
 y[:5]
 ```
 
@@ -277,29 +278,21 @@ $$
 where $P(\mathbf{y}_j | z_j = 1) = \prod_j p_{j,k}^{y_{j,k}} (1-p_{j,k})^{(1-y_{j,k})}$ [@royle2008]. To do this in PyMC, I rely on the `pm.math.switch` function, which is like the `ifelse()` function in R or `np.where()`.
 
 ```{python}
-# likelihood for y data
-def logp(x, p, psi):
-    '''Computes the log-likelihood for an occupancy model
+def logp(value, p, psi):
+    """Log prob for binomial (constant p across occasions) scr"""
 
-    Args: 
-        x: (site_count x visit_count) array with binary detection data
-        p: (site_count x visit_count) array of probabilities
-        p: site_count vector of probabilities
-    '''
-    
-    bern = (p ** x) * ((1 - p) ** (1 - x))
-    bern_prod = pm.math.prod(bern, axis=1)
-    
+    binom = pm.Bernoulli.logp(value, p)
+    bin_sum = pm.math.sum(binom, axis=1)
+    bin_exp = pm.math.exp(bin_sum)
+
     res = pm.math.switch(
-        x.sum(axis=1) > 0,
-        bern_prod * psi,
-        bern_prod * psi + (1 - psi)
+        value.sum(axis=1) > 0, bin_exp * psi, bin_exp * psi + (1 - psi)
     )
-    
+
     return pm.math.log(res)
 ```
 
-Then, I simply provide this function as an argument to the `CustomDist` class in our PyMC model. Note that we have to tell `CustomDist` how many dimensions each parameter has via the `ndims_params` argument. In this case, `p` has the same number of dimensions of `Y` (2), while `psi` has one dimension since it is vector of length `site_count`.
+To use out `logp`, we specify it as an argument to the `CustomDist` class in our PyMC model. Note that we have to tell `CustomDist` the shape of the inputs and outputs have by way of the `signature` argument, so PyMC doesn't get confused. 
 
 ```{python}
 #| fig-cap: Visual representation of the $p(w)\psi(w)$ model.
@@ -324,6 +317,9 @@ with pm.Model() as marginal:
     nu = alpha0 + alpha1 * w
     p = pm.Deterministic('p', pm.math.invlogit(nu))
 
+    # the signature provides the shapes of the input and the output
+    sig = f'({site_count}, {visit_count}), ({site_count}) -> ({site_count}, {visit_count})'
+
     # likelihood
     pm.CustomDist(
         'y',
@@ -331,7 +327,7 @@ with pm.Model() as marginal:
         psi,
         logp=logp,
         observed=y,
-        ndims_params=[2, 1]
+        signature=sig
     )
 
 pm.model_to_graphviz(marginal)
@@ -413,6 +409,8 @@ with pm.Model(coords=coords) as warbler:
     nu = pm.math.dot(W, Alpha)
     p = pm.Deterministic('p', pm.math.invlogit(nu))
 
+    sig = f'({n}, {J}), ({n}) -> ({n}, {J})'
+
     # likelihood
     pm.CustomDist(
         'y',
@@ -420,7 +418,7 @@ with pm.Model(coords=coords) as warbler:
         psi,
         logp=logp,
         observed=Y,
-        ndims_params=[2, 1]
+        signature=sig
     )
 
 pm.model_to_graphviz(warbler)
@@ -541,5 +539,11 @@ Arviz also generates plots for these comparisons.
 #| fig-cap: 'Comparison between the $p(visit,wheight)$ and the $p(\cdot)$ models in terms of loo.'
 #| label: fig-warbler_comp
 az.plot_compare(df_comp_loo, insample_dev=False);
+```
+
+```{python}
+%load_ext watermark
+
+%watermark -n -u -v -iv -w 
 ```
 

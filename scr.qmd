@@ -6,7 +6,7 @@ author:
   affiliation:
     - Marine Mammal Research Program
     - Hawaiʻi Institute of Marine Biology
-date: 'February 8, 2024'
+date: today
 bibliography: refs.bib
 jupyter: pymc
 ---
@@ -37,6 +37,7 @@ BUFFER = 100
 M = 200
 
 # plotting defaults
+plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
@@ -350,7 +351,6 @@ def sim_N(idata, n, K):
     N_samps = n + number_undetected
 
     return N_samps
-
 ```
 
 ```{python}
@@ -383,7 +383,7 @@ plt.show()
 Sometimes, the location of the activity centers is of interest. Below, I plot the posterior median for the activity centers for the detected individuals,
 
 ```{python}
-#| fig-cap: 'Estimated activity centers for the detected individuals'
+#| fig-cap: Estimated activity centers for the detected individuals
 #| label: fig-activity
 
 sx_samps = az.extract(oven_idata).sx
@@ -408,13 +408,12 @@ ax.scatter(sx_mean, sy_mean, marker='o', s=4, color='C0')
 # aesthetics 
 ax.set_title('Estimated activity centers')
 ax.grid(False)
-
 ```
 
 We can also look at the uncertainty around those estimates. Below, I plot the posterior distribution of the activity centers for two individuals.
 
 ```{python}
-#| fig-cap: 'Posterior distributions for two activity centers.'
+#| fig-cap: Posterior distributions for two activity centers.
 #| label: fig-activity-post
 one = 49
 sx1 = sx_samps[one]
@@ -477,5 +476,11 @@ ax.set_ylabel(r'$p$')
 ax.set_xlabel(r'Distance (m)')
 
 plt.show()
+```
+
+```{python}
+%load_ext watermark
+
+%watermark -n -u -v -iv -w 
 ```
 
