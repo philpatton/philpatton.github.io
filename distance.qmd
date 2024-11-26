@@ -6,7 +6,7 @@ author:
   affiliation:
     - Marine Mammal Research Program
     - Hawaiʻi Institute of Marine Biology
-date: 'February 2, 2024'
+date: today
 bibliography: refs.bib
 jupyter: pymc
 ---
@@ -29,6 +29,7 @@ import arviz as az
 import numpy as np
 
 # plotting defaults
+plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
@@ -199,5 +200,11 @@ ax.set_ylabel(r'$p$')
 ax.set_xlabel(r'Distance (m)')
 
 plt.show()
+```
+
+```{python}
+%load_ext watermark
+
+%watermark -n -u -v -iv -w  
 ```
 

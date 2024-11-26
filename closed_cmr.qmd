@@ -6,13 +6,13 @@ author:
   affiliation:
     - Marine Mammal Research Program
     - Hawaiʻi Institute of Marine Biology
-date: 'February 1, 2023'
+date: today
 format:
   html:
     html-math-method: mathjax
     code-overflow: wrap
 bibliography: refs.bib
-jupyter: pymc
+jupyter: python3
 ---
 
 In this notebook, I explore fitting closed population capture-recapture models in PyMC. Capture-recapture, at least the Lincoln-Peterson estimator, has been around for almost 100 years. Since then, countless varieties of capture-recapture models have been developed for closed populations [@otis1978]. 
@@ -34,7 +34,6 @@ This produces a capture history for each individual, which allows us to estimate
 # libraries 
 from pymc.distributions.dist_math import binomln, logpow
 
-import vapeplot
 import seaborn as sns
 import numpy as np
 import pandas as pd
@@ -43,6 +42,7 @@ import arviz as az
 import matplotlib.pyplot as plt 
 
 # plotting parameters
+plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
@@ -409,5 +409,11 @@ ax.set_xlim((0,1))
 ax.set_yticks([])
 ax.legend()
 plt.show()
+```
+
+```{python}
+%load_ext watermark
+
+%watermark -n -u -v -iv -w 
 ```
 

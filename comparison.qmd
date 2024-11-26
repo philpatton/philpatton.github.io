@@ -6,11 +6,11 @@ author:
   affiliation:
     - Marine Mammal Research Program
     - Hawaiʻi Institute of Marine Biology
-date: 'February 11, 2024'
+date: today
 bibliography: refs.bib
-jupyter: pymc
 execute:
   cache: true
+jupyter: pymc
 ---
 
 In this notebook, I demonstrate an approach to model selection in PyMC. To do so, follow the lead of @king2008, although not nearly as elegantly. They demonstrate an approach to model selection for a typical suite of closed capture-recapture models. These include the effects of behavior $b$, time $t,$ and individual heterogeneity $h$ on capture probabilities $p$. The eight models considered here are combinations of the three: $M_{0},$ $M_{t},$ $M_{b},$ $M_{tb},$ $M_{h},$ $M_{th},$ $M_{bh}$. The full model, $M_{tbh}$, is  
@@ -33,6 +33,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pymc.distributions.dist_math import binomln, logpow
 
+plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
@@ -151,6 +152,8 @@ $$
 $$
 which were also used by @king2008. Although note that I used an informative $\text{Beta}(1, 5)$ prior for $\psi$ in the full model (see below). I use the same `logp` seen in the occupancy and closed capture-recapture notebooks, which accounts for row-level zero-inflation. Unlike other notebooks, I did not look at the summaries or the trace plots unless the sampler indicated that it had issues during training.
 
+Throughout the notebook, I use the [nutpie](https://github.com/pymc-devs/nutpie) sampler within PyMC. Nutpie is a NUTS sampler written in Rust, and is often [faster than PyMC](https://discourse.pymc.io/t/new-sampler-library-nutpie/9765). Also, I have tweaked the sampling keyword arguments for each model, since they are a little finicky. 
+
 ```{python}
 def logp(value, n, p, psi):
     
@@ -199,7 +202,7 @@ pm.model_to_graphviz(m0)
 
 ```{python}
 with m0:
-    m0_idata = pm.sample()
+    m0_idata = pm.sample(nuts_sampler='nutpie')
 ```
 
 ```{python}
@@ -238,7 +241,7 @@ pm.model_to_graphviz(mt)
 
 ```{python}
 with mt:
-    mt_idata = pm.sample()
+    mt_idata = pm.sample(nuts_sampler='nutpie')
 ```
 
 ```{python}
@@ -277,7 +280,7 @@ pm.model_to_graphviz(mb)
 
 ```{python}
 with mb:
-    mb_idata = pm.sample()
+    mb_idata = pm.sample(nuts_sampler='nutpie')
 ```
 
 ```{python}
@@ -320,7 +323,7 @@ pm.model_to_graphviz(mtb)
 
 ```{python}
 with mtb:
-    mtb_idata = pm.sample()
+    mtb_idata = pm.sample(nuts_sampler='nutpie')
 ```
 
 ```{python}
@@ -360,7 +363,7 @@ pm.model_to_graphviz(mh)
 
 ```{python}
 with mh:
-    mh_idata = pm.sample(3000, target_accept=0.99)
+    mh_idata = pm.sample(3000, target_accept=0.99, nuts_sampler='nutpie')
 ```
 
 ```{python}
@@ -412,7 +415,7 @@ pm.model_to_graphviz(mth)
 
 ```{python}
 with mth:
-    mth_idata = pm.sample(draws=3000, target_accept=0.95)
+    mth_idata = pm.sample(draws=3000, target_accept=0.95, nuts_sampler='nutpie')
 ```
 
 ```{python}
@@ -468,7 +471,7 @@ pm.model_to_graphviz(mbh)
 
 ```{python}
 with mbh:
-    mbh_idata = pm.sample(draws=3000, target_accept=0.95)
+    mbh_idata = pm.sample(draws=3000, target_accept=0.95, nuts_sampler='nutpie')
 ```
 
 ```{python}
@@ -525,7 +528,7 @@ pm.model_to_graphviz(mtbh)
 
 ```{python}
 with mtbh:
-    mtbh_idata = pm.sample(draws=2000)
+    mtbh_idata = pm.sample(draws=2000, nuts_sampler='nutpie')
 ```
 
 ```{python}
@@ -676,3 +679,10 @@ plt.show()
 ```
 
 This notebook demonstrates a simple way to compare models using leave one out cross-validation (loo) and a classic example from capture-recapture. This is just one way, however, to perform model comparison using PyMC. Perhaps a more effective solution for this problem would be placing a shrinkage prior on the $\sigma$ parameters. 
+
+```{python}
+%load_ext watermark
+
+%watermark -n -u -v -iv -w  
+```
+

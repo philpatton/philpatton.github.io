@@ -6,13 +6,9 @@ author:
   affiliation:
     - Marine Mammal Research Program
     - Hawaiʻi Institute of Marine Biology
-date: 'February 2, 2024'
+date: today
 bibliography: refs.bib
-jupyter:
-  kernelspec:
-    display_name: PyMC
-    language: python
-    name: pymc
+jupyter: python3
 ---
 
 In this notebook, I explore the Cormack-Jolly-Seber (CJS) model for estimating survival using capture-recapture data in PyMC. I have drawn considerable inspiration from Austin Rochford's [notebook](https://austinrochford.com/posts/2018-01-31-capture-recapture.html) on capture-recapture in PyMC, the [second chapter](https://github.com/philpatton/autocapture) of my dissertation (a work in progress), and @mccrea2014.  
@@ -30,7 +26,6 @@ The goal of the CJS model is to estimate survival, accounting for capture probab
 : An example of the M-array from a four year capture-recapture survey. The number recaptured, $m_{i,j}$ refers to the number of individuals released at $i$ who were first recaptured at time $j$.
 
 ```{python}
-
 from pymc.distributions.dist_math import factln
 from scipy.linalg import circulant
 
@@ -41,6 +36,7 @@ import arviz as az
 import pymc as pm 
 import pytensor.tensor as pt
 
+plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
@@ -218,5 +214,11 @@ ax.set_ylabel(r'Apparent survival $\phi$')
 ax.set_title(r'Cormorant CJS')
 
 plt.show()
+```
+
+```{python}
+%load_ext watermark
+
+%watermark -n -u -v -iv -w 
 ```
 
