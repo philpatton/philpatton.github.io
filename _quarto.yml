@@ -13,7 +13,7 @@ website:
       - href: cv.qmd
         text: CV
       - href: notebooks.qmd
-        text: Notebooks
+        text: Code
 
     right:
       - text: "{{< fa brands github>}}"
@@ -24,7 +24,7 @@ website:
         href: https://bsky.app/profile/ptpatton.bsky.social
 
   sidebar:
-    - title: "Notebooks"
+    - title: "Code"
       style: "docked"
       # background: light
       contents:

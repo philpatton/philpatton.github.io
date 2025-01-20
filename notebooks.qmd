@@ -1,5 +1,5 @@
 ---
-title: "Notebooks"
+title: "Code"
 bibliography: refs.bib
 ---
 
