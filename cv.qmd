@@ -1,7 +1,10 @@
 ---
 title: "Philip T. Patton"
 description: Graduate Research Assistant & NOAA QUEST Fellow
+
 ---
+
+[Downloadable version](patton-cv.pdf)
 
 ## Education
 
