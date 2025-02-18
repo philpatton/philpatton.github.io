@@ -13,44 +13,30 @@
 <path fill="none" stroke="black" d="M20,-8C20,-8 168,-8 168,-8 174,-8 180,-14 180,-20 180,-20 180,-223.23 180,-223.23 180,-229.23 174,-235.23 168,-235.23 168,-235.23 20,-235.23 20,-235.23 14,-235.23 8,-229.23 8,-223.23 8,-223.23 8,-20 8,-20 8,-14 14,-8 20,-8"/>
 <text text-anchor="middle" x="161.88" y="-15.2" font-family="Times,serif" font-size="14.00">200</text>
 </g>
-<!-- beta1 -->
+<!-- beta0 -->
 <g id="node1" class="node">
-<title>beta1</title>
+<title>beta0</title>
 <ellipse fill="none" stroke="black" cx="44" cy="-315.79" rx="41.01" ry="40.66"/>
-<text text-anchor="middle" x="44" y="-327.24" font-family="Times,serif" font-size="14.00">beta1</text>
+<text text-anchor="middle" x="44" y="-327.24" font-family="Times,serif" font-size="14.00">beta0</text>
 <text text-anchor="middle" x="44" y="-310.74" font-family="Times,serif" font-size="14.00">~</text>
 <text text-anchor="middle" x="44" y="-294.24" font-family="Times,serif" font-size="14.00">Normal</text>
 </g>
 <!-- psi -->
-<g id="node4" class="node">
+<g id="node5" class="node">
 <title>psi</title>
 <polygon fill="none" stroke="black" points="139.12,-227.23 48.88,-227.23 48.88,-169.73 139.12,-169.73 139.12,-227.23"/>
 <text text-anchor="middle" x="94" y="-209.93" font-family="Times,serif" font-size="14.00">psi</text>
 <text text-anchor="middle" x="94" y="-193.43" font-family="Times,serif" font-size="14.00">~</text>
 <text text-anchor="middle" x="94" y="-176.93" font-family="Times,serif" font-size="14.00">Deterministic</text>
 </g>
-<!-- beta1&#45;&gt;psi -->
+<!-- beta0&#45;&gt;psi -->
 <g id="edge1" class="edge">
-<title>beta1&#45;&gt;psi</title>
+<title>beta0&#45;&gt;psi</title>
 <path fill="none" stroke="black" d="M59.96,-277.99C65.5,-265.22 71.72,-250.87 77.31,-237.97"/>
 <polygon fill="black" stroke="black" points="80.47,-239.49 81.23,-228.92 74.04,-236.7 80.47,-239.49"/>
 </g>
-<!-- beta0 -->
-<g id="node2" class="node">
-<title>beta0</title>
-<ellipse fill="none" stroke="black" cx="144" cy="-315.79" rx="41.01" ry="40.66"/>
-<text text-anchor="middle" x="144" y="-327.24" font-family="Times,serif" font-size="14.00">beta0</text>
-<text text-anchor="middle" x="144" y="-310.74" font-family="Times,serif" font-size="14.00">~</text>
-<text text-anchor="middle" x="144" y="-294.24" font-family="Times,serif" font-size="14.00">Normal</text>
-</g>
-<!-- beta0&#45;&gt;psi -->
-<g id="edge2" class="edge">
-<title>beta0&#45;&gt;psi</title>
-<path fill="none" stroke="black" d="M128.04,-277.99C122.5,-265.22 116.28,-250.87 110.69,-237.97"/>
-<polygon fill="black" stroke="black" points="113.96,-236.7 106.77,-228.92 107.53,-239.49 113.96,-236.7"/>
-</g>
 <!-- p -->
-<g id="node3" class="node">
+<g id="node2" class="node">
 <title>p</title>
 <ellipse fill="none" stroke="black" cx="233" cy="-198.48" rx="44.72" ry="40.66"/>
 <text text-anchor="middle" x="233" y="-209.93" font-family="Times,serif" font-size="14.00">p</text>
@@ -58,7 +44,7 @@
 <text text-anchor="middle" x="233" y="-176.93" font-family="Times,serif" font-size="14.00">Uniform</text>
 </g>
 <!-- y -->
-<g id="node5" class="node">
+<g id="node4" class="node">
 <title>y</title>
 <ellipse fill="lightgrey" stroke="black" cx="94" cy="-81.16" rx="78.14" ry="40.66"/>
 <text text-anchor="middle" x="94" y="-92.61" font-family="Times,serif" font-size="14.00">y</text>
@@ -70,6 +56,20 @@
 <title>p&#45;&gt;y</title>
 <path fill="none" stroke="black" d="M200.41,-170.44C183.51,-156.42 162.5,-138.99 143.63,-123.33"/>
 <polygon fill="black" stroke="black" points="145.95,-120.71 136.02,-117.02 141.48,-126.09 145.95,-120.71"/>
+</g>
+<!-- beta1 -->
+<g id="node3" class="node">
+<title>beta1</title>
+<ellipse fill="none" stroke="black" cx="144" cy="-315.79" rx="41.01" ry="40.66"/>
+<text text-anchor="middle" x="144" y="-327.24" font-family="Times,serif" font-size="14.00">beta1</text>
+<text text-anchor="middle" x="144" y="-310.74" font-family="Times,serif" font-size="14.00">~</text>
+<text text-anchor="middle" x="144" y="-294.24" font-family="Times,serif" font-size="14.00">Normal</text>
+</g>
+<!-- beta1&#45;&gt;psi -->
+<g id="edge2" class="edge">
+<title>beta1&#45;&gt;psi</title>
+<path fill="none" stroke="black" d="M128.04,-277.99C122.5,-265.22 116.28,-250.87 110.69,-237.97"/>
+<polygon fill="black" stroke="black" points="113.96,-236.7 106.77,-228.92 107.53,-239.49 113.96,-236.7"/>
 </g>
 <!-- psi&#45;&gt;y -->
 <g id="edge3" class="edge">

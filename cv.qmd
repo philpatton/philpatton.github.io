@@ -63,6 +63,9 @@ description: Graduate Research Assistant & NOAA QUEST Fellow
 
 ## Teaching Experience
 
+- Teaching Assistant, Global Climate Data (MBIO 690), University of Hawaiʻi at Mānoa, Spring 2025
+- Teaching Assistant, Mathematical Ecology of Marine Systems (MBIO 610), University of Hawaiʻi at Mānoa, Spring 2025
+- Teaching Assistant, Introduction to Scientific Computing (MBIO 690), University of Hawaiʻi at Mānoa, Fall 2024
 - Teaching Assistant, Principles of Wildlife Science (FW 453), North Carolina State, Spring 2016
 - Teaching Assistant, Introduction to Probability and Statistics (APM 391), SUNY ESF, Fall 2012
 - Tutor, Calculus I (APM 105), Academic Support Services, SUNY ESF, 2011 to 2013

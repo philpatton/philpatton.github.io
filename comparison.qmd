@@ -24,6 +24,9 @@ where $\mu$ is the average catchability, $\alpha_t$ is the effect of each occasi
 Like @king2008, I use the the Moray Firth bottlenose dolphin data as a motivating example. @wilson1999 detected $n=56$ dolphins over the course of $T=17$ boat surveys between May and September 1992. They generated the capture-recapture histories by way of photo-identification, which is near and dear to my heart (and my dissertation). 
 
 ```{python}
+
+%config InlineBackend.figure_format = 'retina'
+
 # libraries 
 import numpy as np
 import pandas as pd
@@ -33,7 +36,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pymc.distributions.dist_math import binomln, logpow
 
-plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
@@ -95,7 +97,8 @@ def sim_N(idata):
         p_included = psi_samps * not_p.prod(axis=1)
         number_undetected = RNG.binomial(1, p_included).sum(axis=0)
 
-    N = n + number_undetected
+    # N = n + number_undetected
+    N = RNG.binomial(M, psi_samps)
     return N
 
 # convert the dolphin capture history from '1001001' to array
@@ -202,7 +205,7 @@ pm.model_to_graphviz(m0)
 
 ```{python}
 with m0:
-    m0_idata = pm.sample(nuts_sampler='nutpie')
+    m0_idata = pm.sample()
 ```
 
 ```{python}
@@ -220,10 +223,11 @@ with pm.Model() as mt:
 
     # time effect
     sigma_alpha = pm.InverseGamma('sigma_alpha', 4, 3)
-    alpha = pm.Normal('alpha', 0, tau=1/sigma_alpha, shape=T)
+    alpha = pm.Normal('alpha', 0, pm.math.sqrt(sigma_alpha), shape=T)
 
     # Linear model
-    nu = mu + pm.math.dot(occasion_covariate, alpha)
+    # nu = mu + pm.math.dot(occasion_covariate, alpha)
+    nu = mu + alpha
     p = pm.Deterministic('p', pm.math.invlogit(nu))
 
     # Likelihood 
@@ -241,7 +245,8 @@ pm.model_to_graphviz(mt)
 
 ```{python}
 with mt:
-    mt_idata = pm.sample(nuts_sampler='nutpie')
+    mt_idata = pm.sample()
+    # pass
 ```
 
 ```{python}
@@ -259,7 +264,7 @@ with pm.Model() as mb:
     
     # behavior effect
     sigma_beta = pm.InverseGamma('sigma_beta', 4, 3)
-    beta = pm.Normal('beta', 0, tau=1/sigma_beta)
+    beta = pm.Normal('beta', 0, pm.math.sqrt(sigma_beta))
 
     # Linear model
     nu = mu + behavior_covariate * beta 
@@ -280,7 +285,7 @@ pm.model_to_graphviz(mb)
 
 ```{python}
 with mb:
-    mb_idata = pm.sample(nuts_sampler='nutpie')
+    mb_idata = pm.sample()
 ```
 
 ```{python}
@@ -298,14 +303,14 @@ with pm.Model() as mtb:
 
     # time effect
     sigma_alpha = pm.InverseGamma('sigma_alpha', 4, 3)
-    alpha = pm.Normal('alpha', 0, tau=1/sigma_alpha, shape=T)
+    alpha = pm.Normal('alpha', 0, pm.math.sqrt(sigma_alpha), shape=T)
 
     # behavior effect
     sigma_beta = pm.InverseGamma('sigma_beta', 4, 3)
-    beta = pm.Normal('beta', 0, tau=1/sigma_beta)
+    beta = pm.Normal('beta', 0, pm.math.sqrt(sigma_beta))
 
     # Linear model
-    nu = mu + pm.math.dot(occasion_covariate, alpha) + behavior_covariate * beta
+    nu = mu + alpha + behavior_covariate * beta
     p = pm.Deterministic('p', pm.math.invlogit(nu))
 
     # Likelihood 
@@ -323,7 +328,7 @@ pm.model_to_graphviz(mtb)
 
 ```{python}
 with mtb:
-    mtb_idata = pm.sample(nuts_sampler='nutpie')
+    mtb_idata = pm.sample()
 ```
 
 ```{python}
@@ -341,7 +346,7 @@ with pm.Model() as mh:
 
     # individual effect
     sigma_gamma = pm.InverseGamma('sigma_gamma', 4, 3)
-    gamma = pm.Normal('gamma', 0, tau=1/sigma_gamma, shape=M)
+    gamma = pm.Normal('gamma', 0, pm.math.sqrt(sigma_gamma), shape=M)
 
     # Linear model
     individual_effect = (np.ones((T, M)) * gamma).T
@@ -363,7 +368,7 @@ pm.model_to_graphviz(mh)
 
 ```{python}
 with mh:
-    mh_idata = pm.sample(3000, target_accept=0.99, nuts_sampler='nutpie')
+    mh_idata = pm.sample(3000, target_accept=0.99, )
 ```
 
 ```{python}
@@ -389,15 +394,15 @@ with pm.Model() as mth:
 
     # time effect
     sigma_alpha = pm.InverseGamma('sigma_alpha', 4, 3)
-    alpha = pm.Normal('alpha', 0, tau=1/sigma_alpha, shape=T)
+    alpha = pm.Normal('alpha', 0, pm.math.sqrt(sigma_alpha), shape=T)
 
     # individual effect
     sigma_gamma = pm.InverseGamma('sigma_gamma', 4, 3)
-    gamma = pm.Normal('gamma', 0, tau=1/sigma_gamma, shape=M)
+    gamma = pm.Normal('gamma', 0, pm.math.sqrt(sigma_gamma), shape=M)
 
     # Linear model
     individual_effect = (np.ones((T, M)) * gamma).T
-    nu = mu + pm.math.dot(occasion_covariate, alpha) + individual_effect
+    nu = mu + alpha + individual_effect
     p = pm.Deterministic('p', pm.math.invlogit(nu))
 
     # Likelihood 
@@ -415,7 +420,7 @@ pm.model_to_graphviz(mth)
 
 ```{python}
 with mth:
-    mth_idata = pm.sample(draws=3000, target_accept=0.95, nuts_sampler='nutpie')
+    mth_idata = pm.sample(draws=3000, target_accept=0.95, )
 ```
 
 ```{python}
@@ -445,11 +450,11 @@ with pm.Model() as mbh:
 
     # behavior effect
     sigma_beta = pm.InverseGamma('sigma_beta', 4, 3)
-    beta = pm.Normal('beta', 0, tau=1/sigma_beta)
+    beta = pm.Normal('beta', 0, pm.math.sqrt(sigma_beta))
     
     # individual effect
     sigma_gamma = pm.InverseGamma('sigma_gamma', 4, 3)
-    gamma = pm.Normal('gamma', 0, tau=1/sigma_gamma, shape=M)
+    gamma = pm.Normal('gamma', 0, pm.math.sqrt(sigma_gamma), shape=M)
 
     # Linear model
     individual_effect = (np.ones((T, M)) * gamma).T
@@ -471,7 +476,7 @@ pm.model_to_graphviz(mbh)
 
 ```{python}
 with mbh:
-    mbh_idata = pm.sample(draws=3000, target_accept=0.95, nuts_sampler='nutpie')
+    mbh_idata = pm.sample(draws=3000, target_accept=0.95, )
 ```
 
 ```{python}
@@ -498,19 +503,19 @@ with pm.Model() as mtbh:
 
     # time effect
     sigma_alpha = pm.InverseGamma('sigma_alpha', 4, 3)
-    alpha = pm.Normal('alpha', 0, tau=1/sigma_alpha, shape=T)
+    alpha = pm.Normal('alpha', 0, pm.math.sqrt(sigma_alpha), shape=T)
 
     # behavior effect
     sigma_beta = pm.InverseGamma('sigma_beta', 4, 3)
-    beta = pm.Normal('beta', 0, tau=1/sigma_beta)
+    beta = pm.Normal('beta', 0, pm.math.sqrt(sigma_beta))
 
     # individual effect
     sigma_gamma = pm.InverseGamma('sigma_gamma', 4, 3)
-    gamma = pm.Normal('gamma', 0, tau=1/sigma_gamma, shape=M)
+    gamma = pm.Normal('gamma', 0, pm.math.sqrt(sigma_gamma), shape=M)
 
     # Linear model
     individual_effect = (np.ones((T, M)) * gamma).T
-    nu = mu + pm.math.dot(occasion_covariate, alpha) + behavior_covariate * beta + individual_effect
+    nu = mu + alpha + behavior_covariate * beta + individual_effect
     p = pm.Deterministic('p', pm.math.invlogit(nu))
 
     # Likelihood 
@@ -528,7 +533,7 @@ pm.model_to_graphviz(mtbh)
 
 ```{python}
 with mtbh:
-    mtbh_idata = pm.sample(draws=2000, nuts_sampler='nutpie')
+    mtbh_idata = pm.sample(draws=2000, )
 ```
 
 ```{python}
@@ -656,7 +661,7 @@ We can also look at the posterior densities of $p$ from Model $M_t,$ the second 
 #| fig-cap: Posteriors of $p$ from model $M_t$
 #| label: fig-p
 
-p_samps = az.extract(mt_idata).p.mean(axis=0)
+p_samps = az.extract(mt_idata).p
 
 fig, ax = plt.subplots(figsize=(6, 4))
 

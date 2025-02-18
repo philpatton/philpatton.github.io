@@ -21,6 +21,8 @@ As a motivating example, I use the [ovenbird mist netting dataset](https://www.o
 #| fig-cap: 'Locations of the mist nets in the ovenbird dataset [@efford2004]'
 #| label: fig-nets
 
+%config InlineBackend.figure_format = 'retina'
+
 import seaborn as sns
 import numpy as np
 import pandas as pd
@@ -37,7 +39,6 @@ BUFFER = 100
 M = 200
 
 # plotting defaults
-plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
@@ -113,6 +114,7 @@ ax.annotate(
                     connectionstyle="angle3,angleA=90,angleB=0"))
 
 # aesthetics 
+ax.set_aspect('equal')
 ax.set_title('Mist net locations')
 ax.grid(False)
 plt.show()
@@ -406,6 +408,7 @@ ax.set_xlim((x_min, x_max))
 ax.scatter(sx_mean, sy_mean, marker='o', s=4, color='C0')
 
 # aesthetics 
+ax.set_aspect('equal')
 ax.set_title('Estimated activity centers')
 ax.grid(False)
 ```
@@ -443,6 +446,7 @@ ax.text(sx1.mean(), sy1.mean() + 5, f'{one}', ha='center', va='bottom')
 ax.text(sx2.mean(), sy2.mean() + 5, f'{two}', ha='center', va='bottom')
 
 # aesthetics 
+ax.set_aspect('equal')
 ax.set_title('Posterior of two activity centers')
 ax.grid(False)
 plt.show()

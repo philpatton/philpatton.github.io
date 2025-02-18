@@ -23,6 +23,8 @@ As a motivating example, I use the breeding bird survey (BBS) data used by @dora
 #| fig-cap: Number of detections for each species at each site along this BBS route.
 #| label: fig-bbs
 
+%config InlineBackend.figure_format = 'retina'
+
 import seaborn as sns
 import numpy as np
 import pandas as pd
@@ -35,7 +37,6 @@ from matplotlib.patches import Patch
 SEED = 808
 RNG = np.random.default_rng(SEED)
 
-plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
@@ -124,7 +125,9 @@ pm.model_to_graphviz(known)
 
 ```{python}
 with known:
-    known_idata = pm.sample(nuts_sampler='nutpie')
+    # known_idata = pm.sample(nuts_sampler='nutpie')
+    # known_idata = pm.sample(nuts_sampler='numpyro')
+    known_idata = pm.sample()
 ```
 
 ```{python}
@@ -228,7 +231,8 @@ pm.model_to_graphviz(unknown)
 
 ```{python}
 with unknown:
-    unknown_idata = pm.sample(nuts_sampler='nutpie')
+    # unknown_idata = pm.sample(nuts_sampler='nutpie')
+    unknown_idata = pm.sample()
 ```
 
 We see some warnings about the effective sample size and the $\hat{R}$ statistic. Some of these warnings may just relate to the individual random effects.
@@ -254,21 +258,8 @@ I can plot the posterior distribution of species richness $N.$ This is slightly 
 # relevant posterior samples
 post = az.extract(unknown_idata)
 o_samps = post.omega.to_numpy()
-psi_samps = post.psi.to_numpy()[n:, :]
-p_samps = post.p.to_numpy()[n:, :]
 
-# probability that the animal was never detected during the survey if present
-p_not_detected = (1 - p_samps) ** K
-
-# probability of a zero detection history 
-p_zero_hist = psi_samps * p_not_detected + (1 - psi_samps)
-
-# probability that the species was included in the given the all-zero history
-p_included = (o_samps * p_zero_hist ** J) / (o_samps * p_zero_hist ** J + (1 - o_samps))
-
-# posterior samples of N
-number_undetected = RNG.binomial(1, p_included).sum(axis=0)
-N_samps = n + number_undetected
+N_samps = RNG.binomial(M, o_samps)
 
 # posterior distribution 
 N_hat_royle = 138

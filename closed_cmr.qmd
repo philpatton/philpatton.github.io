@@ -31,6 +31,8 @@ This produces a capture history for each individual, which allows us to estimate
 # Model $M_0$
 
 ```{python}
+%config InlineBackend.figure_format = 'retina'
+
 # libraries 
 from pymc.distributions.dist_math import binomln, logpow
 
@@ -42,7 +44,6 @@ import arviz as az
 import matplotlib.pyplot as plt 
 
 # plotting parameters
-plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'

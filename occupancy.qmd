@@ -29,6 +29,8 @@ which assumes a constant occurrence probability across sites and a constant dete
 To start, I demonstrate how to simulate this zero-inflated model using numpy. Throughout this section, I use hyperparameter values similar to those of @kery2011.
 
 ```{python}
+%config InlineBackend.figure_format = 'retina'
+
 # relevant libraries
 import numpy as np
 import pymc as pm
@@ -37,7 +39,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # plotting styles
-plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'

@@ -49,6 +49,6 @@ website:
               text: Model comparison
 format:
   html:
-    theme: cosmo
+    theme: yeti
     css: styles.css
     toc: true

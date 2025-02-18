@@ -1,0 +1,19 @@
+# this code was used to generate samples of N from the posterior distribution
+# of the multispecies occupancy model. I'm not sure it's 100% legit, and
+# N ~ Binomial(M, omega) seems to work fine. Nevertheless, I'm keeping it here
+
+psi_samps = post.psi.to_numpy()[n:, :]
+p_samps = post.p.to_numpy()[n:, :]
+
+# probability that the animal was never detected during the survey if present
+p_not_detected = (1 - p_samps) ** K
+
+# probability of a zero detection history 
+p_zero_hist = psi_samps * p_not_detected + (1 - psi_samps)
+
+# probability that the species was included in the given the all-zero history
+p_included = (o_samps * p_zero_hist ** J) / (o_samps * p_zero_hist ** J + (1 - o_samps))
+
+# posterior samples of N
+number_undetected = RNG.binomial(1, p_included).sum(axis=0)
+N_samps = n + number_undetected

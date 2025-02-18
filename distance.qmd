@@ -21,6 +21,7 @@ Following @hooten2019, Chapter 24 and @royle2008, Chapter 7, I use the impala da
 #| fig-cap: Histogram of the number of detected impalas at varying distances.
 #| label: fig-hist
 
+%config InlineBackend.figure_format = 'retina'
 import seaborn as sns
 import pymc as pm
 import pytensor.tensor as pt
@@ -29,7 +30,6 @@ import arviz as az
 import numpy as np
 
 # plotting defaults
-plt.rcParams['figure.dpi'] = 600
 plt.style.use('fivethirtyeight')
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['figure.facecolor'] = 'white'
