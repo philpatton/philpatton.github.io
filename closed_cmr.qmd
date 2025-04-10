@@ -35,13 +35,13 @@ This produces a capture history for each individual, which allows us to estimate
 
 # libraries 
 from pymc.distributions.dist_math import binomln, logpow
-
-import seaborn as sns
+from scipy.stats import binom
+import arviz as az
+import matplotlib.pyplot as plt 
 import numpy as np
 import pandas as pd
 import pymc as pm
-import arviz as az
-import matplotlib.pyplot as plt 
+import seaborn as sns
 
 # plotting parameters
 plt.style.use('fivethirtyeight')
@@ -71,7 +71,7 @@ def augment_history(history, M):
     zero_history = np.zeros((zero_history_count, T))
 
     # tack those on to the capture history
-    augmented = np.row_stack((history, zero_history))
+    augmented = np.vstack((history, zero_history))
 
     return augmented 
 ```
@@ -152,14 +152,15 @@ pm.model_to_graphviz(M0)
 
 ```{python}
 with M0:
-    M0_idata = pm.sample()
+    M0_idata = pm.sample(nuts_sampler='nutpie')
 ```
 
 ```{python}
 #| fig-cap: Traceplots for the salamander $M_0$ model. The red-cheeked salamander is in blue while the pygmy salamander is in red.
 #| label: fig-trace
 
-az.plot_trace(M0_idata, figsize=(8,4));
+ax = az.plot_trace(M0_idata, figsize=(8,4), var_names=['psi', 'p']);
+plt.subplots_adjust(hspace=0.4)
 ```
 
 For faster sampling, it's better to separate the two species into two separate models. On my machine, the individual species models finish sampling in 2-3 seconds, compared to 15-20 seconds for the two species model. That said, the two species model is somewhat more convenient.
@@ -172,13 +173,13 @@ posterior = az.extract(M0_idata)
 psi_samps = posterior.psi.values
 p_samps = posterior.p.values
 
-# conditional probability that the animal is in the sample 
-not_p = (1 - p_samps)
-p_included = (psi_samps * (not_p) ** T) / (psi_samps * (not_p) ** T + (1 - psi_samps))
+# posterior probabilities of being present in the population but not detected
+p_if_present = psi_samps * binom.pmf(0, n=T, p=p_samps)
+p_total = p_if_present + (1 - psi_samps)
 
 # simulate the number of undetected animals in each population
-number_undetected_pyg = RNG.binomial(M - n_pyg, p_included[0])
-number_undetected_red = RNG.binomial(M - n_red, p_included[1])
+number_undetected_pyg = RNG.binomial(M - n_pyg, p_if_present[0] / p_total[0])
+number_undetected_red = RNG.binomial(M - n_red, p_if_present[1] / p_total[1])
 
 # simulate N
 N_pyg = n_pyg + number_undetected_pyg
@@ -310,7 +311,7 @@ pm.model_to_graphviz(mb)
 
 ```{python}
 with mb:
-    mb_idata = pm.sample()
+    mb_idata = pm.sample(nuts_sampler='nutpie')
 ```
 
 ```{python}
@@ -330,23 +331,26 @@ The forest plot indicates that there is some evidence of a weak, positive behavi
 #| fig-cap: Posterior distribution of $N$ from model $M_b.$ The number voles that were detected $n$ is shown by the vertical red line.
 #| label: fig-mb_N
 
-# simulate draws of N 
+# # simulate draws of N 
 psi_samps = az.extract(mb_idata).psi.values
-p_samps = az.extract(mb_idata).p.values[:n]
+p_samps = az.extract(mb_idata).p.values
 
-not_p = (1 - p_samps)
-bin_prod = not_p.prod(axis=1)
-p_included = (psi_samps * bin_prod) / (psi_samps * bin_prod + (1 - psi_samps))
+# posterior probabilities of being present in the population but not detected
+p_if_present = psi_samps * binom.pmf(0, n=T, p=p_samps)
+p_total = p_if_present + (1 - psi_samps)
 
-number_undetected = RNG.binomial(1, p_included).sum(axis=0)
-N_samples = n + number_undetected
+# simulate the number of undetected animals in each population
+number_undetected = RNG.binomial(M - n, p_if_present / p_total)
 
-# use a bar chart since the posterior is bunched up 
-N_values, N_counts = np.unique(N_samples, return_counts=True)
+# simulate N
+N = n + number_undetected
+
 
 # create the plot
-fig, ax = plt.subplots(figsize=(4, 4))
+fig, ax = plt.subplots(figsize=(4, 3))
 
+# bar plot looks a little better than a histogram here imo
+N_values, N_counts = np.unique(N, return_counts=True)
 ax.bar(N_values, N_counts)
 
 ax.annotate(
@@ -354,11 +358,12 @@ ax.annotate(
     ha='left',
     xy=(N_values[0], N_counts[0]), 
     color='black',
-    xytext=(n+1, 1600), 
+    xytext=(n+5, 6.2e5), 
     arrowprops=dict(arrowstyle="->", color='black', linewidth=1,
                     connectionstyle="angle3,angleA=90,angleB=0")
 )
 
+ax.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 ax.set_ylabel('Number of samples')
 ax.set_title('Posterior of $N$')
 
@@ -396,15 +401,26 @@ We can also look at the behavioral effect by visualizing the posterior distribut
 #| fig-cap: Posterior distributions for the probability of detection given the behavioral effect.
 #| label: fig-b_effect
 
-p_samples = az.extract(mb_idata).p.values.reshape(500, 4000)
-b_cov = X[:,:,1].flatten()
+# p_samples = az.extract(mb_idata).p.values.reshape(500, 4000)
+# b_cov = X[:,:,1].flatten()
 
-zero_p = p_samples[b_cov==0,].flatten()
-one_p = p_samples[b_cov==1,].flatten() 
+# p_first_detection = (X[:, :, 1]) * p_samps
+
+# x_first_detection = (1 - X[:, :, 1])
+# x_previous_detected = X[:, :, 1]
+
+# (x_first_detection[:, :, np.newaxis] * p_samps).shape
+
+```
+
+```{python}
+first_detection = X[:, :, 1] == 0
+p_first_detection = p_samps[first_detection].flatten()
+p_seen_before = p_samps[~first_detection].flatten()
 
 fig, ax = plt.subplots(figsize=(5, 3.5))
-az.plot_dist(zero_p, ax=ax, label='First detection', color='C0')
-az.plot_dist(one_p, ax=ax, label='Seen before', color='C1')
+az.plot_dist(p_first_detection, ax=ax, label='First detection', color='C0')
+az.plot_dist(p_seen_before, ax=ax, label='Seen before', color='C1')
 ax.set_title('Posterior distributions of $p$')
 ax.set_xlim((0,1))
 ax.set_yticks([])

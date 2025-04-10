@@ -10,7 +10,7 @@ date: today
 bibliography: refs.bib
 execute:
   cache: true
-jupyter: pymc
+jupyter: python3
 ---
 
 In this notebook, I explore fitting community occupancy models in PyMC. Community occupancy models are a multi-species extension of standard occupancy models. The benefit of these models is that, by treating each species as a random effect, they can estimate occupancy and detection more precisely than single species models. Further, through data augmentation, they can estimate the richness of the supercommunity, that is, the total number of species that use the study area during the surveys.
@@ -25,14 +25,14 @@ As a motivating example, I use the breeding bird survey (BBS) data used by @dora
 
 %config InlineBackend.figure_format = 'retina'
 
-import seaborn as sns
+from matplotlib.patches import Patch
+from scipy.stats import binom
+import arviz as az
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pymc as pm
-import arviz as az
-import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.patches import Patch
+import seaborn as sns
 
 SEED = 808
 RNG = np.random.default_rng(SEED)
@@ -125,9 +125,7 @@ pm.model_to_graphviz(known)
 
 ```{python}
 with known:
-    # known_idata = pm.sample(nuts_sampler='nutpie')
-    # known_idata = pm.sample(nuts_sampler='numpyro')
-    known_idata = pm.sample()
+    known_idata = pm.sample(nuts_sampler='nutpie')
 ```
 
 ```{python}
@@ -231,8 +229,8 @@ pm.model_to_graphviz(unknown)
 
 ```{python}
 with unknown:
-    # unknown_idata = pm.sample(nuts_sampler='nutpie')
-    unknown_idata = pm.sample()
+    unknown_idata = pm.sample(nuts_sampler='nutpie')
+    # unknown_idata = pm.sample()
 ```
 
 We see some warnings about the effective sample size and the $\hat{R}$ statistic. Some of these warnings may just relate to the individual random effects.
@@ -259,7 +257,25 @@ I can plot the posterior distribution of species richness $N.$ This is slightly 
 post = az.extract(unknown_idata)
 o_samps = post.omega.to_numpy()
 
-N_samps = RNG.binomial(M, o_samps)
+# only care about the undetected species
+p_samps = post.p.to_numpy()[n:]
+
+# probability that the species was in the study area but wasn't detected
+p_if_present = o_samps * binom.pmf(0, n=K, p=p_samps)
+p_total = p_if_present + (1 - o_samps)
+
+# simulate the latent occurrence state for the undetected species
+Z = RNG.binomial(1, p_if_present / p_total)
+
+# simulate species richness
+number_undetected = Z.sum(axis=0)
+N_samps = number_undetected + n
+
+# relevant posterior samples
+# post = az.extract(unknown_idata)
+# o_samps = post.omega.to_numpy()
+
+# N_samps = RNG.binomial(M, o_samps)
 
 # posterior distribution 
 N_hat_royle = 138

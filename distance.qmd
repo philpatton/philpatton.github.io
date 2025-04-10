@@ -8,7 +8,7 @@ author:
     - Hawaiʻi Institute of Marine Biology
 date: today
 bibliography: refs.bib
-jupyter: pymc
+jupyter: python3
 ---
 
 In this notebook, I explore how to fit distance sampling models for estimating the size of a closed population. Similar to the occupancy and closed capture-recapture notebooks, I use parameter-expanded data-augmentation (PX-DA) and the zero-inflated binomial model in this notebook.
@@ -22,12 +22,13 @@ Following @hooten2019, Chapter 24 and @royle2008, Chapter 7, I use the impala da
 #| label: fig-hist
 
 %config InlineBackend.figure_format = 'retina'
-import seaborn as sns
+from scipy.stats import binom
+import arviz as az
+import matplotlib.pyplot as plt
+import numpy as np
 import pymc as pm
 import pytensor.tensor as pt
-import matplotlib.pyplot as plt
-import arviz as az
-import numpy as np
+import seaborn as sns
 
 # plotting defaults
 plt.style.use('fivethirtyeight')
@@ -107,7 +108,7 @@ pm.model_to_graphviz(distance)
 
 ```{python}
 with distance:
-    distance_idata = pm.sample()
+    distance_idata = pm.sample(nuts_sampler='nutpie')
 ```
 
 ```{python}
@@ -116,9 +117,11 @@ with distance:
 
 az.plot_trace(
     distance_idata, 
-    figsize=(10,4),
+    figsize=(8,4),
     var_names=['psi', 'sigma']
-);
+)
+plt.subplots_adjust(hspace=0.4)
+plt.show()
 ```
 
 This model samples slower than the models in the other notebooks, presumably because of the unobserved $x.$ As in the closed capture-recapture notebook, we will have to simulate the posterior for $N$ using the posterior distribution of $\psi$ and $M.$ 
@@ -126,31 +129,36 @@ This model samples slower than the models in the other notebooks, presumably bec
 ```{python}
 RNG = np.random.default_rng()
 
+# extract the posterior samples into numpy arrays
 posterior = az.extract(distance_idata)
 psi_samples = posterior.psi.to_numpy()
-p_samples = posterior.p.to_numpy()
 
-not_p = (1 - p_samples[n:])
-p_included = (not_p * psi_samples) / (not_p * psi_samples + (1 - psi_samples))
-n_undetected = RNG.binomial(1, p_included).sum(axis=0)
-N_samples = n + n_undetected
+# only interested in the unobserved animals
+p_samples = posterior.p.to_numpy()[n:]
+
+# posterior probabilities of being present in the population but not detected
+p_if_present = psi_samples * binom.pmf(0, n=1, p=p_samples)
+p_total = p_if_present + (1 - psi_samples)
+
+# simulate the latent inclusion state 
+Z = RNG.binomial(1, p_if_present / p_total)
+number_undetected = Z.sum(axis=0)
+
+# # # compute the total number of animals in the population
+N_samples = n + number_undetected
 ```
 
 ```{python}
 #| fig-cap: Posterior distributions for $N$ and $\sigma.$ Estimates from @royle2008 are shown with vertical lines.
 #| label: fig-posteriors
 
+# plot the posterior distributions
 sigma_samples = posterior.sigma.to_numpy()
-
-# plot the results
 fig, (ax0, ax1) = plt.subplots(1, 2, sharey=True, figsize=(8,4))
 
 # histograms of the posteriors
 ax0.hist(N_samples, edgecolor='white', bins=30)
 ax1.hist(sigma_samples, edgecolor='white', bins=30)
-
-# show the abundance dist in terms of M
-# ax0.set_xlim((100, M))
 
 # axes labels 
 ax0.set_xlabel(r'Abundance $N$')
