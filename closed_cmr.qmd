@@ -152,7 +152,7 @@ pm.model_to_graphviz(M0)
 
 ```{python}
 with M0:
-    M0_idata = pm.sample(nuts_sampler='nutpie')
+    M0_idata = pm.sample()
 ```
 
 ```{python}
@@ -311,7 +311,7 @@ pm.model_to_graphviz(mb)
 
 ```{python}
 with mb:
-    mb_idata = pm.sample(nuts_sampler='nutpie')
+    mb_idata = pm.sample()
 ```
 
 ```{python}
@@ -401,19 +401,6 @@ We can also look at the behavioral effect by visualizing the posterior distribut
 #| fig-cap: Posterior distributions for the probability of detection given the behavioral effect.
 #| label: fig-b_effect
 
-# p_samples = az.extract(mb_idata).p.values.reshape(500, 4000)
-# b_cov = X[:,:,1].flatten()
-
-# p_first_detection = (X[:, :, 1]) * p_samps
-
-# x_first_detection = (1 - X[:, :, 1])
-# x_previous_detected = X[:, :, 1]
-
-# (x_first_detection[:, :, np.newaxis] * p_samps).shape
-
-```
-
-```{python}
 first_detection = X[:, :, 1] == 0
 p_first_detection = p_samps[first_detection].flatten()
 p_seen_before = p_samps[~first_detection].flatten()

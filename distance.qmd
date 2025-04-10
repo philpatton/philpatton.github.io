@@ -108,7 +108,7 @@ pm.model_to_graphviz(distance)
 
 ```{python}
 with distance:
-    distance_idata = pm.sample(nuts_sampler='nutpie')
+    distance_idata = pm.sample()
 ```
 
 ```{python}
