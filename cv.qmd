@@ -72,7 +72,7 @@ description: Graduate Research Assistant & NOAA QUEST Fellow
 
 ## Professional Development
 
-- An Introduction to Close-Kin Mark-Recapture, EURING Analytical Meeting
+- An [Introduction](bioss-interview.html) to Close-Kin Mark-Recapture, EURING Analytical Meeting
 - C++ Virtual Training, NOAA Fisheries
 - Bayesian Model Selection and Decision Theory for Ecologists, International Statistical Ecology Conference
 - Flexible Programming with NIMBLE, International Statistical Ecology Conference
