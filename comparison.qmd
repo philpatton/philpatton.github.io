@@ -10,7 +10,7 @@ date: today
 bibliography: refs.bib
 execute:
   cache: true
-jupyter: pymc
+jupyter: python3
 ---
 
 In this notebook, I demonstrate an approach to model selection in PyMC. To do so, follow the lead of @king2008, although not nearly as elegantly. They demonstrate an approach to model selection for a typical suite of closed capture-recapture models. These include the effects of behavior $b$, time $t,$ and individual heterogeneity $h$ on capture probabilities $p$. The eight models considered here are combinations of the three: $M_{0},$ $M_{t},$ $M_{b},$ $M_{tb},$ $M_{h},$ $M_{th},$ $M_{bh}$. The full model, $M_{tbh}$, is  

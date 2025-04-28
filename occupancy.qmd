@@ -8,7 +8,7 @@ author:
     - Hawaiʻi Institute of Marine Biology
 date: today
 bibliography: refs.bib
-jupyter: pymc
+jupyter: python3
 ---
 
 In this notebook, I demonstrate how to fit static site-occupancy models in PyMC [@royle2008, Chapter 3]. The standard site-occupancy model models binary detection/non-detection data $y_{j,k}$ for repeated surveys $k=1,2,\dots,K$ at sites $j=1,2,\dots,J.$ The species is present at the sites when $z_j=1,$ and absent otherwise. We assume that our probability of detecting the species given that the site is occupied is  $P(y_{j,k}|z_j=1)=p,$ and zero when the site is unoccupied. The probability of occurrence, which is typically the parameter of interest, is $P(z_{j}=1)=\psi.$ As such, we can think of this as a zero-inflated binomial model, where

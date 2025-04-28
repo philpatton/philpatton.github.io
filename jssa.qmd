@@ -8,7 +8,7 @@ author:
     - Hawaiʻi Institute of Marine Biology
 date: today
 bibliography: refs.bib
-jupyter: pymc
+jupyter: python3
 ---
 
 In this notebook, I explore the Jolly-Seber model (technically the JS-Schwarz-Arnason, JSSA or POPAN, parameterization) for estimating survival and abundance using capture recapture data. JSSA is very similar to the CJS framework, except that it also models entry into the population, permitting esimation of the superpopulation size. Like the CJS notebook, I have drawn considerable inspiration from Austin Rochford's [notebook](https://austinrochford.com/posts/2018-01-31-capture-recapture.html) on capture-recapture in PyMC, the [second chapter](https://github.com/philpatton/autocapture) of my dissertation, and @mccrea2014.  

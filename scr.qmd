@@ -8,7 +8,7 @@ author:
     - Hawaiʻi Institute of Marine Biology
 date: today
 bibliography: refs.bib
-jupyter: pymc
+jupyter: python3
 ---
 
 In this notebook, I show how to train spatial capture-recapture (SCR) models in PyMC. SCR expands upon traditional capture-recapture by incorporating the location of the traps in the analysis. This matters because, typically, animals that live near a particular trap are more likely to be caught in it. In doing so, SCR links individual-level processes to the population-level, expanding the scientific scope of simple designs. 

@@ -2,15 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.554">
+<meta name="generator" content="quarto-1.7.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Philip T. Patton">
-<meta name="dcterms.date" content="2025-04-10">
+<meta name="dcterms.date" content="2025-04-28">
 <meta name="description" content="Closed population capture-recapture models using data augmentation">
 
-<title>Philip T. Patton - Closed capture-recapture</title>
+<title>Closed capture-recapture – Philip T. Patton</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,8 +24,9 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -89,15 +90,16 @@ div.csl-indent {
 <meta name="quarto:offset" content="./">
 <link href="./distance.html" rel="next">
 <link href="./occupancy.html" rel="prev">
-<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-8929f1c62dfcd2c766979c7334903532.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -132,7 +134,7 @@ div.csl-indent {
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 <script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
@@ -165,7 +167,7 @@ window.Quarto = {
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed">
+<body class="nav-sidebar docked nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -177,7 +179,7 @@ window.Quarto = {
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -210,17 +212,17 @@ window.Quarto = {
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./closed_cmr.html">Closed capture-recapture</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -239,9 +241,9 @@ window.Quarto = {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">PyMC</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -348,7 +350,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 10, 2025</p>
+      <p class="date">April 28, 2025</p>
     </div>
   </div>
   
@@ -362,13 +364,13 @@ window.Quarto = {
 
 <p>In this notebook, I explore fitting closed population capture-recapture models in PyMC. Capture-recapture, at least the Lincoln-Peterson estimator, has been around for almost 100 years. Since then, countless varieties of capture-recapture models have been developed for closed populations <span class="citation" data-cites="otis1978">(<a href="#ref-otis1978" role="doc-biblioref">Otis et al. 1978</a>)</span>.</p>
 <p>The basic steps in capture-recapture are: capture several individuals–e.g., via trapping–from the population of interest, mark these animals, then release them. We repeat this process several times, each time noting when we recapture individuals.</p>
-<div id="tbl-ch" class="quarto-float anchored">
+<div id="tbl-ch" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-ch-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</span> is the sampling occasion and 1 indicates capture
 </figcaption>
 <div aria-describedby="tbl-ch-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Individual</th>
@@ -408,7 +410,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <p>This produces a capture history for each individual, which allows us to estimate the probability of capture and the number of individuals in the population <span class="math inline">\(N\)</span>.</p>
 <section id="model-m_0" class="level1">
 <h1>Model <span class="math inline">\(M_0\)</span></h1>
-<div id="74a7233a" class="cell" data-execution_count="1">
+<div id="6e36d6cd" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># libraries </span></span>
@@ -436,7 +438,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>RNG <span class="op">=</span> np.random.default_rng(SEED)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I explore fitting the simplest closed capture-recapture model, Model <span class="math inline">\(M_0,\)</span> through parameter-expanded data-augmentation <span class="citation" data-cites="royle2008">(PX-DA, <a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008</a>)</span>. The idea with PX-DA is to augment the capture histories with <span class="math inline">\(M-n\)</span> all zero capture-histories, where <span class="math inline">\(M\)</span> is a hyperparameter that should be much greater than the true population size <span class="math inline">\(N,\)</span> and <span class="math inline">\(n\)</span> is the total number of individuals that were captured during the study. This allows us to treat the data as a zero-inflated binomial distribution (see below).</p>
-<div id="d89ef12f" class="cell" data-execution_count="2">
+<div id="e0aff4d0" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> augment_history(history, M):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Augment a capture history with all-zero histories.'''</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -452,7 +454,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> augmented </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To demonstrate this approach, I use the salamander dataset from <span class="citation" data-cites="bailey2004">Bailey, Simons, and Pollock (<a href="#ref-bailey2004" role="doc-biblioref">2004</a>)</span>, as demonstrated in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 24. These data were collected on two salamander species, the red-cheeked salamander (<em>Plethodon jordani</em>) and the pygmy salamander (<em>Desmognathus wrighti</em>), in Great Smoky Mountains National Park. The salamanders were counted in 15m by 15m square plots. In this case, we augment the history by setting <span class="math inline">\(M=1500\)</span>. There were <span class="math inline">\(n=92\)</span> individual red-cheeked and <span class="math inline">\(n=132\)</span> pygmy salamanders captured during the course of the survey.</p>
-<div id="64ab51f2" class="cell" data-execution_count="3">
+<div id="2a101358" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_histories():</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Read, augment, and recombine the salamander histories.'''</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -517,7 +519,7 @@ Table&nbsp;1: Example capture history, where <span class="math inline">\(t\)</sp
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(M0)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
-<div id="fig-m0" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-m0" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-m0-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="closed_cmr_files/figure-html/fig-m0-output-1.svg" class="img-fluid figure-img">
@@ -529,29 +531,31 @@ Figure&nbsp;1: Visual representation of model <span class="math inline">\(M_0.\)
 </div>
 </div>
 </div>
-<div id="fe9d8ed6" class="cell" data-execution_count="5">
+<div id="a030aa3c" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> M0:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    M0_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
-NUTS: [psi, p]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 7 seconds.</code></pre>
+NUTS: [psi, p]</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"b54e2a9221244ec7846d3dbf6eb70074","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"c7ffd483b0c94b059ddd0f89cdb2d5c7","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
 </div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 7 seconds.</code></pre>
+</div>
 </div>
 <div id="cell-fig-trace" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> az.plot_trace(M0_idata, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>), var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'p'</span>])<span class="op">;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(hspace<span class="op">=</span><span class="fl">0.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> az.plot_trace(M0_idata, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>), var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'p'</span>])<span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(hspace<span class="op">=</span><span class="fl">0.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-trace" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-trace" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="closed_cmr_files/figure-html/fig-trace-output-1.png" width="687" height="367" class="figure-img">
@@ -565,41 +569,41 @@ Figure&nbsp;2: Traceplots for the salamander <span class="math inline">\(M_0\)</
 </div>
 <p>For faster sampling, it’s better to separate the two species into two separate models. On my machine, the individual species models finish sampling in 2-3 seconds, compared to 15-20 seconds for the two species model. That said, the two species model is somewhat more convenient.</p>
 <p>Of course, the trace plots lack our true parameter of interest: the population size <span class="math inline">\(N.\)</span> We can simulate the posterior of <span class="math inline">\(N\)</span> as a <em>derived quantity</em>, using <span class="math inline">\(M\)</span> and the posterior distribution of <span class="math inline">\(\psi\)</span>.</p>
-<div id="6878bebd" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># az.extract flattens the chains</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> az.extract(M0_idata)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>psi_samps <span class="op">=</span> posterior.psi.values</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> posterior.p.values</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior probabilities of being present in the population but not detected</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>p_if_present <span class="op">=</span> psi_samps <span class="op">*</span> binom.pmf(<span class="dv">0</span>, n<span class="op">=</span>T, p<span class="op">=</span>p_samps)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>p_total <span class="op">=</span> p_if_present <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> psi_samps)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate the number of undetected animals in each population</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>number_undetected_pyg <span class="op">=</span> RNG.binomial(M <span class="op">-</span> n_pyg, p_if_present[<span class="dv">0</span>] <span class="op">/</span> p_total[<span class="dv">0</span>])</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>number_undetected_red <span class="op">=</span> RNG.binomial(M <span class="op">-</span> n_red, p_if_present[<span class="dv">1</span>] <span class="op">/</span> p_total[<span class="dv">1</span>])</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate N</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>N_pyg <span class="op">=</span> n_pyg <span class="op">+</span> number_undetected_pyg</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>N_red <span class="op">=</span> n_red <span class="op">+</span> number_undetected_red</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="0ee988cf" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># az.extract flattens the chains</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>posterior <span class="op">=</span> az.extract(M0_idata)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>psi_samps <span class="op">=</span> posterior.psi.values</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> posterior.p.values</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior probabilities of being present in the population but not detected</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>p_if_present <span class="op">=</span> psi_samps <span class="op">*</span> binom.pmf(<span class="dv">0</span>, n<span class="op">=</span>T, p<span class="op">=</span>p_samps)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>p_total <span class="op">=</span> p_if_present <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> psi_samps)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate the number of undetected animals in each population</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>number_undetected_pyg <span class="op">=</span> RNG.binomial(M <span class="op">-</span> n_pyg, p_if_present[<span class="dv">0</span>] <span class="op">/</span> p_total[<span class="dv">0</span>])</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>number_undetected_red <span class="op">=</span> RNG.binomial(M <span class="op">-</span> n_red, p_if_present[<span class="dv">1</span>] <span class="op">/</span> p_total[<span class="dv">1</span>])</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate N</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>N_pyg <span class="op">=</span> n_pyg <span class="op">+</span> number_undetected_pyg</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>N_red <span class="op">=</span> n_red <span class="op">+</span> number_undetected_red</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Below I plotted the posterior distributions of <span class="math inline">\(N\)</span> for both species, adding the estimates from <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 24. Although note that they used a different prior for <span class="math inline">\(\psi.\)</span></p>
 <div id="cell-fig-N_trace" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>N_hooten <span class="op">=</span> [<span class="fl">229.6</span>, <span class="fl">450.9</span>]</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">4</span>))</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>ax.hist(N_pyg, color<span class="op">=</span><span class="st">'C0'</span>, edgecolor<span class="op">=</span><span class="st">'white'</span>, alpha<span class="op">=</span><span class="fl">0.9</span>, bins<span class="op">=</span><span class="dv">30</span>, label<span class="op">=</span><span class="st">'Pygmy'</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>ax.hist(N_red, color<span class="op">=</span><span class="st">'C1'</span>, edgecolor<span class="op">=</span><span class="st">'white'</span>, alpha<span class="op">=</span><span class="fl">0.9</span>, bins<span class="op">=</span><span class="dv">30</span>, label<span class="op">=</span><span class="st">'Red-cheeked'</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>ax.axvline(N_hooten[<span class="dv">0</span>], linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'black'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>ax.axvline(N_hooten[<span class="dv">1</span>], linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'black'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Posterior distributions of $N$'</span>)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Number of samples'</span>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>N_hooten <span class="op">=</span> [<span class="fl">229.6</span>, <span class="fl">450.9</span>]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">4</span>))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>ax.hist(N_pyg, color<span class="op">=</span><span class="st">'C0'</span>, edgecolor<span class="op">=</span><span class="st">'white'</span>, alpha<span class="op">=</span><span class="fl">0.9</span>, bins<span class="op">=</span><span class="dv">30</span>, label<span class="op">=</span><span class="st">'Pygmy'</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ax.hist(N_red, color<span class="op">=</span><span class="st">'C1'</span>, edgecolor<span class="op">=</span><span class="st">'white'</span>, alpha<span class="op">=</span><span class="fl">0.9</span>, bins<span class="op">=</span><span class="dv">30</span>, label<span class="op">=</span><span class="st">'Red-cheeked'</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>ax.axvline(N_hooten[<span class="dv">0</span>], linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'black'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>ax.axvline(N_hooten[<span class="dv">1</span>], linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'black'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Posterior distributions of $N$'</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Number of samples'</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-n_trace" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-n_trace" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-n_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="closed_cmr_files/figure-html/fig-n_trace-output-1.png" width="588" height="382" class="figure-img">
+<img src="closed_cmr_files/figure-html/fig-n_trace-output-1.png" width="604" height="382" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-n_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Posterior distributions of <span class="math inline">\(N\)</span> from the <span class="math inline">\(M_0\)</span> model. Estimates from <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span> are shown by the vertical lines’
@@ -610,33 +614,33 @@ Figure&nbsp;3: Posterior distributions of <span class="math inline">\(N\)</span>
 </div>
 <p>We might expect estimates of capture probability <span class="math inline">\(p\)</span> and the abundance <span class="math inline">\(N\)</span> to be somewhat correlated. We can explore this relationship visually by plotting the posterior draws.</p>
 <div id="cell-fig-posterior" class="cell" data-fig-lab="post" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the plot</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># add the scatter for each species</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>labs <span class="op">=</span> [<span class="st">'Pygmy'</span>, <span class="st">'Red-backed'</span>]</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>ax.scatter(p_samps[<span class="dv">0</span>], N_pyg, s<span class="op">=</span><span class="dv">10</span>, alpha<span class="op">=</span><span class="fl">0.2</span>, label<span class="op">=</span>labs[<span class="dv">0</span>])</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>ax.scatter(p_samps[<span class="dv">1</span>], N_red, s<span class="op">=</span><span class="dv">10</span>, alpha<span class="op">=</span><span class="fl">0.2</span>, label<span class="op">=</span>labs[<span class="dv">1</span>])</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># this removes the opacity for the dots in the legend</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>leg <span class="op">=</span> ax.legend()</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> lh <span class="kw">in</span> leg.legend_handles: </span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    lh.<span class="bu">set</span>(sizes<span class="op">=</span>[<span class="dv">25</span>], alpha<span class="op">=</span>[<span class="dv">1</span>])</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># update aesthetics </span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>ax.spines.right.set_visible(<span class="va">False</span>)</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>ax.spines.top.set_visible(<span class="va">False</span>)</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r'$N$'</span>)</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'$p$'</span>)</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Posterior draws'</span>)</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the plot</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># add the scatter for each species</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>labs <span class="op">=</span> [<span class="st">'Pygmy'</span>, <span class="st">'Red-backed'</span>]</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>ax.scatter(p_samps[<span class="dv">0</span>], N_pyg, s<span class="op">=</span><span class="dv">10</span>, alpha<span class="op">=</span><span class="fl">0.2</span>, label<span class="op">=</span>labs[<span class="dv">0</span>])</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>ax.scatter(p_samps[<span class="dv">1</span>], N_red, s<span class="op">=</span><span class="dv">10</span>, alpha<span class="op">=</span><span class="fl">0.2</span>, label<span class="op">=</span>labs[<span class="dv">1</span>])</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># this removes the opacity for the dots in the legend</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>leg <span class="op">=</span> ax.legend()</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> lh <span class="kw">in</span> leg.legend_handles: </span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    lh.<span class="bu">set</span>(sizes<span class="op">=</span>[<span class="dv">25</span>], alpha<span class="op">=</span>[<span class="dv">1</span>])</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co"># update aesthetics </span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>ax.spines.right.set_visible(<span class="va">False</span>)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>ax.spines.top.set_visible(<span class="va">False</span>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">N</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">p</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Posterior draws'</span>)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-posterior" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-posterior" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-posterior-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="closed_cmr_files/figure-html/fig-posterior-output-1.png" width="420" height="409" class="figure-img">
+<img src="closed_cmr_files/figure-html/fig-posterior-output-1.png" width="432" height="409" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-posterior-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;4: Posterior draws of <span class="math inline">\(N\)</span> and <span class="math inline">\(p\)</span> for both species of salamander.
@@ -650,69 +654,69 @@ Figure&nbsp;4: Posterior draws of <span class="math inline">\(N\)</span> and <sp
 <h1>Model <span class="math inline">\(M_b\)</span></h1>
 <p>Next, I fit model <span class="math inline">\(M_b,\)</span> which accounts for the possibility that the capture probability changes after the animal is first caught. This could be from trap happiness, whereby animals are more likely to be trapped after their first time. Conversely, this could be from subsequent trap avoidance.</p>
 <p>Mirroring <span class="citation" data-cites="royle2008">(<a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008, chap. 5</a>)</span>, I fit this model to the <em>Microtus</em> dataset reported in <span class="citation" data-cites="williams2002">(<a href="#ref-williams2002" role="doc-biblioref">Williams, Nichols, and Conroy 2002, 525</a>)</span>. This version of the <a href="https://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/chapters.htm">dataset</a> includes encounter histories of <span class="math inline">\(n=56\)</span> adult males that were captured on <span class="math inline">\(T=5\)</span> consecutive days.</p>
-<div id="a815abb2" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the microtus data</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>microtus <span class="op">=</span> np.loadtxt(<span class="st">'microtus.data.txt'</span>).astype(<span class="bu">int</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># the last column is not relevant</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>micro_hist <span class="op">=</span> microtus[:,:<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>n, T <span class="op">=</span> micro_hist.shape</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># augment with all zero histories</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">100</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>micro_augmented <span class="op">=</span> augment_history(micro_hist, M<span class="op">=</span>M)</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co"># note the occasion when each individual was first seen</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>first_seen <span class="op">=</span> (micro_hist <span class="op">!=</span> <span class="dv">0</span>).argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co"># create the covariate for the behavior effect</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>behavior_effect <span class="op">=</span> np.zeros((M, T))</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, f <span class="kw">in</span> <span class="bu">enumerate</span>(first_seen):</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    behavior_effect[i, (f <span class="op">+</span> <span class="dv">1</span>):] <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co"># covariate matrix</span></span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>x_int <span class="op">=</span> np.ones((M, T))</span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.stack((x_int, behavior_effect), axis<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="ea7eebdd" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the microtus data</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>microtus <span class="op">=</span> np.loadtxt(<span class="st">'microtus.data.txt'</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># the last column is not relevant</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>micro_hist <span class="op">=</span> microtus[:,:<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>n, T <span class="op">=</span> micro_hist.shape</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># augment with all zero histories</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>micro_augmented <span class="op">=</span> augment_history(micro_hist, M<span class="op">=</span>M)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># note the occasion when each individual was first seen</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>first_seen <span class="op">=</span> (micro_hist <span class="op">!=</span> <span class="dv">0</span>).argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co"># create the covariate for the behavior effect</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>behavior_effect <span class="op">=</span> np.zeros((M, T))</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, f <span class="kw">in</span> <span class="bu">enumerate</span>(first_seen):</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    behavior_effect[i, (f <span class="op">+</span> <span class="dv">1</span>):] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co"># covariate matrix</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>x_int <span class="op">=</span> np.ones((M, T))</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.stack((x_int, behavior_effect), axis<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I use the same custom distribution as the occupancy notebook, the zero-inflated model, except the zero-inflation happens at the row-level.</p>
 <div id="cell-fig-mb" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logp(value, n, p, psi):</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    binom <span class="op">=</span> binomln(n, value) <span class="op">+</span> logpow(p, value) <span class="op">+</span> logpow(<span class="dv">1</span> <span class="op">-</span> p, n <span class="op">-</span> value)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    bin_sum <span class="op">=</span> pm.math.<span class="bu">sum</span>(binom, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    bin_exp <span class="op">=</span> pm.math.exp(bin_sum)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> pm.math.switch(</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        value.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">&gt;</span> <span class="dv">0</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        bin_exp <span class="op">*</span> psi,</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        bin_exp <span class="op">*</span> psi <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> psi)</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pm.math.log(res)</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'alpha_coeffs'</span>: [<span class="st">'Intercept'</span>, <span class="st">'B_Response'</span>]}</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model(coords<span class="op">=</span>coords) <span class="im">as</span> mb:</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for the capture and inclusion probabilities</span></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    psi <span class="op">=</span> pm.Beta(<span class="st">'psi'</span>, <span class="fl">0.001</span>, <span class="dv">1</span>)</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    Alpha <span class="op">=</span> pm.Normal(<span class="st">'Alpha'</span>, <span class="dv">0</span>, <span class="dv">2</span>, dims<span class="op">=</span><span class="st">'alpha_coeffs'</span>)</span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    nu <span class="op">=</span> pm.math.dot(X, Alpha)</span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.Deterministic(<span class="st">'p'</span>, pm.math.invlogit(nu))</span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># likelihood </span></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    pm.CustomDist(</span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">'y'</span>,</span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span>,</span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>        p,</span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>        psi,</span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>        logp<span class="op">=</span>logp,</span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>        observed<span class="op">=</span>micro_augmented</span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(mb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logp(value, n, p, psi):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    binom <span class="op">=</span> binomln(n, value) <span class="op">+</span> logpow(p, value) <span class="op">+</span> logpow(<span class="dv">1</span> <span class="op">-</span> p, n <span class="op">-</span> value)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    bin_sum <span class="op">=</span> pm.math.<span class="bu">sum</span>(binom, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    bin_exp <span class="op">=</span> pm.math.exp(bin_sum)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> pm.math.switch(</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        value.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">&gt;</span> <span class="dv">0</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        bin_exp <span class="op">*</span> psi,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        bin_exp <span class="op">*</span> psi <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> psi)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pm.math.log(res)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'alpha_coeffs'</span>: [<span class="st">'Intercept'</span>, <span class="st">'B_Response'</span>]}</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model(coords<span class="op">=</span>coords) <span class="im">as</span> mb:</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for the capture and inclusion probabilities</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    psi <span class="op">=</span> pm.Beta(<span class="st">'psi'</span>, <span class="fl">0.001</span>, <span class="dv">1</span>)</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    Alpha <span class="op">=</span> pm.Normal(<span class="st">'Alpha'</span>, <span class="dv">0</span>, <span class="dv">2</span>, dims<span class="op">=</span><span class="st">'alpha_coeffs'</span>)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    nu <span class="op">=</span> pm.math.dot(X, Alpha)</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.Deterministic(<span class="st">'p'</span>, pm.math.invlogit(nu))</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># likelihood </span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    pm.CustomDist(</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">'y'</span>,</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span>,</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>        p,</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>        psi,</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>        logp<span class="op">=</span>logp,</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>        observed<span class="op">=</span>micro_augmented</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(mb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
-<div id="fig-mb" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-mb" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-mb-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="closed_cmr_files/figure-html/fig-mb-output-1.svg" class="img-fluid figure-img">
@@ -724,32 +728,33 @@ Figure&nbsp;5: Visual representation of model <span class="math inline">\(M_b.\)
 </div>
 </div>
 </div>
-<div id="4e4a6e1b" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mb:</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    mb_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="0de6e33b" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mb:</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    mb_idata <span class="op">=</span> pm.sample()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Initializing NUTS using jitter+adapt_diag...
 Multiprocess sampling (4 chains in 4 jobs)
-NUTS: [psi, Alpha]
-Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 1 seconds.</code></pre>
+NUTS: [psi, Alpha]</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"7f3c849b4e824f70b6a173a027f95253","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"a9eef9d0797a403c9ecf0d2d0c3b047b","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
 </div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 1 seconds.</code></pre>
 </div>
-<div id="ad99ed4c" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>az.summary(mb_idata, var_names<span class="op">=</span>[<span class="st">'Alpha'</span>, <span class="st">'psi'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="c1a968d4" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>az.summary(mb_idata, var_names<span class="op">=</span>[<span class="st">'Alpha'</span>, <span class="st">'psi'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <div>
-<div>
 
 
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -767,38 +772,38 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">Alpha[Intercept]</td>
-<td>0.109</td>
-<td>0.239</td>
-<td>-0.341</td>
-<td>0.554</td>
-<td>0.005</td>
+<td>0.122</td>
+<td>0.246</td>
+<td>-0.354</td>
+<td>0.556</td>
+<td>0.006</td>
 <td>0.004</td>
-<td>2291.0</td>
-<td>2397.0</td>
+<td>1878.0</td>
+<td>1995.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">Alpha[B_Response]</td>
-<td>0.622</td>
-<td>0.285</td>
-<td>0.104</td>
-<td>1.160</td>
-<td>0.006</td>
+<td>0.602</td>
+<td>0.290</td>
+<td>0.068</td>
+<td>1.137</td>
+<td>0.007</td>
 <td>0.005</td>
-<td>2245.0</td>
-<td>2237.0</td>
+<td>1917.0</td>
+<td>2176.0</td>
 <td>1.0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">psi</td>
 <td>0.570</td>
-<td>0.051</td>
-<td>0.469</td>
-<td>0.660</td>
+<td>0.053</td>
+<td>0.468</td>
+<td>0.664</td>
 <td>0.001</td>
 <td>0.001</td>
-<td>2588.0</td>
-<td>2385.0</td>
+<td>2521.0</td>
+<td>2359.0</td>
 <td>1.0</td>
 </tr>
 </tbody>
@@ -807,14 +812,13 @@ Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws 
 </div>
 </div>
 </div>
-</div>
 <div id="cell-fig-forest" class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>az.plot_forest(mb_idata, var_names<span class="op">=</span>[<span class="st">'Alpha'</span>], combined<span class="op">=</span><span class="va">True</span>, ess<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">2</span>))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>az.plot_forest(mb_idata, var_names<span class="op">=</span>[<span class="st">'Alpha'</span>], combined<span class="op">=</span><span class="va">True</span>, ess<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">2</span>))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-forest" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-forest" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-forest-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="closed_cmr_files/figure-html/fig-forest-output-1.png" width="687" height="222" class="figure-img">
+<img src="closed_cmr_files/figure-html/fig-forest-output-1.png" width="681" height="222" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-forest-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6: Forest plot showing the catchability parameters from model <span class="math inline">\(M_b.\)</span>
@@ -825,48 +829,48 @@ Figure&nbsp;6: Forest plot showing the catchability parameters from model <span 
 </div>
 <p>The forest plot indicates that there is some evidence of a weak, positive behavioral response. Although note that the 94% credible intervals between the baseline capture rate and the behavioral effect overlap considerably.</p>
 <div id="cell-fig-mb_N" class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # simulate draws of N </span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>psi_samps <span class="op">=</span> az.extract(mb_idata).psi.values</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> az.extract(mb_idata).p.values</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior probabilities of being present in the population but not detected</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>p_if_present <span class="op">=</span> psi_samps <span class="op">*</span> binom.pmf(<span class="dv">0</span>, n<span class="op">=</span>T, p<span class="op">=</span>p_samps)</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>p_total <span class="op">=</span> p_if_present <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> psi_samps)</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate the number of undetected animals in each population</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>number_undetected <span class="op">=</span> RNG.binomial(M <span class="op">-</span> n, p_if_present <span class="op">/</span> p_total)</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate N</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> n <span class="op">+</span> number_undetected</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="co"># create the plot</span></span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">3</span>))</span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="co"># bar plot looks a little better than a histogram here imo</span></span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>N_values, N_counts <span class="op">=</span> np.unique(N, return_counts<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>ax.bar(N_values, N_counts)</span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>ax.annotate(</span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Number</span><span class="ch">\n</span><span class="st">detected $n$'</span>, </span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    ha<span class="op">=</span><span class="st">'left'</span>,</span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    xy<span class="op">=</span>(N_values[<span class="dv">0</span>], N_counts[<span class="dv">0</span>]), </span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'black'</span>,</span>
-<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>    xytext<span class="op">=</span>(n<span class="op">+</span><span class="dv">5</span>, <span class="fl">6.2e5</span>), </span>
-<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>    arrowprops<span class="op">=</span><span class="bu">dict</span>(arrowstyle<span class="op">=</span><span class="st">"-&gt;"</span>, color<span class="op">=</span><span class="st">'black'</span>, linewidth<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>                    connectionstyle<span class="op">=</span><span class="st">"angle3,angleA=90,angleB=0"</span>)</span>
-<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>ax.ticklabel_format(axis<span class="op">=</span><span class="st">'y'</span>, style<span class="op">=</span><span class="st">'sci'</span>, scilimits<span class="op">=</span>(<span class="dv">0</span>,<span class="dv">0</span>))</span>
-<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Number of samples'</span>)</span>
-<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Posterior of $N$'</span>)</span>
-<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # simulate draws of N </span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>psi_samps <span class="op">=</span> az.extract(mb_idata).psi.values</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> az.extract(mb_idata).p.values</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior probabilities of being present in the population but not detected</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>p_if_present <span class="op">=</span> psi_samps <span class="op">*</span> binom.pmf(<span class="dv">0</span>, n<span class="op">=</span>T, p<span class="op">=</span>p_samps)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>p_total <span class="op">=</span> p_if_present <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> psi_samps)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate the number of undetected animals in each population</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>number_undetected <span class="op">=</span> RNG.binomial(M <span class="op">-</span> n, p_if_present <span class="op">/</span> p_total)</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate N</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> n <span class="op">+</span> number_undetected</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="co"># create the plot</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">3</span>))</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co"># bar plot looks a little better than a histogram here imo</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>N_values, N_counts <span class="op">=</span> np.unique(N, return_counts<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>ax.bar(N_values, N_counts)</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>ax.annotate(</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Number</span><span class="ch">\n</span><span class="st">detected $n$'</span>, </span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>    ha<span class="op">=</span><span class="st">'left'</span>,</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>    xy<span class="op">=</span>(N_values[<span class="dv">0</span>], N_counts[<span class="dv">0</span>]), </span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'black'</span>,</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>    xytext<span class="op">=</span>(n<span class="op">+</span><span class="dv">5</span>, <span class="fl">6.2e5</span>), </span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>    arrowprops<span class="op">=</span><span class="bu">dict</span>(arrowstyle<span class="op">=</span><span class="st">"-&gt;"</span>, color<span class="op">=</span><span class="st">'black'</span>, linewidth<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>                    connectionstyle<span class="op">=</span><span class="st">"angle3,angleA=90,angleB=0"</span>)</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>ax.ticklabel_format(axis<span class="op">=</span><span class="st">'y'</span>, style<span class="op">=</span><span class="st">'sci'</span>, scilimits<span class="op">=</span>(<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Number of samples'</span>)</span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Posterior of $N$'</span>)</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-mb_n" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-mb_n" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-mb_n-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="closed_cmr_files/figure-html/fig-mb_n-output-1.png" width="397" height="304" class="figure-img">
+<img src="closed_cmr_files/figure-html/fig-mb_n-output-1.png" width="415" height="304" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mb_n-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7: Posterior distribution of <span class="math inline">\(N\)</span> from model <span class="math inline">\(M_b.\)</span> The number voles that were detected <span class="math inline">\(n\)</span> is shown by the vertical red line.
@@ -877,25 +881,25 @@ Figure&nbsp;7: Posterior distribution of <span class="math inline">\(N\)</span> 
 </div>
 <p>Most of the posterior density of <span class="math inline">\(N\)</span> is at <span class="math inline">\(n,\)</span> the number of animals detected. The discovery curve hints at why this may be the case. It seems that all the voles in the population may have been captured by the end of the study.</p>
 <div id="cell-fig-discovery" class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># how many voles have been seen?</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>total_seen <span class="op">=</span> micro_hist.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>).cumsum()</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>total_seen <span class="op">=</span> np.insert(total_seen, <span class="dv">0</span>, <span class="dv">0</span>)</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># how many new voles have been seen?</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>first_seen <span class="op">=</span> (micro_hist <span class="op">!=</span> <span class="dv">0</span>).argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>newbies <span class="op">=</span> [<span class="bu">sum</span>(first_seen <span class="op">==</span> t) <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(T)]</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>total_newbies <span class="op">=</span> np.cumsum(newbies)</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>total_newbies <span class="op">=</span> np.insert(total_newbies, <span class="dv">0</span>, <span class="dv">0</span>)</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="fl">3.5</span>))</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>ax.plot(total_seen, total_newbies)</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>ax.fill_between(total_seen, total_newbies, alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Discovery curve'</span>)</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Total voles captured'</span>)</span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Unique voles captured'</span>)</span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># how many voles have been seen?</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>total_seen <span class="op">=</span> micro_hist.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>).cumsum()</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>total_seen <span class="op">=</span> np.insert(total_seen, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># how many new voles have been seen?</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>first_seen <span class="op">=</span> (micro_hist <span class="op">!=</span> <span class="dv">0</span>).argmax(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>newbies <span class="op">=</span> [<span class="bu">sum</span>(first_seen <span class="op">==</span> t) <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(T)]</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>total_newbies <span class="op">=</span> np.cumsum(newbies)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>total_newbies <span class="op">=</span> np.insert(total_newbies, <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="fl">3.5</span>))</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>ax.plot(total_seen, total_newbies)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>ax.fill_between(total_seen, total_newbies, alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Discovery curve'</span>)</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Total voles captured'</span>)</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Unique voles captured'</span>)</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-discovery" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-discovery" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-discovery-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="closed_cmr_files/figure-html/fig-discovery-output-1.png" width="492" height="370" class="figure-img">
@@ -909,20 +913,20 @@ Figure&nbsp;8: Discovery curve for the <em>Microtus</em> study.
 </div>
 <p>We can also look at the behavioral effect by visualizing the posterior distributions of <span class="math inline">\(p.\)</span> As we can see, the voles who have been captured before are more likely to be captured again.</p>
 <div id="cell-fig-b_effect" class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>first_detection <span class="op">=</span> X[:, :, <span class="dv">1</span>] <span class="op">==</span> <span class="dv">0</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>p_first_detection <span class="op">=</span> p_samps[first_detection].flatten()</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>p_seen_before <span class="op">=</span> p_samps[<span class="op">~</span>first_detection].flatten()</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="fl">3.5</span>))</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>az.plot_dist(p_first_detection, ax<span class="op">=</span>ax, label<span class="op">=</span><span class="st">'First detection'</span>, color<span class="op">=</span><span class="st">'C0'</span>)</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>az.plot_dist(p_seen_before, ax<span class="op">=</span>ax, label<span class="op">=</span><span class="st">'Seen before'</span>, color<span class="op">=</span><span class="st">'C1'</span>)</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Posterior distributions of $p$'</span>)</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>ax.set_xlim((<span class="dv">0</span>,<span class="dv">1</span>))</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>ax.set_yticks([])</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>first_detection <span class="op">=</span> X[:, :, <span class="dv">1</span>] <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>p_first_detection <span class="op">=</span> p_samps[first_detection].flatten()</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>p_seen_before <span class="op">=</span> p_samps[<span class="op">~</span>first_detection].flatten()</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="fl">3.5</span>))</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>az.plot_dist(p_first_detection, ax<span class="op">=</span>ax, label<span class="op">=</span><span class="st">'First detection'</span>, color<span class="op">=</span><span class="st">'C0'</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>az.plot_dist(p_seen_before, ax<span class="op">=</span>ax, label<span class="op">=</span><span class="st">'Seen before'</span>, color<span class="op">=</span><span class="st">'C1'</span>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Posterior distributions of $p$'</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>ax.set_xlim((<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>ax.set_yticks([])</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-b_effect" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-b_effect" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-b_effect-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="closed_cmr_files/figure-html/fig-b_effect-output-1.png" width="467" height="344" class="figure-img">
@@ -934,23 +938,23 @@ Figure&nbsp;9: Posterior distributions for the probability of detection given th
 </div>
 </div>
 </div>
-<div id="a411aad6" class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">-</span>n <span class="op">-</span>u <span class="op">-</span>v <span class="op">-</span>iv <span class="op">-</span>w </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="16273c3d" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">-</span>n <span class="op">-</span>u <span class="op">-</span>v <span class="op">-</span>iv <span class="op">-</span>w </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Last updated: Thu Apr 10 2025
+<pre><code>Last updated: Mon Apr 28 2025
 
 Python implementation: CPython
 Python version       : 3.13.2
 IPython version      : 9.0.2
 
 arviz     : 0.21.0
-numpy     : 2.1.3
-pymc      : 5.22.0
 seaborn   : 0.13.2
+numpy     : 2.1.3
 matplotlib: 3.10.1
 pandas    : 2.2.3
+pymc      : 5.22.0
 
 Watermark: 2.5.0
 </code></pre>
@@ -979,231 +983,245 @@ Williams, Byron K, James D Nichols, and Michael J Conroy. 2002. <em>Analysis and
 </div>
 </div></section></div></main> <!-- /main -->
 <script type="application/vnd.jupyter.widget-state+json">
-{"state":{"0b007b0f048d4d51a49d1001d7a84a09":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"665e3b1317c3420abd1bfe30192b8769":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"7f3c849b4e824f70b6a173a027f95253":{"model_module":"@jupyter-widgets/output","model_module_version":"1.0.0","model_name":"OutputModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/output","_model_module_version":"1.0.0","_model_name":"OutputModel","_view_count":null,"_view_module":"@jupyter-widgets/output","_view_module_version":"1.0.0","_view_name":"OutputView","layout":"IPY_MODEL_0b007b0f048d4d51a49d1001d7a84a09","msg_id":"","outputs":[{"data":{"text/html":"<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">                                                                                                                   \n <span style=\"font-weight: bold\"> Progress                 </span> <span style=\"font-weight: bold\"> Draws </span> <span style=\"font-weight: bold\"> Divergences </span> <span style=\"font-weight: bold\"> Step size </span> <span style=\"font-weight: bold\"> Grad evals </span> <span style=\"font-weight: bold\"> Sampling Speed  </span> <span style=\"font-weight: bold\"> Elapsed </span> <span style=\"font-weight: bold\"> Remaining </span> \n ───────────────────────────────────────────────────────────────────────────────────────────────────────────────── \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.66        7            2477.41 draws/s   0:00:00   0:00:00    \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.39        7            2417.42 draws/s   0:00:00   0:00:00    \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.65        7            2337.62 draws/s   0:00:00   0:00:00    \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.48        7            2163.07 draws/s   0:00:00   0:00:00    \n                                                                                                                   \n</pre>\n","text/plain":"                                                                                                                   \n \u001b[1m \u001b[0m\u001b[1mProgress                \u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mDraws\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mDivergences\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mStep size\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mGrad evals\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mSampling Speed \u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mElapsed\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mRemaining\u001b[0m\u001b[1m \u001b[0m \n ───────────────────────────────────────────────────────────────────────────────────────────────────────────────── \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.66        7            2477.41 draws/s   0:00:00   0:00:00    \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.39        7            2417.42 draws/s   0:00:00   0:00:00    \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.65        7            2337.62 draws/s   0:00:00   0:00:00    \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.48        7            2163.07 draws/s   0:00:00   0:00:00    \n                                                                                                                   \n"},"metadata":{},"output_type":"display_data"}],"tabbable":null,"tooltip":null}},"b54e2a9221244ec7846d3dbf6eb70074":{"model_module":"@jupyter-widgets/output","model_module_version":"1.0.0","model_name":"OutputModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/output","_model_module_version":"1.0.0","_model_name":"OutputModel","_view_count":null,"_view_module":"@jupyter-widgets/output","_view_module_version":"1.0.0","_view_name":"OutputView","layout":"IPY_MODEL_665e3b1317c3420abd1bfe30192b8769","msg_id":"","outputs":[{"data":{"text/html":"<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">                                                                                                                   \n <span style=\"font-weight: bold\"> Progress                  </span> <span style=\"font-weight: bold\"> Draws </span> <span style=\"font-weight: bold\"> Divergences </span> <span style=\"font-weight: bold\"> Step size </span> <span style=\"font-weight: bold\"> Grad evals </span> <span style=\"font-weight: bold\"> Sampling Speed </span> <span style=\"font-weight: bold\"> Elapsed </span> <span style=\"font-weight: bold\"> Remaining </span> \n ───────────────────────────────────────────────────────────────────────────────────────────────────────────────── \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.47        7            289.17 draws/s   0:00:06   0:00:00    \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.32        7            307.38 draws/s   0:00:06   0:00:00    \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.35        3            304.85 draws/s   0:00:06   0:00:00    \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.46        7            309.34 draws/s   0:00:06   0:00:00    \n                                                                                                                   \n</pre>\n","text/plain":"                                                                                                                   \n \u001b[1m \u001b[0m\u001b[1mProgress                 \u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mDraws\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mDivergences\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mStep size\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mGrad evals\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mSampling Speed\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mElapsed\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mRemaining\u001b[0m\u001b[1m \u001b[0m \n ───────────────────────────────────────────────────────────────────────────────────────────────────────────────── \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.47        7            289.17 draws/s   0:00:06   0:00:00    \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.32        7            307.38 draws/s   0:00:06   0:00:00    \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.35        3            304.85 draws/s   0:00:06   0:00:00    \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.46        7            309.34 draws/s   0:00:06   0:00:00    \n                                                                                                                   \n"},"metadata":{},"output_type":"display_data"}],"tabbable":null,"tooltip":null}}},"version_major":2,"version_minor":0}
+{"state":{"267bb18b7a3e4492ad99173cebdf6ea4":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"4d7abf21ff2a4f73aec13e605076dec6":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"a9eef9d0797a403c9ecf0d2d0c3b047b":{"model_module":"@jupyter-widgets/output","model_module_version":"1.0.0","model_name":"OutputModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/output","_model_module_version":"1.0.0","_model_name":"OutputModel","_view_count":null,"_view_module":"@jupyter-widgets/output","_view_module_version":"1.0.0","_view_name":"OutputView","layout":"IPY_MODEL_4d7abf21ff2a4f73aec13e605076dec6","msg_id":"","outputs":[{"data":{"text/html":"<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">                                                                                                                   \n <span style=\"font-weight: bold\"> Progress                 </span> <span style=\"font-weight: bold\"> Draws </span> <span style=\"font-weight: bold\"> Divergences </span> <span style=\"font-weight: bold\"> Step size </span> <span style=\"font-weight: bold\"> Grad evals </span> <span style=\"font-weight: bold\"> Sampling Speed  </span> <span style=\"font-weight: bold\"> Elapsed </span> <span style=\"font-weight: bold\"> Remaining </span> \n ───────────────────────────────────────────────────────────────────────────────────────────────────────────────── \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.56        3            2586.13 draws/s   0:00:00   0:00:00    \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.49        3            2417.32 draws/s   0:00:00   0:00:00    \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.67        3            2336.70 draws/s   0:00:00   0:00:00    \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.54        7            2220.28 draws/s   0:00:00   0:00:00    \n                                                                                                                   \n</pre>\n","text/plain":"                                                                                                                   \n \u001b[1m \u001b[0m\u001b[1mProgress                \u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mDraws\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mDivergences\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mStep size\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mGrad evals\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mSampling Speed \u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mElapsed\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mRemaining\u001b[0m\u001b[1m \u001b[0m \n ───────────────────────────────────────────────────────────────────────────────────────────────────────────────── \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.56        3            2586.13 draws/s   0:00:00   0:00:00    \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.49        3            2417.32 draws/s   0:00:00   0:00:00    \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.67        3            2336.70 draws/s   0:00:00   0:00:00    \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.54        7            2220.28 draws/s   0:00:00   0:00:00    \n                                                                                                                   \n"},"metadata":{},"output_type":"display_data"}],"tabbable":null,"tooltip":null}},"c7ffd483b0c94b059ddd0f89cdb2d5c7":{"model_module":"@jupyter-widgets/output","model_module_version":"1.0.0","model_name":"OutputModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/output","_model_module_version":"1.0.0","_model_name":"OutputModel","_view_count":null,"_view_module":"@jupyter-widgets/output","_view_module_version":"1.0.0","_view_name":"OutputView","layout":"IPY_MODEL_267bb18b7a3e4492ad99173cebdf6ea4","msg_id":"","outputs":[{"data":{"text/html":"<pre style=\"white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace\">                                                                                                                   \n <span style=\"font-weight: bold\"> Progress                  </span> <span style=\"font-weight: bold\"> Draws </span> <span style=\"font-weight: bold\"> Divergences </span> <span style=\"font-weight: bold\"> Step size </span> <span style=\"font-weight: bold\"> Grad evals </span> <span style=\"font-weight: bold\"> Sampling Speed </span> <span style=\"font-weight: bold\"> Elapsed </span> <span style=\"font-weight: bold\"> Remaining </span> \n ───────────────────────────────────────────────────────────────────────────────────────────────────────────────── \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.36        3            295.75 draws/s   0:00:06   0:00:00    \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.30        15           290.32 draws/s   0:00:06   0:00:00    \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.30        7            298.27 draws/s   0:00:06   0:00:00    \n  <span style=\"color: #1f77b4; text-decoration-color: #1f77b4\">━━━━━━━━━━━━━━━━━━━━━━━━━</span>   2000    0             0.38        7            301.80 draws/s   0:00:06   0:00:00    \n                                                                                                                   \n</pre>\n","text/plain":"                                                                                                                   \n \u001b[1m \u001b[0m\u001b[1mProgress                 \u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mDraws\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mDivergences\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mStep size\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mGrad evals\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mSampling Speed\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mElapsed\u001b[0m\u001b[1m \u001b[0m \u001b[1m \u001b[0m\u001b[1mRemaining\u001b[0m\u001b[1m \u001b[0m \n ───────────────────────────────────────────────────────────────────────────────────────────────────────────────── \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.36        3            295.75 draws/s   0:00:06   0:00:00    \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.30        15           290.32 draws/s   0:00:06   0:00:00    \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.30        7            298.27 draws/s   0:00:06   0:00:00    \n  \u001b[38;2;31;119;180m━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m   2000    0             0.38        7            301.80 draws/s   0:00:06   0:00:00    \n                                                                                                                   \n"},"metadata":{},"output_type":"display_data"}],"tabbable":null,"tooltip":null}}},"version_major":2,"version_minor":0}
 </script>
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
-      }
-    }
-    return false;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  });
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
         }
       }
+      return false;
     }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
         }
-        return container.innerHTML
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -1211,185 +1229,161 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./occupancy.html" class="pagination-link" aria-label="Occupancy">
