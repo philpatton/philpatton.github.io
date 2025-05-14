@@ -12,7 +12,7 @@ about:
       href: https://bsky.app/profile/ptpatton.bsky.social
 ---
 
-Phil is a PhD candidate in the [Marine Mammal Research Program](https://www.mmrphawaii.org) at the [Hawaiʻi Institute of Marine Biology](https://www.himb.hawaii.edu), and a [NOAA QUEST Fellow](https://www.fisheries.noaa.gov/content/quantitative-ecology-and-socioeconomics-training-quest-program) with the [Cetacean Research Program](https://www.fisheries.noaa.gov/pacific-islands/science-data/whale-and-dolphin-surveys-pacific-islands) at the Pacific Islands Fisheries Science [Center](bioss-pres.html).
+Phil is a PhD candidate in the [Marine Mammal Research Program](https://www.mmrphawaii.org) at the [Hawaiʻi Institute of Marine Biology](https://www.himb.hawaii.edu), and a [NOAA QUEST Fellow](https://www.fisheries.noaa.gov/content/quantitative-ecology-and-socioeconomics-training-quest-program) with the [Cetacean Research Program](https://www.fisheries.noaa.gov/pacific-islands/science-data/whale-and-dolphin-surveys-pacific-islands) at the Pacific Islands Fisheries Science Center.
 
 For his dissertation, he's researching ways to improve stock assessments of non-migratory dolphins in Hawaiʻi. This includes [automating photo-identification](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.14167) of these animals, understanding how these automated tools [interact with capture-recapture models](https://conbio.onlinelibrary.wiley.com/doi/10.1111/cobi.14436), and estimating demographic parameters using cutting edge methods in capture recapture.
 
