@@ -11,7 +11,7 @@ bibliography: refs.bib
 jupyter: python3
 ---
 
-In this notebook, I explore the Cormack-Jolly-Seber (CJS) model for estimating survival using capture-recapture data in PyMC. I have drawn considerable inspiration from Austin Rochford's [notebook](https://austinrochford.com/posts/2018-01-31-capture-recapture.html) on capture-recapture in PyMC, the [second chapter](https://github.com/philpatton/autocapture) of my dissertation (a work in progress), and @mccrea2014.  
+In this notebook, I [explore](bioss-pres.html) the Cormack-Jolly-Seber (CJS) model for estimating survival using capture-recapture data in PyMC. I have drawn considerable inspiration from Austin Rochford's [notebook](https://austinrochford.com/posts/2018-01-31-capture-recapture.html) on capture-recapture in PyMC, the [second chapter](https://github.com/philpatton/autocapture) of my dissertation (a work in progress), and @mccrea2014.  
 
 # Cormack-Jolly-Seber 
 

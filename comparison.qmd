@@ -683,7 +683,7 @@ ax.set_xlabel(r'$p$')
 plt.show()
 ```
 
-This notebook demonstrates a simple way to compare models using leave one out cross-validation (loo) and a classic example from capture-recapture. This is just one way, however, to perform model comparison using PyMC. Perhaps a more effective solution for this problem would be [placing](bioss-pres.html) a shrinkage prior on the $\sigma$ parameters. 
+This notebook demonstrates a simple way to compare models using leave one out cross-validation (loo) and a classic example from capture-recapture. This is just one way, however, to perform model comparison using PyMC. Perhaps a more effective solution for this problem would be placing a shrinkage prior on the $\sigma$ parameters. 
 
 ```{python}
 %load_ext watermark

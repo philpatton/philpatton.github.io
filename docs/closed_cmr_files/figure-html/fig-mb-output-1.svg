@@ -27,7 +27,7 @@
 <text text-anchor="middle" x="28.81" y="-176.93" font-family="Times,serif" font-size="14.00">Beta</text>
 </g>
 <!-- y -->
-<g id="node4" class="node">
+<g id="node3" class="node">
 <title>y</title>
 <ellipse fill="lightgrey" stroke="black" cx="140.81" cy="-81.16" rx="67" ry="40.66"/>
 <text text-anchor="middle" x="140.81" y="-92.61" font-family="Times,serif" font-size="14.00">y</text>
@@ -49,7 +49,7 @@
 <text text-anchor="middle" x="140.81" y="-298.74" font-family="Times,serif" font-size="14.00">Normal</text>
 </g>
 <!-- p -->
-<g id="node3" class="node">
+<g id="node4" class="node">
 <title>p</title>
 <polygon fill="none" stroke="black" points="185.94,-227.23 95.69,-227.23 95.69,-169.73 185.94,-169.73 185.94,-227.23"/>
 <text text-anchor="middle" x="140.81" y="-209.93" font-family="Times,serif" font-size="14.00">p</text>
