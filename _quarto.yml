@@ -14,6 +14,8 @@ website:
         text: CV
       - href: notebooks.qmd
         text: Code
+      - href: defense.qmd
+        text: Defense
 
     right:
       - text: "{{< fa brands github>}}"
