@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.25">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Philip T. Patton">
-<meta name="dcterms.date" content="2025-05-14">
+<meta name="dcterms.date" content="2025-10-09">
 <meta name="description" content="Static community occupancy models in PyMC">
 
 <title>Community occupancy – Philip T. Patton</title>
@@ -81,7 +81,7 @@ div.csl-indent {
 }</style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -92,14 +92,15 @@ div.csl-indent {
 <link href="./scr.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-00c1544343d3734d152362c2ea5c4d40.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-242a7e6346f5e2fd6d6599311e0369af.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -129,7 +130,7 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
@@ -147,7 +148,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -173,6 +174,8 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Philip T. Patton</span>
     </a>
@@ -184,7 +187,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -192,8 +195,12 @@ window.Quarto = {
 <span class="menu-text">CV</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./notebooks.html" aria-current="page"> 
+    <a class="nav-link" href="./notebooks.html"> 
 <span class="menu-text">Code</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./defense.html"> 
+<span class="menu-text">Defense</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -230,6 +237,10 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+      </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -352,7 +363,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 14, 2025</p>
+      <p class="date">October 9, 2025</p>
     </div>
   </div>
   
@@ -368,8 +379,8 @@ window.Quarto = {
 <section id="us-breeding-bird-survey" class="level1">
 <h1>US Breeding Bird Survey</h1>
 <p>As a motivating example, I use the breeding bird survey (BBS) data used by <span class="citation" data-cites="dorazio2005">Dorazio and Royle (<a href="#ref-dorazio2005" role="doc-biblioref">2005</a>)</span> and <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, Chapter 12. This is a <span class="math inline">\((n, J)\)</span> matrix with the number of times each species was detected over <span class="math inline">\(K\)</span> surveys, where <span class="math inline">\(n\)</span> is the number of detected species and <span class="math inline">\(J\)</span> is the number surveyed sites. In this example, <span class="math inline">\(n=99\)</span> species were detected at the <span class="math inline">\(J=50\)</span> sites over the <span class="math inline">\(K=11\)</span> surveys in New Hampshire. The BBS occurs on routes across the US. This dataset represents one route.</p>
-<div id="cell-fig-bbs" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span>
+<div id="cell-fig-bbs" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Patch</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> binom</span>
@@ -416,7 +427,7 @@ window.Quarto = {
 <span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>patches <span class="op">=</span> [ Patch(color<span class="op">=</span>colors[i], label<span class="op">=</span><span class="ss">f'</span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">'</span>) <span class="cf">for</span> i, v <span class="kw">in</span> <span class="bu">enumerate</span>(values) ]</span>
 <span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">'Detections'</span>, handles<span class="op">=</span>patches, bbox_to_anchor<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">1</span>), loc<span class="op">=</span><span class="dv">2</span>, borderaxespad<span class="op">=</span><span class="fl">0.</span>)</span>
 <span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">False</span>)</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-bbs" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -438,8 +449,8 @@ Figure&nbsp;1: Number of detections for each species at each site along this BBS
 <p>First, I fit the the known <span class="math inline">\(N\)</span> version of the model. The goal of this version is to estimate occurrence and detection for each species, without estimating species richness.</p>
 <p>This notebook makes extensive use of the <code>coords</code> feature in PyMC. <code>Coords</code> makes it easier to incorporate the species-level effects via the multivariate normal. I use a <span class="math inline">\(\text{Normal}(0, 2)\)</span> prior for both <span class="math inline">\(\mu\)</span> parameters, and a LKJ Cholesky covariance prior for <span class="math inline">\(\mathbf{\Sigma}.\)</span></p>
 <p>Throughout the notebook, I use the <a href="https://github.com/pymc-devs/nutpie">nutpie</a> sampler within PyMC. Nutpie is a NUTS sampler written in Rust, and is often <a href="https://discourse.pymc.io/t/new-sampler-library-nutpie/9765">faster than PyMC</a>.</p>
-<div id="cell-fig-known" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'process'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>], </span>
+<div id="cell-fig-known" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'process'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>], </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">'process_bis'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">'species'</span>: lookup}</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -468,7 +479,7 @@ Figure&nbsp;1: Number of detections for each species at each site along this BBS
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># likelihood</span></span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    pm.ZeroInflatedBinomial(<span class="st">'Y'</span>, p<span class="op">=</span>p, psi<span class="op">=</span>psi, n<span class="op">=</span>K, observed<span class="op">=</span>Y)</span>
 <span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(known)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(known)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <div id="fig-known" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -482,9 +493,9 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
 </div>
 </div>
 </div>
-<div id="c309c001" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> known:</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    known_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="96c6e541" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> known:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    known_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 
 <style>
@@ -611,7 +622,7 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
                     <td>2000</td>
                     <td>0</td>
                     <td>0.39</td>
-                    <td>15</td>
+                    <td>31</td>
                 </tr>
             
                 <tr>
@@ -632,7 +643,7 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.37</td>
+                    <td>0.38</td>
                     <td>15</td>
                 </tr>
             
@@ -653,10 +664,10 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
 </div>
 </div>
 </div>
-<div id="cell-fig-trace_known." class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mu_hat_royle <span class="op">=</span> [<span class="op">-</span><span class="fl">1.11</span>, <span class="op">-</span><span class="fl">1.7</span>]</span>
+<div id="cell-fig-trace_known." class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mu_hat_royle <span class="op">=</span> [<span class="op">-</span><span class="fl">1.11</span>, <span class="op">-</span><span class="fl">1.7</span>]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>az.plot_trace(known_idata, var_names<span class="op">=</span>[<span class="st">'mu'</span>], figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">2</span>),</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"mu"</span>, {}, [mu_hat_royle])])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"mu"</span>, {}, [mu_hat_royle])])<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-trace_known." class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -670,8 +681,8 @@ Figure&nbsp;3: Trace plots for the community level means of occupancy and abunda
 </div>
 </div>
 </div>
-<div id="cell-fig-probs" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>samps <span class="op">=</span> az.extract(known_idata, var_names<span class="op">=</span><span class="st">'ab'</span>)</span>
+<div id="cell-fig-probs" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>samps <span class="op">=</span> az.extract(known_idata, var_names<span class="op">=</span><span class="st">'ab'</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ab_mean <span class="op">=</span> samps.mean(axis<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>,<span class="dv">4</span>))</span>
@@ -680,7 +691,7 @@ Figure&nbsp;3: Trace plots for the community level means of occupancy and abunda
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Occupancy probability'</span>)</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>ax.set_ylim((<span class="dv">0</span>, <span class="fl">0.8</span>))</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Detection probability'</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-probs" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -700,8 +711,8 @@ Figure&nbsp;4: Species-level probabilities of detection and occupancy.
 <h2 class="anchored" data-anchor-id="unknown-n">Unknown <span class="math inline">\(N\)</span></h2>
 <p>Next, I train the unknown <span class="math inline">\(N\)</span> version of the model. Like many other notebooks in this series, it relies on augmenting the detection histories with all-zero histories. These represent the detection histories for species that may use the study site, but were not detected over the <span class="math inline">\(K=11\)</span> surveys. I also augment the species names in the <code>coords</code> dict, such that we can still use the <code>dims</code> argument in the multivariate normal. Mirroring <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, I augment the history <span class="math inline">\(M - n\)</span> all-zero histories, where <span class="math inline">\(M=250\)</span> and <span class="math inline">\(n\)</span> is the number of species detected during the survey.</p>
 <p>Similar to the occupancy notebook, I use a <code>CustomDist</code> to model the augmented history. This accounts for the “row-level” zero-inflation, whereby we know that the species is included in the super community if it was detected along the BBS route. The only difference with this <code>logp</code> is that it uses a <code>ZeroInflatedBinomial</code> distribution under the hood, rather than a Bernoulli, and uses the parameter <span class="math inline">\(\Omega\)</span> to account for the row-level inflation.</p>
-<div id="cell-fig-unknown" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">250</span></span>
+<div id="cell-fig-unknown" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">250</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>all_zero_history <span class="op">=</span> np.zeros((M <span class="op">-</span> n, J))</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>Y_augmented <span class="op">=</span> np.row_stack((Y, all_zero_history))</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -763,9 +774,9 @@ Figure&nbsp;4: Species-level probabilities of detection and occupancy.
 <span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>        observed<span class="op">=</span>Y_augmented</span>
 <span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(unknown)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(unknown)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/7b/nb0vyhy90mdf30_65xwqzl300000gn/T/ipykernel_31514/237033199.py:3: DeprecationWarning: `row_stack` alias is deprecated. Use `np.vstack` directly.
+<pre><code>/var/folders/7b/nb0vyhy90mdf30_65xwqzl300000gn/T/ipykernel_57986/237033199.py:3: DeprecationWarning: `row_stack` alias is deprecated. Use `np.vstack` directly.
   Y_augmented = np.row_stack((Y, all_zero_history))</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="6">
@@ -781,10 +792,10 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 </div>
 </div>
 </div>
-<div id="fc62b4d8" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> unknown:</span>
+<div id="d28d2f5a" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> unknown:</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    unknown_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># unknown_idata = pm.sample()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># unknown_idata = pm.sample()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 
 <style>
@@ -921,8 +932,8 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.27</td>
-                    <td>31</td>
+                    <td>0.26</td>
+                    <td>15</td>
                 </tr>
             
                 <tr>
@@ -932,8 +943,8 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.25</td>
-                    <td>31</td>
+                    <td>0.26</td>
+                    <td>15</td>
                 </tr>
             
                 <tr>
@@ -943,7 +954,7 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.27</td>
+                    <td>0.26</td>
                     <td>15</td>
                 </tr>
             
@@ -954,13 +965,13 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 </div>
 </div>
 <p>We see some warnings about the effective sample size and the <span class="math inline">\(\hat{R}\)</span> statistic. Some of these warnings may just relate to the individual random effects.</p>
-<div id="76e0b3a0" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>az.summary(unknown_idata, var_names<span class="op">=</span>[<span class="st">'omega'</span>, <span class="st">'cov'</span>, <span class="st">'mu'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="1667b919" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>az.summary(unknown_idata, var_names<span class="op">=</span>[<span class="st">'omega'</span>, <span class="st">'cov'</span>, <span class="st">'mu'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -977,88 +988,88 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">omega</td>
+<th data-quarto-table-cell-role="th">omega</th>
 <td>0.529</td>
-<td>0.071</td>
-<td>0.402</td>
-<td>0.660</td>
-<td>0.005</td>
-<td>0.004</td>
-<td>177.0</td>
-<td>289.0</td>
-<td>1.02</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">cov[detection, detection]</td>
-<td>1.233</td>
-<td>0.319</td>
-<td>0.704</td>
-<td>1.847</td>
-<td>0.020</td>
-<td>0.013</td>
-<td>267.0</td>
-<td>518.0</td>
-<td>1.01</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">cov[detection, occurrence]</td>
-<td>1.346</td>
-<td>0.481</td>
-<td>0.520</td>
-<td>2.274</td>
-<td>0.035</td>
-<td>0.020</td>
-<td>189.0</td>
-<td>477.0</td>
-<td>1.03</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">cov[occurrence, detection]</td>
-<td>1.346</td>
-<td>0.481</td>
-<td>0.520</td>
-<td>2.274</td>
-<td>0.035</td>
-<td>0.020</td>
-<td>189.0</td>
-<td>477.0</td>
-<td>1.03</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">cov[occurrence, occurrence]</td>
-<td>5.118</td>
-<td>1.373</td>
-<td>2.952</td>
-<td>7.834</td>
-<td>0.103</td>
-<td>0.062</td>
-<td>178.0</td>
-<td>431.0</td>
-<td>1.02</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">mu[detection]</td>
-<td>-1.994</td>
-<td>0.193</td>
-<td>-2.343</td>
-<td>-1.650</td>
-<td>0.015</td>
+<td>0.072</td>
+<td>0.409</td>
+<td>0.662</td>
 <td>0.007</td>
-<td>166.0</td>
-<td>487.0</td>
+<td>0.006</td>
+<td>131.0</td>
+<td>167.0</td>
+<td>1.04</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">cov[detection, detection]</th>
+<td>1.270</td>
+<td>0.336</td>
+<td>0.699</td>
+<td>1.895</td>
+<td>0.022</td>
+<td>0.013</td>
+<td>233.0</td>
+<td>531.0</td>
+<td>1.02</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">cov[detection, occurrence]</th>
+<td>1.398</td>
+<td>0.500</td>
+<td>0.527</td>
+<td>2.291</td>
+<td>0.037</td>
+<td>0.024</td>
+<td>183.0</td>
+<td>374.0</td>
+<td>1.03</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">cov[occurrence, detection]</th>
+<td>1.398</td>
+<td>0.500</td>
+<td>0.527</td>
+<td>2.291</td>
+<td>0.037</td>
+<td>0.024</td>
+<td>183.0</td>
+<td>374.0</td>
 <td>1.03</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">mu[occurrence]</td>
-<td>-2.062</td>
-<td>0.460</td>
-<td>-3.005</td>
-<td>-1.315</td>
-<td>0.037</td>
-<td>0.026</td>
-<td>163.0</td>
-<td>248.0</td>
-<td>1.02</td>
+<th data-quarto-table-cell-role="th">cov[occurrence, occurrence]</th>
+<td>5.107</td>
+<td>1.391</td>
+<td>2.770</td>
+<td>7.617</td>
+<td>0.118</td>
+<td>0.064</td>
+<td>154.0</td>
+<td>348.0</td>
+<td>1.04</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">mu[detection]</th>
+<td>-2.012</td>
+<td>0.210</td>
+<td>-2.407</td>
+<td>-1.634</td>
+<td>0.016</td>
+<td>0.011</td>
+<td>176.0</td>
+<td>252.0</td>
+<td>1.03</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">mu[occurrence]</th>
+<td>-2.056</td>
+<td>0.473</td>
+<td>-2.951</td>
+<td>-1.246</td>
+<td>0.039</td>
+<td>0.030</td>
+<td>167.0</td>
+<td>167.0</td>
+<td>1.04</td>
 </tr>
 </tbody>
 </table>
@@ -1066,10 +1077,10 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 </div>
 </div>
 </div>
-<div id="cell-fig-trace_unknown." class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>omega_hat_royle <span class="op">=</span> [<span class="fl">0.55</span>]</span>
+<div id="cell-fig-trace_unknown." class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>omega_hat_royle <span class="op">=</span> [<span class="fl">0.55</span>]</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>az.plot_trace(unknown_idata, var_names<span class="op">=</span>[<span class="st">'omega'</span>], figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">2</span>), </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"omega"</span>, {}, [omega_hat_royle])])<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"omega"</span>, {}, [omega_hat_royle])])<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-trace_unknown." class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1084,8 +1095,8 @@ Figure&nbsp;6: Trace plots for the inclusion parameter for the unknown <span cla
 </div>
 </div>
 <p>I can plot the posterior distribution of species richness <span class="math inline">\(N.\)</span> This is slightly more complicated than before sinc there is an additional level of zero-inflation (included and never detected or not-included) in this model compared to the occupancy model (present and never detection or not present).</p>
-<div id="cell-fig-postN" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># relevant posterior samples</span></span>
+<div id="cell-fig-postN" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># relevant posterior samples</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>post <span class="op">=</span> az.extract(unknown_idata)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>o_samps <span class="op">=</span> post.omega.to_numpy()</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1117,7 +1128,7 @@ Figure&nbsp;6: Trace plots for the inclusion parameter for the unknown <span cla
 <span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Posterior samples'</span>)</span>
 <span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>ax.axvline(N_hat_royle, linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'C1'</span>)</span>
 <span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>ax.axvline(N_samps.mean(), linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'C2'</span>)</span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-postn" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1131,22 +1142,22 @@ Figure&nbsp;7: Posterior distribution of species richness from the BBS model.
 </div>
 </div>
 </div>
-<div id="d64cc6a3" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
+<div id="3d51f127" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">-</span>n <span class="op">-</span>u <span class="op">-</span>v <span class="op">-</span>iv <span class="op">-</span>w  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">-</span>n <span class="op">-</span>u <span class="op">-</span>v <span class="op">-</span>iv <span class="op">-</span>w  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Last updated: Mon Apr 28 2025
+<pre><code>Last updated: Thu Oct 09 2025
 
 Python implementation: CPython
 Python version       : 3.13.2
 IPython version      : 9.0.2
 
-numpy     : 2.1.3
 arviz     : 0.21.0
-seaborn   : 0.13.2
-pandas    : 2.2.3
 pymc      : 5.22.0
+numpy     : 2.1.3
+pandas    : 2.2.3
+seaborn   : 0.13.2
 matplotlib: 3.10.1
 
 Watermark: 2.5.0
@@ -1218,13 +1229,14 @@ Royle, J Andrew, and Robert M Dorazio. 2008. <em>Hierarchical Modeling and Infer
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

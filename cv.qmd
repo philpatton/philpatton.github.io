@@ -8,13 +8,16 @@ description: Graduate Research Assistant & NOAA QUEST Fellow
 
 ## Education
 
-- Ph.D., Marine Biology, Hawaiʻi Institute of Marine Biology, 2025 (anticipated)
+- Ph.D., Marine Biology, Hawaiʻi Institute of Marine Biology, 2025
+  - Chair: Lars Bejder
 - M.S., Fisheries, Wildlife, and Conservation Biology, North Carolina State University, 2016
+  - Chair: Krishna Pacifici
 - B.S., Conservation Biology, SUNY College of Environmental Science and Forestry, 2013
 
 ## Research Experience
 
-- NOAA QUEST Fellow, Pacific Islands Fisheries Science Center, NOAA Fisheries, 2021 - Present
+- Quantitative Ecologist, Migratory Bird Center, Smithsonian's National Zoo and Conservation Biology Institute, 2025 - Present
+- NOAA QUEST Fellow, Pacific Islands Fisheries Science Center, NOAA Fisheries, 2021 - 2025
 - Graduate Research Assistant, Hawaiʻi Institute of Marine Biology, University of Hawaiʻi at Mānoa, 2021 - Present
 - Graduate Research Assistant, Quantitative Ecology & Resource Management, University of Washington, 2016 - 2017
 - Graduate Research Assistant, Applied Ecology, North Carolina State University, 2014 - 2016
@@ -42,11 +45,12 @@ description: Graduate Research Assistant & NOAA QUEST Fellow
 
 ## [Papers](https://scholar.google.com/citations?user=4TUtf04AAAAJ&hl=en&oi=ao) 
 
-1. Brijs, J., Moore, C., Schakmann, M., Souza, T., Grellman, K.,  Tran, L.L., **Patton, P.T.**, and Johansen, J.L. (2025) Eat more, often: The capacity of piscivores to meet increased energy demands in warming oceans. *Science of the Total Environment*, 973, 179105. [PDF](papers/brijs-2025-eat.pdf)
-2. **Patton, P. T.**, Pacifici, K., Baird, R. W., Oleson, E. M., Allen, J. B., Ashe, E., Athayde, A., Basran, C. J., Cabrera, E., Calambokidis, J., Cardoso, J., Carroll, E. L., Cesario, A., Cheney, B. J., Cheeseman, T., Corsi, E., Currie, J. J., Durban, J. W., Falcone, E. A., ..., Bejder, L. (2024). Optimizing automated photo-identification for population assessments. *Conservation Biology*, e14436 [PDF](papers/patton-2025-optimal.pdf)
-3. **Patton, P. T.**, Cheeseman, T., Abe, K., Yamaguchi, T., Reade, W., Southerland, K., Howard, A., Oleson, E. M., Allen, J. B., Ashe, E., Athayde, A., Baird, R. W., Basran, C., Cabrera, E., Calambokidis, J., Cardoso, J., Carroll, E. L., Cesario, A., Cheney, B. J. ..., Bejder, L. (2023). A deep learning approach to photo‑identification demonstrates high performance on two dozen cetacean species. *Methods in Ecology and Evolution*, 14, 2611–2625 [PDF](papers/patton-2023-deep.pdf)
-4. Vivier, F., Wells, R.S., Hill, M.C., Yano, K.M., Bradford, A.L., Leunissen, E.M., Pacini, A., Booth, C.G., Rocho-Levine, J., Currie J.J., **Patton, P.T.**, & Bejder, L. (2023) Quantifying the age-structure of free-ranging delphinid populations: testing the accuracy of Unoccupied Aerial System-photogrammetry. *Ecology and Evolution,* 13, e10082. [PDF](papers/vivier-2023-uas.pdf)
-5. **Patton, P. T.**, Pacifici, K., \& Collazo, J. A. (2022) Modeling and estimating co-occurrence between the invasive Shiny Cowbird and its Puerto Rican hosts. *Biological Invasions,* 24, 2951--2960 [PDF](papers/patton-2022-cowbird.pdf)
+1. Parnell, K., Smith, C., Diaz, A., Fertitta, K., Thompson, P., **Patton, P.T.**, Charrier, I., Robinson, S., Pacini, A., & Bejder, L. (2025). Underwater sound production of free-ranging Hawaiian monk seals. \textit{Royal Society Open Science}. In press.
+2. Brijs, J., Moore, C., Schakmann, M., Souza, T., Grellman, K.,  Tran, L.L., **Patton, P.T.**, and Johansen, J.L. (2025) Eat more, often: The capacity of piscivores to meet increased energy demands in warming oceans. *Science of the Total Environment*, 973, 179105. [PDF](papers/brijs-2025-eat.pdf)
+3. **Patton, P. T.**, Pacifici, K., Baird, R. W., Oleson, E. M., Allen, J. B., Ashe, E., Athayde, A., Basran, C. J., Cabrera, E., Calambokidis, J., Cardoso, J., Carroll, E. L., Cesario, A., Cheney, B. J., Cheeseman, T., Corsi, E., Currie, J. J., Durban, J. W., Falcone, E. A., ..., Bejder, L. (2024). Optimizing automated photo-identification for population assessments. *Conservation Biology*, e14436 [PDF](papers/patton-2025-optimal.pdf)
+4. **Patton, P. T.**, Cheeseman, T., Abe, K., Yamaguchi, T., Reade, W., Southerland, K., Howard, A., Oleson, E. M., Allen, J. B., Ashe, E., Athayde, A., Baird, R. W., Basran, C., Cabrera, E., Calambokidis, J., Cardoso, J., Carroll, E. L., Cesario, A., Cheney, B. J. ..., Bejder, L. (2023). A deep learning approach to photo‑identification demonstrates high performance on two dozen cetacean species. *Methods in Ecology and Evolution*, 14, 2611–2625 [PDF](papers/patton-2023-deep.pdf)
+5. Vivier, F., Wells, R.S., Hill, M.C., Yano, K.M., Bradford, A.L., Leunissen, E.M., Pacini, A., Booth, C.G., Rocho-Levine, J., Currie J.J., **Patton, P.T.**, & Bejder, L. (2023) Quantifying the age-structure of free-ranging delphinid populations: testing the accuracy of Unoccupied Aerial System-photogrammetry. *Ecology and Evolution,* 13, e10082. [PDF](papers/vivier-2023-uas.pdf)
+6. **Patton, P. T.**, Pacifici, K., \& Collazo, J. A. (2022) Modeling and estimating co-occurrence between the invasive Shiny Cowbird and its Puerto Rican hosts. *Biological Invasions,* 24, 2951--2960 [PDF](papers/patton-2022-cowbird.pdf)
 
 ## Presentations
 
