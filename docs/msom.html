@@ -321,7 +321,10 @@ window.Quarto = {
   <li><a href="#us-breeding-bird-survey" id="toc-us-breeding-bird-survey" class="nav-link active" data-scroll-target="#us-breeding-bird-survey">US Breeding Bird Survey</a>
   <ul class="collapse">
   <li><a href="#known-n" id="toc-known-n" class="nav-link" data-scroll-target="#known-n">Known <span class="math inline">\(N\)</span></a></li>
-  <li><a href="#unknown-n" id="toc-unknown-n" class="nav-link" data-scroll-target="#unknown-n">Unknown <span class="math inline">\(N\)</span></a></li>
+  <li><a href="#unknown-n" id="toc-unknown-n" class="nav-link" data-scroll-target="#unknown-n">Unknown <span class="math inline">\(N\)</span></a>
+  <ul class="collapse">
+  <li><a href="#the-customdist-class" id="toc-the-customdist-class" class="nav-link" data-scroll-target="#the-customdist-class">The <code>CustomDist</code> class</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -379,7 +382,7 @@ window.Quarto = {
 <section id="us-breeding-bird-survey" class="level1">
 <h1>US Breeding Bird Survey</h1>
 <p>As a motivating example, I use the breeding bird survey (BBS) data used by <span class="citation" data-cites="dorazio2005">Dorazio and Royle (<a href="#ref-dorazio2005" role="doc-biblioref">2005</a>)</span> and <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, Chapter 12. This is a <span class="math inline">\((n, J)\)</span> matrix with the number of times each species was detected over <span class="math inline">\(K\)</span> surveys, where <span class="math inline">\(n\)</span> is the number of detected species and <span class="math inline">\(J\)</span> is the number surveyed sites. In this example, <span class="math inline">\(n=99\)</span> species were detected at the <span class="math inline">\(J=50\)</span> sites over the <span class="math inline">\(K=11\)</span> surveys in New Hampshire. The BBS occurs on routes across the US. This dataset represents one route.</p>
-<div id="cell-fig-bbs" class="cell" data-execution_count="1">
+<div id="cell-fig-bbs" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Patch</span>
@@ -391,43 +394,48 @@ window.Quarto = {
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc <span class="im">as</span> pm</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> <span class="dv">808</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>RNG <span class="op">=</span> np.random.default_rng(SEED)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">'fivethirtyeight'</span>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.left'</span>] <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.right'</span>] <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.top'</span>] <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.bottom'</span>] <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">"tab10"</span>)</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> invlogit(x):</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(<span class="op">-</span>x))</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the detection data</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>nh17 <span class="op">=</span> pd.read_csv(<span class="st">'detectionFreq.NH17.csv'</span>)</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> nh17.to_numpy()</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>n, J <span class="op">=</span> Y.shape</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> Y.<span class="bu">max</span>()</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co"># convert the species names to ints </span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>species_idx, lookup <span class="op">=</span> nh17.index.factorize() <span class="co"># lookup[int] returns the actual name</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the detection frequencies</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">6</span>))</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> ax.imshow(Y[np.argsort(Y.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>))], aspect<span class="op">=</span><span class="st">'auto'</span>)</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Species'</span>)</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Site'</span>)</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co"># add a legend</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> np.unique(Y.ravel())[<span class="dv">1</span>::<span class="dv">2</span>]</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [ im.cmap(im.norm(value)) <span class="cf">for</span> value <span class="kw">in</span> values]</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>patches <span class="op">=</span> [ Patch(color<span class="op">=</span>colors[i], label<span class="op">=</span><span class="ss">f'</span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">'</span>) <span class="cf">for</span> i, v <span class="kw">in</span> <span class="bu">enumerate</span>(values) ]</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">'Detections'</span>, handles<span class="op">=</span>patches, bbox_to_anchor<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">1</span>), loc<span class="op">=</span><span class="dv">2</span>, borderaxespad<span class="op">=</span><span class="fl">0.</span>)</span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">False</span>)</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># only necessary on MacOS Sequoia</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># https://discourse.pymc.io/t/pytensor-fails-to-compile-model-after-upgrading-to-mac-os-15-4/16796/5</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytensor</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>pytensor.config.cxx <span class="op">=</span> <span class="st">'/usr/bin/clang++'</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>SEED <span class="op">=</span> <span class="dv">808</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>RNG <span class="op">=</span> np.random.default_rng(SEED)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>plt.style.use(<span class="st">'fivethirtyeight'</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.facecolor'</span>] <span class="op">=</span> <span class="st">'white'</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.left'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.right'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.top'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'axes.spines.bottom'</span>] <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>sns.set_palette(<span class="st">"tab10"</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> invlogit(x):</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> np.exp(<span class="op">-</span>x))</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the detection data</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>nh17 <span class="op">=</span> pd.read_csv(<span class="st">'detectionFreq.NH17.csv'</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> nh17.to_numpy()</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>n, J <span class="op">=</span> Y.shape</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> Y.<span class="bu">max</span>()</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co"># convert the species names to ints</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>species_idx, lookup <span class="op">=</span> nh17.index.factorize() <span class="co"># lookup[int] returns the actual name</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the detection frequencies</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">6</span>))</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> ax.imshow(Y[np.argsort(Y.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>))], aspect<span class="op">=</span><span class="st">'auto'</span>)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Species'</span>)</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Site'</span>)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co"># add a legend</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> np.unique(Y.ravel())[<span class="dv">1</span>::<span class="dv">2</span>]</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [ im.cmap(im.norm(value)) <span class="cf">for</span> value <span class="kw">in</span> values]</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>patches <span class="op">=</span> [ Patch(color<span class="op">=</span>colors[i], label<span class="op">=</span><span class="ss">f'</span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">'</span>) <span class="cf">for</span> i, v <span class="kw">in</span> <span class="bu">enumerate</span>(values) ]</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">'Detections'</span>, handles<span class="op">=</span>patches, bbox_to_anchor<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">1</span>), loc<span class="op">=</span><span class="dv">2</span>, borderaxespad<span class="op">=</span><span class="fl">0.</span>)</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">False</span>)</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-bbs" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -449,8 +457,8 @@ Figure&nbsp;1: Number of detections for each species at each site along this BBS
 <p>First, I fit the the known <span class="math inline">\(N\)</span> version of the model. The goal of this version is to estimate occurrence and detection for each species, without estimating species richness.</p>
 <p>This notebook makes extensive use of the <code>coords</code> feature in PyMC. <code>Coords</code> makes it easier to incorporate the species-level effects via the multivariate normal. I use a <span class="math inline">\(\text{Normal}(0, 2)\)</span> prior for both <span class="math inline">\(\mu\)</span> parameters, and a LKJ Cholesky covariance prior for <span class="math inline">\(\mathbf{\Sigma}.\)</span></p>
 <p>Throughout the notebook, I use the <a href="https://github.com/pymc-devs/nutpie">nutpie</a> sampler within PyMC. Nutpie is a NUTS sampler written in Rust, and is often <a href="https://discourse.pymc.io/t/new-sampler-library-nutpie/9765">faster than PyMC</a>.</p>
-<div id="cell-fig-known" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'process'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>], </span>
+<div id="cell-fig-known" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'process'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">'process_bis'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">'species'</span>: lookup}</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -465,7 +473,7 @@ Figure&nbsp;1: Number of detections for each species at each site along this BBS
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    cov <span class="op">=</span> pm.Deterministic(<span class="st">"cov"</span>, chol.dot(chol.T), dims<span class="op">=</span>(<span class="st">"process"</span>, <span class="st">"process_bis"</span>))</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># species-level occurrence and detection probabilities on logit-scale  </span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># species-level occurrence and detection probabilities on logit-scale</span></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    ab <span class="op">=</span> pm.MvNormal(<span class="st">"ab"</span>, mu, chol<span class="op">=</span>chol, dims<span class="op">=</span>(<span class="st">"species"</span>, <span class="st">"process"</span>))</span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># probability of detection. newaxis allows for broadcasting</span></span>
@@ -493,7 +501,7 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
 </div>
 </div>
 </div>
-<div id="96c6e541" class="cell" data-execution_count="3">
+<div id="67955808" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> known:</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    known_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
@@ -621,18 +629,7 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.39</td>
-                    <td>31</td>
-                </tr>
-            
-                <tr>
-                    <td class="progress-cell">
-                        <progress max="2000" value="2000">
-                        </progress>
-                    </td>
-                    <td>2000</td>
-                    <td>0</td>
-                    <td>0.39</td>
+                    <td>0.38</td>
                     <td>15</td>
                 </tr>
             
@@ -654,7 +651,18 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.39</td>
+                    <td>0.38</td>
+                    <td>15</td>
+                </tr>
+            
+                <tr>
+                    <td class="progress-cell">
+                        <progress max="2000" value="2000">
+                        </progress>
+                    </td>
+                    <td>2000</td>
+                    <td>0</td>
+                    <td>0.38</td>
                     <td>15</td>
                 </tr>
             
@@ -664,7 +672,7 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
 </div>
 </div>
 </div>
-<div id="cell-fig-trace_known." class="cell" data-execution_count="4">
+<div id="cell-fig-trace_known." class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mu_hat_royle <span class="op">=</span> [<span class="op">-</span><span class="fl">1.11</span>, <span class="op">-</span><span class="fl">1.7</span>]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>az.plot_trace(known_idata, var_names<span class="op">=</span>[<span class="st">'mu'</span>], figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">2</span>),</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"mu"</span>, {}, [mu_hat_royle])])<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -681,7 +689,7 @@ Figure&nbsp;3: Trace plots for the community level means of occupancy and abunda
 </div>
 </div>
 </div>
-<div id="cell-fig-probs" class="cell" data-execution_count="5">
+<div id="cell-fig-probs" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>samps <span class="op">=</span> az.extract(known_idata, var_names<span class="op">=</span><span class="st">'ab'</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ab_mean <span class="op">=</span> samps.mean(axis<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -710,8 +718,10 @@ Figure&nbsp;4: Species-level probabilities of detection and occupancy.
 <section id="unknown-n" class="level2">
 <h2 class="anchored" data-anchor-id="unknown-n">Unknown <span class="math inline">\(N\)</span></h2>
 <p>Next, I train the unknown <span class="math inline">\(N\)</span> version of the model. Like many other notebooks in this series, it relies on augmenting the detection histories with all-zero histories. These represent the detection histories for species that may use the study site, but were not detected over the <span class="math inline">\(K=11\)</span> surveys. I also augment the species names in the <code>coords</code> dict, such that we can still use the <code>dims</code> argument in the multivariate normal. Mirroring <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, I augment the history <span class="math inline">\(M - n\)</span> all-zero histories, where <span class="math inline">\(M=250\)</span> and <span class="math inline">\(n\)</span> is the number of species detected during the survey.</p>
-<p>Similar to the occupancy notebook, I use a <code>CustomDist</code> to model the augmented history. This accounts for the “row-level” zero-inflation, whereby we know that the species is included in the super community if it was detected along the BBS route. The only difference with this <code>logp</code> is that it uses a <code>ZeroInflatedBinomial</code> distribution under the hood, rather than a Bernoulli, and uses the parameter <span class="math inline">\(\Omega\)</span> to account for the row-level inflation.</p>
-<div id="cell-fig-unknown" class="cell" data-execution_count="6">
+<section id="the-customdist-class" class="level3">
+<h3 class="anchored" data-anchor-id="the-customdist-class">The <code>CustomDist</code> class</h3>
+<p>In the notebooks for closed models, we have relied on the <code>marginalize</code> function from <code>pymc_extras</code>. In my testing, however, this function fails with this model, perhaps because of the the double layers of zero inflation (site occupation, community inclusion). As such, we will have to marginalize the discrete latent state ourselves. To do so, we have to create a custom distribution via PyMC’s <code>CustomDist</code> class. The typical way to do so is to define the <code>logp</code> as a function, as one would in Stan.</p>
+<div id="cell-fig-unknown" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">250</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>all_zero_history <span class="op">=</span> np.zeros((M <span class="op">-</span> n, J))</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>Y_augmented <span class="op">=</span> np.row_stack((Y, all_zero_history))</span>
@@ -719,7 +729,7 @@ Figure&nbsp;4: Species-level probabilities of detection and occupancy.
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>aug_names <span class="op">=</span> [<span class="ss">f'aug</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> i <span class="kw">in</span> np.arange(M <span class="op">-</span> n)]</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>spp_aug <span class="op">=</span> np.concatenate((lookup, aug_names))</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'process'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>], </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'process'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>          <span class="st">'process_bis'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>          <span class="st">'species_aug'</span>: spp_aug}</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
@@ -729,20 +739,20 @@ Figure&nbsp;4: Species-level probabilities of detection and occupancy.
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    lp <span class="op">=</span> pm.logp(rv, x)</span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    lp_sum <span class="op">=</span> lp.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    lp_exp <span class="op">=</span> pm.math.exp(lp_sum)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> pm.math.switch(</span>
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        x.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">&gt;</span> <span class="dv">0</span>,</span>
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        lp_exp <span class="op">*</span> omega,</span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        lp_exp <span class="op">*</span> omega <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> omega)</span>
 <span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pm.math.log(res)</span>
 <span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model(coords<span class="op">=</span>coords) <span class="im">as</span> unknown:</span>
 <span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for inclusion</span></span>
 <span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    omega <span class="op">=</span> pm.Beta(<span class="st">'omega'</span>, <span class="fl">0.001</span>, <span class="dv">1</span>)</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for community-level means for detection and occurrence</span></span>
 <span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> pm.Normal(<span class="st">'mu'</span>, <span class="dv">0</span>, <span class="dv">2</span>, dims<span class="op">=</span><span class="st">'process'</span>)</span>
 <span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
@@ -752,7 +762,7 @@ Figure&nbsp;4: Species-level probabilities of detection and occupancy.
 <span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    cov <span class="op">=</span> pm.Deterministic(<span class="st">"cov"</span>, chol.dot(chol.T), dims<span class="op">=</span>(<span class="st">"process"</span>, <span class="st">"process_bis"</span>))</span>
 <span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># species-level occurrence and detection probabilities on logit-scale  </span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># species-level occurrence and detection probabilities on logit-scale</span></span>
 <span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    ab <span class="op">=</span> pm.MvNormal(<span class="st">"ab"</span>, mu, chol<span class="op">=</span>chol, dims<span class="op">=</span>(<span class="st">"species_aug"</span>, <span class="st">"process"</span>))</span>
 <span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># probability of detection</span></span>
@@ -773,10 +783,10 @@ Figure&nbsp;4: Species-level probabilities of detection and occupancy.
 <span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>        logp<span class="op">=</span>logp,</span>
 <span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>        observed<span class="op">=</span>Y_augmented</span>
 <span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(unknown)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/7b/nb0vyhy90mdf30_65xwqzl300000gn/T/ipykernel_57986/237033199.py:3: DeprecationWarning: `row_stack` alias is deprecated. Use `np.vstack` directly.
+<pre><code>/var/folders/7b/nb0vyhy90mdf30_65xwqzl300000gn/T/ipykernel_47331/4077413751.py:3: DeprecationWarning: `row_stack` alias is deprecated. Use `np.vstack` directly.
   Y_augmented = np.row_stack((Y, all_zero_history))</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="6">
@@ -792,7 +802,7 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 </div>
 </div>
 </div>
-<div id="d28d2f5a" class="cell" data-execution_count="7">
+<div id="4bb00cd4" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> unknown:</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    unknown_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># unknown_idata = pm.sample()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -894,7 +904,7 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
         Finished Chains:
         <span id="active-chains">4</span>
     </p>
-    <p>Sampling for 26 seconds</p>
+    <p>Sampling for 24 seconds</p>
     <p>
         Estimated Time to Completion:
         <span id="eta">now</span>
@@ -921,7 +931,7 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.26</td>
+                    <td>0.27</td>
                     <td>15</td>
                 </tr>
             
@@ -932,7 +942,7 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.26</td>
+                    <td>0.27</td>
                     <td>15</td>
                 </tr>
             
@@ -965,7 +975,7 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 </div>
 </div>
 <p>We see some warnings about the effective sample size and the <span class="math inline">\(\hat{R}\)</span> statistic. Some of these warnings may just relate to the individual random effects.</p>
-<div id="1667b919" class="cell" data-execution_count="8">
+<div id="d91e53c9" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>az.summary(unknown_idata, var_names<span class="op">=</span>[<span class="st">'omega'</span>, <span class="st">'cov'</span>, <span class="st">'mu'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
@@ -990,86 +1000,86 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 <tr class="odd">
 <th data-quarto-table-cell-role="th">omega</th>
 <td>0.529</td>
-<td>0.072</td>
-<td>0.409</td>
-<td>0.662</td>
-<td>0.007</td>
+<td>0.075</td>
+<td>0.396</td>
+<td>0.669</td>
 <td>0.006</td>
-<td>131.0</td>
-<td>167.0</td>
-<td>1.04</td>
+<td>0.004</td>
+<td>165.0</td>
+<td>224.0</td>
+<td>1.02</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">cov[detection, detection]</th>
-<td>1.270</td>
-<td>0.336</td>
-<td>0.699</td>
-<td>1.895</td>
-<td>0.022</td>
-<td>0.013</td>
-<td>233.0</td>
-<td>531.0</td>
+<td>1.290</td>
+<td>0.359</td>
+<td>0.715</td>
+<td>1.953</td>
+<td>0.025</td>
+<td>0.017</td>
+<td>209.0</td>
+<td>500.0</td>
 <td>1.02</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">cov[detection, occurrence]</th>
-<td>1.398</td>
-<td>0.500</td>
-<td>0.527</td>
-<td>2.291</td>
-<td>0.037</td>
-<td>0.024</td>
-<td>183.0</td>
-<td>374.0</td>
+<td>1.416</td>
+<td>0.520</td>
+<td>0.513</td>
+<td>2.404</td>
+<td>0.046</td>
+<td>0.025</td>
+<td>131.0</td>
+<td>340.0</td>
 <td>1.03</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">cov[occurrence, detection]</th>
-<td>1.398</td>
-<td>0.500</td>
-<td>0.527</td>
-<td>2.291</td>
-<td>0.037</td>
-<td>0.024</td>
-<td>183.0</td>
-<td>374.0</td>
+<td>1.416</td>
+<td>0.520</td>
+<td>0.513</td>
+<td>2.404</td>
+<td>0.046</td>
+<td>0.025</td>
+<td>131.0</td>
+<td>340.0</td>
 <td>1.03</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">cov[occurrence, occurrence]</th>
-<td>5.107</td>
-<td>1.391</td>
-<td>2.770</td>
-<td>7.617</td>
-<td>0.118</td>
-<td>0.064</td>
-<td>154.0</td>
-<td>348.0</td>
-<td>1.04</td>
+<td>5.050</td>
+<td>1.453</td>
+<td>2.562</td>
+<td>7.689</td>
+<td>0.111</td>
+<td>0.085</td>
+<td>181.0</td>
+<td>277.0</td>
+<td>1.02</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">mu[detection]</th>
-<td>-2.012</td>
-<td>0.210</td>
-<td>-2.407</td>
-<td>-1.634</td>
-<td>0.016</td>
+<td>-2.021</td>
+<td>0.215</td>
+<td>-2.439</td>
+<td>-1.645</td>
+<td>0.018</td>
 <td>0.011</td>
-<td>176.0</td>
-<td>252.0</td>
-<td>1.03</td>
+<td>141.0</td>
+<td>287.0</td>
+<td>1.02</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">mu[occurrence]</th>
-<td>-2.056</td>
-<td>0.473</td>
-<td>-2.951</td>
-<td>-1.246</td>
-<td>0.039</td>
-<td>0.030</td>
-<td>167.0</td>
-<td>167.0</td>
-<td>1.04</td>
+<td>-2.046</td>
+<td>0.491</td>
+<td>-2.983</td>
+<td>-1.223</td>
+<td>0.041</td>
+<td>0.027</td>
+<td>154.0</td>
+<td>247.0</td>
+<td>1.02</td>
 </tr>
 </tbody>
 </table>
@@ -1077,9 +1087,9 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 </div>
 </div>
 </div>
-<div id="cell-fig-trace_unknown." class="cell" data-execution_count="9">
+<div id="cell-fig-trace_unknown." class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>omega_hat_royle <span class="op">=</span> [<span class="fl">0.55</span>]</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>az.plot_trace(unknown_idata, var_names<span class="op">=</span>[<span class="st">'omega'</span>], figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">2</span>), </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>az.plot_trace(unknown_idata, var_names<span class="op">=</span>[<span class="st">'omega'</span>], figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">2</span>),</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"omega"</span>, {}, [omega_hat_royle])])<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-trace_unknown." class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1095,7 +1105,7 @@ Figure&nbsp;6: Trace plots for the inclusion parameter for the unknown <span cla
 </div>
 </div>
 <p>I can plot the posterior distribution of species richness <span class="math inline">\(N.\)</span> This is slightly more complicated than before sinc there is an additional level of zero-inflation (included and never detected or not-included) in this model compared to the occupancy model (present and never detection or not present).</p>
-<div id="cell-fig-postN" class="cell" data-execution_count="10">
+<div id="cell-fig-postN" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># relevant posterior samples</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>post <span class="op">=</span> az.extract(unknown_idata)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>o_samps <span class="op">=</span> post.omega.to_numpy()</span>
@@ -1120,7 +1130,7 @@ Figure&nbsp;6: Trace plots for the inclusion parameter for the unknown <span cla
 <span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="co"># N_samps = RNG.binomial(M, o_samps)</span></span>
 <span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior distribution </span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior distribution</span></span>
 <span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>N_hat_royle <span class="op">=</span> <span class="dv">138</span></span>
 <span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
 <span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>ax.hist(N_samps, edgecolor<span class="op">=</span><span class="st">'white'</span>, bins<span class="op">=</span><span class="dv">25</span>)</span>
@@ -1142,23 +1152,24 @@ Figure&nbsp;7: Posterior distribution of species richness from the BBS model.
 </div>
 </div>
 </div>
-<div id="3d51f127" class="cell" data-execution_count="11">
+<div id="c6550c41" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">-</span>n <span class="op">-</span>u <span class="op">-</span>v <span class="op">-</span>iv <span class="op">-</span>w  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">-</span>n <span class="op">-</span>u <span class="op">-</span>v <span class="op">-</span>iv <span class="op">-</span>w</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Last updated: Thu Oct 09 2025
+<pre><code>Last updated: Tue Oct 14 2025
 
 Python implementation: CPython
 Python version       : 3.13.2
 IPython version      : 9.0.2
 
-arviz     : 0.21.0
-pymc      : 5.22.0
 numpy     : 2.1.3
-pandas    : 2.2.3
-seaborn   : 0.13.2
+pymc      : 5.22.0
+pytensor  : 2.30.2
 matplotlib: 3.10.1
+pandas    : 2.2.3
+arviz     : 0.21.0
+seaborn   : 0.13.2
 
 Watermark: 2.5.0
 </code></pre>
@@ -1167,6 +1178,7 @@ Watermark: 2.5.0
 
 
 
+</section>
 </section>
 </section>
 

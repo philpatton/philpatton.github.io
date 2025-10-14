@@ -34,6 +34,11 @@ import pandas as pd
 import pymc as pm
 import seaborn as sns
 
+# only necessary on MacOS Sequoia
+# https://discourse.pymc.io/t/pytensor-fails-to-compile-model-after-upgrading-to-mac-os-15-4/16796/5
+import pytensor
+pytensor.config.cxx = '/usr/bin/clang++'
+
 SEED = 808
 RNG = np.random.default_rng(SEED)
 
@@ -55,7 +60,7 @@ Y = nh17.to_numpy()
 n, J = Y.shape
 K = Y.max()
 
-# convert the species names to ints 
+# convert the species names to ints
 species_idx, lookup = nh17.index.factorize() # lookup[int] returns the actual name
 
 # plot the detection frequencies
@@ -77,7 +82,7 @@ plt.show()
 $$
 {\alpha_i \choose \beta_i} \sim \text{Normal} \left( {\mu_{\,\text{detection}} \choose \mu_{\, \text{occupancy}}}, \; \mathbf{\Sigma} \right),
 $$
-where $\alpha_i$ is the logit-scale probability of detection for species $i=1,\dots,n$, $\beta_i$ is the logit-scale probability of occurrence, $\mu$ is the community-level average, and $\mathbf{\Sigma}$ is the covariance matrix. We assume that there will be a positive correlation between occupancy and the probability of detection, since abundance is positively correlated with both. 
+where $\alpha_i$ is the logit-scale probability of detection for species $i=1,\dots,n$, $\beta_i$ is the logit-scale probability of occurrence, $\mu$ is the community-level average, and $\mathbf{\Sigma}$ is the covariance matrix. We assume that there will be a positive correlation between occupancy and the probability of detection, since abundance is positively correlated with both.
 
 ## Known $N$
 
@@ -85,13 +90,13 @@ First, I fit the the known $N$ version of the model. The goal of this version is
 
 This notebook makes extensive use of the `coords` feature in PyMC. `Coords` makes it easier to incorporate the species-level effects via the multivariate normal. I use a $\text{Normal}(0, 2)$ prior for both $\mu$ parameters, and a LKJ Cholesky covariance prior for $\mathbf{\Sigma}.$
 
-Throughout the notebook, I use the [nutpie](https://github.com/pymc-devs/nutpie) sampler within PyMC. Nutpie is a NUTS sampler written in Rust, and is often [faster than PyMC](https://discourse.pymc.io/t/new-sampler-library-nutpie/9765). 
+Throughout the notebook, I use the [nutpie](https://github.com/pymc-devs/nutpie) sampler within PyMC. Nutpie is a NUTS sampler written in Rust, and is often [faster than PyMC](https://discourse.pymc.io/t/new-sampler-library-nutpie/9765).
 
 ```{python}
 #| fig-cap: Visual representation of the known $N$ version of the community occupancy model.
 #| label: fig-known
 
-coords = {'process': ['detection', 'occurrence'], 
+coords = {'process': ['detection', 'occurrence'],
           'process_bis': ['detection', 'occurrence'],
           'species': lookup}
 
@@ -106,7 +111,7 @@ with pm.Model(coords=coords) as known:
     )
     cov = pm.Deterministic("cov", chol.dot(chol.T), dims=("process", "process_bis"))
 
-    # species-level occurrence and detection probabilities on logit-scale  
+    # species-level occurrence and detection probabilities on logit-scale
     ab = pm.MvNormal("ab", mu, chol=chol, dims=("species", "process"))
 
     # probability of detection. newaxis allows for broadcasting
@@ -155,9 +160,11 @@ The estimates of the community-level means is quite close to the estimates from 
 
 ## Unknown $N$
 
-Next, I train the unknown $N$ version of the model. Like many other notebooks in this series, it relies on augmenting the detection histories with all-zero histories. These represent the detection histories for species that may use the study site, but were not detected over the $K=11$ surveys. I also augment the species names in the `coords` dict, such that we can still use the `dims` argument in the multivariate normal. Mirroring @royle2008, I augment the history $M - n$ all-zero histories, where $M=250$ and $n$ is the number of species detected during the survey. 
+Next, I train the unknown $N$ version of the model. Like many other notebooks in this series, it relies on augmenting the detection histories with all-zero histories. These represent the detection histories for species that may use the study site, but were not detected over the $K=11$ surveys. I also augment the species names in the `coords` dict, such that we can still use the `dims` argument in the multivariate normal. Mirroring @royle2008, I augment the history $M - n$ all-zero histories, where $M=250$ and $n$ is the number of species detected during the survey.
 
-Similar to the occupancy notebook, I use a `CustomDist` to model the augmented history. This accounts for the "row-level" zero-inflation, whereby we know that the species is included in the super community if it was detected along the BBS route. The only difference with this `logp` is that it uses a `ZeroInflatedBinomial` distribution under the hood, rather than a Bernoulli, and uses the parameter $\Omega$ to account for the row-level inflation. 
+### The `CustomDist` class
+
+In the notebooks for closed models, we have relied on the `marginalize` function from `pymc_extras`. In my testing, however, this function fails with this model, perhaps because of the the double layers of zero inflation (site occupation, community inclusion). As such, we will have to marginalize the discrete latent state ourselves. To do so, we have to create a custom distribution via PyMC's `CustomDist` class. The typical way to do so is to define the `logp` as a function, as one would in Stan.
 
 ```{python}
 #| fig-cap: Visual representation of the unknown $N$ version of the BBS model.
@@ -169,7 +176,7 @@ Y_augmented = np.row_stack((Y, all_zero_history))
 aug_names = [f'aug{i}' for i in np.arange(M - n)]
 spp_aug = np.concatenate((lookup, aug_names))
 
-coords = {'process': ['detection', 'occurrence'], 
+coords = {'process': ['detection', 'occurrence'],
           'process_bis': ['detection', 'occurrence'],
           'species_aug': spp_aug}
 
@@ -179,20 +186,20 @@ def logp(x, psi, n, p, omega):
     lp = pm.logp(rv, x)
     lp_sum = lp.sum(axis=1)
     lp_exp = pm.math.exp(lp_sum)
-    
+
     res = pm.math.switch(
         x.sum(axis=1) > 0,
         lp_exp * omega,
         lp_exp * omega + (1 - omega)
     )
-    
+
     return pm.math.log(res)
 
 with pm.Model(coords=coords) as unknown:
 
     # priors for inclusion
     omega = pm.Beta('omega', 0.001, 1)
-    
+
     # priors for community-level means for detection and occurrence
     mu = pm.Normal('mu', 0, 2, dims='process')
 
@@ -202,7 +209,7 @@ with pm.Model(coords=coords) as unknown:
     )
     cov = pm.Deterministic("cov", chol.dot(chol.T), dims=("process", "process_bis"))
 
-    # species-level occurrence and detection probabilities on logit-scale  
+    # species-level occurrence and detection probabilities on logit-scale
     ab = pm.MvNormal("ab", mu, chol=chol, dims=("species_aug", "process"))
 
     # probability of detection
@@ -223,7 +230,7 @@ with pm.Model(coords=coords) as unknown:
         logp=logp,
         observed=Y_augmented
     )
-    
+
 pm.model_to_graphviz(unknown)
 ```
 
@@ -243,11 +250,11 @@ az.summary(unknown_idata, var_names=['omega', 'cov', 'mu'])
 #| fig-cap: Trace plots for the inclusion parameter for the unknown $N$ version of the BBS model. The estimate from @royle2008 are shown by vertical and horizontal lines.
 #| label: fig-trace_unknown.
 omega_hat_royle = [0.55]
-az.plot_trace(unknown_idata, var_names=['omega'], figsize=(8,2), 
+az.plot_trace(unknown_idata, var_names=['omega'], figsize=(8,2),
               lines=[("omega", {}, [omega_hat_royle])]);
 ```
 
-I can plot the posterior distribution of species richness $N.$ This is slightly more complicated than before sinc there is an additional level of zero-inflation (included and never detected or not-included) in this model compared to the occupancy model (present and never detection or not present). 
+I can plot the posterior distribution of species richness $N.$ This is slightly more complicated than before sinc there is an additional level of zero-inflation (included and never detected or not-included) in this model compared to the occupancy model (present and never detection or not present).
 
 ```{python}
 #| fig-cap: Posterior distribution of species richness from the BBS model.
@@ -277,7 +284,7 @@ N_samps = number_undetected + n
 
 # N_samps = RNG.binomial(M, o_samps)
 
-# posterior distribution 
+# posterior distribution
 N_hat_royle = 138
 fig, ax = plt.subplots(figsize=(6, 4))
 ax.hist(N_samps, edgecolor='white', bins=25)
@@ -291,6 +298,6 @@ plt.show()
 ```{python}
 %load_ext watermark
 
-%watermark -n -u -v -iv -w  
+%watermark -n -u -v -iv -w
 ```
 
