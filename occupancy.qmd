@@ -8,25 +8,25 @@ author:
     - Hawaiʻi Institute of Marine Biology
 date: today
 bibliography: refs.bib
-jupyter: python3
+jupyter: pymc_env
 ---
 
 In this notebook, I demonstrate how to fit static site-occupancy models in PyMC [@royle2008, Chapter 3]. The standard site-occupancy model models binary detection/non-detection data $y_{j,k}$ for repeated surveys $k=1,2,\dots,K$ at sites $j=1,2,\dots,J.$ The species is present at the sites when $z_j=1,$ and absent otherwise. We assume that our probability of detecting the species given that the site is occupied is  $P(y_{j,k}|z_j=1)=p,$ and zero when the site is unoccupied. The probability of occurrence, which is typically the parameter of interest, is $P(z_{j}=1)=\psi.$ As such, we can think of this as a zero-inflated binomial model, where
-$$ 
+$$
 \begin{align}
-&y_j \sim 
+&y_j \sim
 \begin{cases}
     0,   & \text{if } z_j = 0 \\
     \text{Binomial}(K, p),   & \text{if } z_j = 1
 \end{cases} \\
-&z_j \sim \text{Bernoulli}(\psi) 
+&z_j \sim \text{Bernoulli}(\psi)
 \end{align},
 $$
-which assumes a constant occurrence probability across sites and a constant detection probability. I start with this simple model, then add site- and visit-level covariates later. 
+which assumes a constant occurrence probability across sites and a constant detection probability. I start with this simple model, then add site- and visit-level covariates later.
 
 # Simulated examples
 
-To start, I demonstrate how to simulate this zero-inflated model using numpy. Throughout this section, I use hyperparameter values similar to those of @kery2011.
+To start, I demonstrate how to simulate this zero-inflated model using NumPy. Throughout this section, I use hyperparameter values similar to those of @kery2011.
 
 ```{python}
 %config InlineBackend.figure_format = 'retina'
@@ -37,6 +37,11 @@ import pymc as pm
 import arviz as az
 import pandas as pd
 import matplotlib.pyplot as plt
+
+# only necessary on MacOS Sequoia
+# https://discourse.pymc.io/t/pytensor-fails-to-compile-model-after-upgrading-to-mac-os-15-4/16796/5
+import pytensor
+pytensor.config.cxx = '/usr/bin/clang++'
 
 # plotting styles
 plt.style.use('fivethirtyeight')
@@ -54,12 +59,12 @@ def invlogit(x):
 def sim_y(p, z, site_count, visit_count):
     '''Simulate detections given detection probability p and occurrence state z.'''
     ones = np.ones((site_count, visit_count))
-    p_array = p * ones 
+    p_array = p * ones
 
     flips = rng.binomial(1, p_array)
     y = (flips.T * z_true).T
-    
-    return y 
+
+    return y
 
 ## simulation
 
@@ -86,16 +91,16 @@ p_true = 0.5
 # simulate detection
 y = sim_y(p_true, z_true, site_count, visit_count)
 
-# number of detections at each site 
+# number of detections at each site
 y_summarized = y.sum(axis=1)
 
-# detection data at the first five sites 
+# detection data at the first five sites
 y[:5]
 ```
 
 ## Estimating parameters with PyMC
 
-Next, I use PyMC to train the occupancy model with the simulated data. First, similar to JAGS and Stan, the model must be specified using the PyMC syntax. This is done using a [context manager](https://peps.python.org/pep-0343/) in Python, essentially, a `with` statement. This creates a `Model` object. 
+Next, I use PyMC to train the occupancy model with the simulated data. First, similar to JAGS and Stan, the model must be specified using the PyMC syntax. This is done using a [context manager](https://peps.python.org/pep-0343/) in Python, essentially, a `with` statement. This creates a `Model` object.
 
 ```{python}
 with pm.Model() as constant:
@@ -105,7 +110,7 @@ with pm.Model() as constant:
     p = pm.Uniform('p', 0, 1)
 
     # likelihood for the summarized data
-    pm.ZeroInflatedBinomial('y', p=p, psi=psi, n=visit_count, 
+    pm.ZeroInflatedBinomial('y', p=p, psi=psi, n=visit_count,
                             observed=y_summarized)
 ```
 
@@ -114,7 +119,7 @@ In JAGS, the prior for $p$ would be specified as `p ~ dunif(0, 1).` The PyMC equ
 ```{python}
 #| fig-cap: Visual representation of model $p(\cdot)\psi(\cdot).$ `MarginalMixture` refers to the zero-inflated binomial distribution.
 #| label: fig-pdot
- 
+
 pm.model_to_graphviz(constant)
 ```
 
@@ -125,7 +130,7 @@ with constant:
     constant_idata = pm.sample()
 ```
 
-PyMC will try to use the No-U-Turn Sampler (NUTS) whenever possible. As you can see, it samples the posterior quickly. I can plot the output using the `az.plot_trace()`, supplying the true values for $p$ and $\psi$ for comparizon. I can also look at a tabular summary using `az.summary()`.
+PyMC will try to use the No-U-Turn Sampler (NUTS) whenever possible. As you can see, it samples the posterior quickly. I can plot the output using the `az.plot_trace()`, supplying the true values for $p$ and $\psi$ for comparison. I can also look at a tabular summary using `az.summary()`.
 
 ```{python}
 #| fig-cap: Traceplots for the $p(\cdot)\psi(\cdot)$ model. The true parameter values are shown by vertical and horizontal lines.
@@ -134,7 +139,7 @@ az.plot_trace(
     constant_idata,
     compact=True,
     figsize=(8,4),
-    lines=[("psi", {}, [psi_true]), ("p", {}, [p_true])] 
+    lines=[("psi", {}, [psi_true]), ("p", {}, [p_true])]
 );
 ```
 
@@ -144,7 +149,7 @@ az.summary(constant_idata)
 
 ## Adding site covariates
 
-Next, I add in some realism by simulating a site-level covariate $x$ that affects the occurrence probability. I model this effect with a logit-linear model, i.e., $\psi_j=\text{logit}^{-1}(\beta_0 + \beta_1 x_j).$ 
+Next, I add in some realism by simulating a site-level covariate $x$ that affects the occurrence probability. I model this effect with a logit-linear model, i.e., $\psi_j=\text{logit}^{-1}(\beta_0 + \beta_1 x_j).$
 
 ```{python}
 ## ecological model
@@ -153,7 +158,7 @@ Next, I add in some realism by simulating a site-level covariate $x$ that affect
 beta0_true = -1
 beta1_true = 3
 
-# covariates 
+# covariates
 x = scale(rng.uniform(size=site_count))
 
 # linear model
@@ -171,25 +176,25 @@ p_true = 0.75
 # simulate detection
 y = sim_y(p_true, z_true, site_count, visit_count)
 
-# vector with the number of detections at each site 
+# vector with the number of detections at each site
 y_summarized = y.sum(axis=1)
 
-# detection data at the first five sites 
+# detection data at the first five sites
 y[:5]
 ```
 
-Again, I specify the model with PyMC. Like JAGS, the random variables can be manipulated, as in a linear model with $x_j.$ These behave like numpy arrays, meaning that vectorized operations and broadcasting are available. To monitor the output of these manipulations, use the `pm.Deterministic` class. In this case, I am monitoring the site level occurrence probability $\psi_j.$
+Again, I specify the model with PyMC. Like JAGS, the random variables can be manipulated, as in a linear model with $x_j.$ These behave like NumPy arrays, meaning that vectorized operations and broadcasting are available. To monitor the output of these manipulations, use the `pm.Deterministic` class. In this case, I am monitoring the site level occurrence probability $\psi_j.$
 
 ```{python}
 #| fig-cap: Visual representation of model $p(\cdot)\psi(x).$ `MarginalMixture` refers to the zero-inflated binomial distribution.
 #| label: fig-psix
 with pm.Model() as psix:
 
-    # occurrence process 
-    # priors 
+    # occurrence process
+    # priors
     beta0 = pm.Normal("beta0", mu=0, sigma=2)
     beta1 = pm.Normal("beta1", mu=0, sigma=2)
-    
+
     # linear model
     mu = beta0 + beta1 * x
     psi = pm.Deterministic("psi", pm.math.invlogit(mu))
@@ -199,7 +204,7 @@ with pm.Model() as psix:
     p = pm.Uniform('p', 0, 1)
 
     # likelihood for the summarized data
-    pm.ZeroInflatedBinomial('y', p=p, psi=psi, n=visit_count, 
+    pm.ZeroInflatedBinomial('y', p=p, psi=psi, n=visit_count,
                             observed=y_summarized)
 
 pm.model_to_graphviz(psix)
@@ -217,7 +222,7 @@ az.plot_trace(
     psix_idata,
     figsize=(8,6),
     var_names=['beta0', 'beta1', 'p'],
-    lines=[("beta0", {}, [beta0_true]), ("beta1", {}, [beta1_true]), 
+    lines=[("beta0", {}, [beta0_true]), ("beta1", {}, [beta1_true]),
            ('p', {}, [p_true])]
 );
 ```
@@ -237,7 +242,7 @@ Finally, I add in visit-level covariate $w_{j,k}$ that affects detection.
 beta0_true = -1
 beta1_true = 3
 
-# covariates 
+# covariates
 x = scale(rng.uniform(size=site_count))
 
 # linear model
@@ -266,45 +271,20 @@ print(y.shape)
 y[:5]
 ```
 
-Our PyMC code will need to be a little uglier now. I could write the model in terms of the latent occurrence state $z_j.$ The NUTS sampler, however, does not jive with discrete latent states. As such, PyMC will assign it to a binary Gibbs sampler by default, which works, albeit slowly.
+Now that we have visit covariates, we can no longer rely on the `pm.ZeroInflatedBinomial` class for our likelihood because it assumes that all zeros might be come from either process (i.e., not there or not detected). In an occupancy model, however, this is only true at sites where the species was never detected, and we have no way of compelling `pm.ZeroInflatedBinomial` to only consider zero inflation at certain sites.
 
-Since I am impatient, I instead use the [marginalized version of the model](https://mbjoseph.github.io/posts/2020-04-28-a-step-by-step-guide-to-marginalizing-over-discrete-parameters-for-ecologists-using-stan/), that is, a model that does not include the discrete latent states. To do this in PyMC, I use the `CustomDist` class. This requires, first, defining the log probability of the distribution, `logp`, given the data and it's parameters. We can write `logp` using the likelihood of the occupancy model, 
-$$
-P(\mathbf{y}_j)= 
-\begin{cases}
-    P(\mathbf{y}_j | z_j = 1)\; \psi_j \; + \; (1 - \psi_j),   & \text{if } \mathbf{y}_j = \mathbf{0}\\
-    P(\mathbf{y}_j | z_j = 1)\; \psi_j,  & \text{otherwise}
-\end{cases}
-$$
-where $P(\mathbf{y}_j | z_j = 1) = \prod_j p_{j,k}^{y_{j,k}} (1-p_{j,k})^{(1-y_{j,k})}$ [@royle2008]. To do this in PyMC, I rely on the `pm.math.switch` function, which is like the `ifelse()` function in R or `np.where()`.
-
-```{python}
-def logp(value, p, psi):
-    """Log prob for binomial (constant p across occasions) scr"""
-
-    binom = pm.Bernoulli.logp(value, p)
-    bin_sum = pm.math.sum(binom, axis=1)
-    bin_exp = pm.math.exp(bin_sum)
-
-    res = pm.math.switch(
-        value.sum(axis=1) > 0, bin_exp * psi, bin_exp * psi + (1 - psi)
-    )
-
-    return pm.math.log(res)
-```
-
-To use out `logp`, we specify it as an argument to the `CustomDist` class in our PyMC model. Note that we have to tell `CustomDist` the shape of the inputs and outputs have by way of the `signature` argument, so PyMC doesn't get confused. 
+As such, we will now code the model in terms of the discrete, latent $z_i$ state, where $z_i=1$ if site $i$ is occupied and $z_i=0$ otherwise. This is the canonical way to code occupancy models in WinBUGS, JAGS, and NIMBLE [@royle2008;@kery2011]. The NUTS sampler, however, does not jive with discrete latent states. As such, PyMC will assign a binary Gibbs sampler to `z` by default, which works, albeit less efficiently than the NUTS sampler. That said, PyMC will assign the other continuous parameters to the NUTS sampler, which is good!
 
 ```{python}
 #| fig-cap: Visual representation of the $p(w)\psi(w)$ model.
 #| label: fig-pw
-with pm.Model() as marginal:
+with pm.Model() as binary_gibbs:
 
-    # occurrence process 
-    # priors 
+    # occurrence process
+    # priors
     beta0 = pm.Normal("beta0", mu=0, sigma=2)
     beta1 = pm.Normal("beta1", mu=0, sigma=2)
-    
+
     # linear model
     mu = beta0 + beta1 * x
     psi = pm.Deterministic("psi", pm.math.invlogit(mu))
@@ -318,46 +298,61 @@ with pm.Model() as marginal:
     nu = alpha0 + alpha1 * w
     p = pm.Deterministic('p', pm.math.invlogit(nu))
 
-    # the signature provides the shapes of the input and the output
-    sig = f'({site_count}, {visit_count}), ({site_count}) -> ({site_count}, {visit_count})'
+    # occupied / unoccupied state at each site
+    z = pm.Bernoulli("z", psi)
 
-    # likelihood
-    pm.CustomDist(
-        'y',
-        p,
-        psi,
-        logp=logp,
-        observed=y,
-        signature=sig
-    )
+    # [:, None] allows us to multiply a vector across every column of a matrix
+    mu_y = z[:, None] * p
 
-pm.model_to_graphviz(marginal)
+    # the likelihood is now bernoulli conditional on the z state
+    pm.Bernoulli("y", mu_y, observed=y)
+
+pm.model_to_graphviz(binary_gibbs)
 ```
 
+The `mu_y = z[:, None] * p` notation may look strange to an R user. This is a trick that's related to NumPy's [broadcasting rules](https://numpy.org/doc/stable/user/basics.broadcasting.html). Broadcasting allows us to multiply arrays with different dimensions. In this case, we have a vector `z` that we would like to multiply against a matrix `p`, such that the first value in `z` is multiplied against every value in the first row of `p`, and so on. R does this naturally since it has slightly different broadcasting rules than NumPy. To do this in NumPy, we need to make `z` a column vector by adding a dummy dimension, hence the `[:, None]`.
+
 ```{python}
+with binary_gibbs:
+    binary_gibbs_idata = pm.sample()
+az.summary(binary_gibbs_idata, var_names=['beta0', 'beta1', 'alpha0', 'alpha1'])
+```
+
+We see that the model recovers the simulated parameters. Nevertheless, it did take 13 seconds to do so on my machine. While this is fairly quick, we can do better.
+
+## Automated Marginalization
+
+PyMC has a handy experimental feature called `marginalize` that automatically marginalizes out discrete latent states. This means that we can sample every parameter in the model with NUTS. This is not only faster than the hybrid sampler above, it also explores the parameter space more efficiently, which can be important for complex models or challenging datasets
+
+`marginalize` is an experimental feature, and as such should be treated with some caution. Nevertheless, I have had success with it in the most common closed Bayesian population models (e.g., occupancy, capture-recapture, and distance sampling). The PyMC team houses these experimental features in the `pymc-extras` package, which can be installed following the instructions [here](https://www.pymc.io/projects/extras/en/stable/).
+
+```{python}
+import pymc_extras as pmx
+marginal = pmx.marginalize(binary_gibbs, ["z"])
+
 with marginal:
     marginal_idata = pm.sample()
+
+az.summary(marginal_idata, var_names=['beta0', 'beta1', 'alpha0', 'alpha1'])
 ```
 
 ```{python}
 #| fig-cap: Tracepots for the $p(w)\psi(x)$ model. The true parameter values are shown by vertical and horizontal lines
 #| label: fig-pw_trace
 az.plot_trace(
-    marginal_idata,
-    figsize=(8,6), 
+    binary_gibbs_idata,
+    figsize=(8,6),
     var_names=['beta0', 'beta1', 'alpha0', 'alpha1'],
-    lines=[("beta0", {}, [beta0_true]), ("beta1", {}, [beta1_true]), 
+    lines=[("beta0", {}, [beta0_true]), ("beta1", {}, [beta1_true]),
            ('alpha0', {}, [alpha0_true]), ('alpha1', {}, [alpha1_true])]
 );
 ```
 
-```{python}
-az.summary(marginal_idata, var_names=['beta0', 'beta1', 'alpha0', 'alpha1'])
-```
+As we can see, the marginal model produces the same estimates in one second. That means that the hybrid sampler took 13 times as long! While 13 seconds doesn't seem like a lot, remember that this is simulated data and a rather simple model. Imagine if, say, the marginal model took five minutes to fit!
 
 # Real data example
 
-Finally, I demonstrate the model using a real data example. These data come from @henden2013, and were used as a demonstration in @hooten2019, Chapter 23. They represent detection/non-detection data of Willow Warblers from Finnmark, Norway. The $J=27$ sites were sampled $K=3$ times. Replicating the analysis in Box 23.7 in @hooten2019, I use two covariates for site: site area and willow tree height. Further, I use two covariates for visit: an indicator for the visit and willow tree height. 
+Finally, I demonstrate the model using a real data example. These data come from @henden2013, and were used as a demonstration in @hooten2019, Chapter 23. They represent detection/non-detection data of Willow Warblers from Finnmark, Norway. The $J=27$ sites were sampled $K=3$ times. Replicating the analysis in Box 23.7 in @hooten2019, I use two covariates for site: site area and willow tree height. Further, I use two covariates for visit: an indicator for the visit and willow tree height.
 
 ```{python}
 # read in the data
@@ -396,9 +391,9 @@ coords = {"beta_coefs": ["Intercept", "Pland", 'Wheight'],
 
 with pm.Model(coords=coords) as warbler:
 
-    # occurrence process priors 
+    # occurrence process priors
     Beta = pm.Normal("Beta", mu=0, sigma=2, dims="beta_coefs")
-    
+
     # linear model
     mu = pm.math.dot(X, Beta)
     psi = pm.Deterministic("psi", pm.math.invlogit(mu))
@@ -410,17 +405,14 @@ with pm.Model(coords=coords) as warbler:
     nu = pm.math.dot(W, Alpha)
     p = pm.Deterministic('p', pm.math.invlogit(nu))
 
-    sig = f'({n}, {J}), ({n}) -> ({n}, {J})'
+    # occupied / unoccupied state at each site
+    z = pm.Bernoulli("z", psi)
 
-    # likelihood
-    pm.CustomDist(
-        'y',
-        p,
-        psi,
-        logp=logp,
-        observed=Y,
-        signature=sig
-    )
+    # [:, None] allows us to multiply a vector across every column of a matrix
+    mu_y = z[:, None] * p
+
+    # the likelihood is now bernoulli conditional on the z state
+    pm.Bernoulli("y", mu_y, observed=Y)
 
 pm.model_to_graphviz(warbler)
 ```
@@ -428,17 +420,18 @@ pm.model_to_graphviz(warbler)
 Now the dimensionality of the prior distributions is clear, with (3) different priors specified for each random variable in the vectors $\alpha$ and $\beta$.
 
 ```{python}
-with warbler:
-    warbler_idata = pm.sample(4000)
+warbler_marginal = pmx.marginalize(warbler, ['z'])
+with warbler_marginal:
+    warbler_idata = pm.sample()
 ```
 
-I upped the number of draw iterations to 4,000 per chain, 16,000 total, since this dataset includes real-world messiness. Nevertheless, sampling the posterior took only 6 seconds!  
+I upped the number of draw iterations to 4,000 per chain, 16,000 total, since this dataset includes real-world messiness. Nevertheless, sampling the posterior took only 6 seconds!
 
 ```{python}
 az.summary(warbler_idata, var_names=['Alpha', 'Beta'])
 ```
 
-I compare the parameter estimates to the ones estimated by @hooten2019, Chapter 23. 
+I compare the parameter estimates to the ones estimated by @hooten2019, Chapter 23.
 
 ```{python}
 #| fig-cap: Traceplots from the willow warbler occupancy model. Estimates from @hooten2019 are shown by vertical and horizontal lines.
@@ -449,102 +442,28 @@ beta_hat_hooten = [0.56, 1.92, 0.93]
 
 az.plot_trace(
     warbler_idata,
-    figsize=(8,4), 
+    figsize=(8,4),
     var_names=['Alpha', 'Beta'],
-    lines=[("Alpha", {}, [alpha_hat_hooten]), 
+    lines=[("Alpha", {}, [alpha_hat_hooten]),
            ("Beta", {}, [beta_hat_hooten])]
 );
 ```
 
-There is a high level of agreement between the two methods. While their algorithm was designed for teaching and interpretability, it is noteworthy that the PyMC model is 10x faster. 
+There is a high level of agreement between the two methods. While their algorithm was designed for teaching and interpretability, it is noteworthy that the PyMC model is 10x faster.
 
-Arviz also produces forest plots for looking at effect sizes. 
+Arviz also produces forest plots for looking at effect sizes.
 
 ```{python}
 #| fig-cap: Forest plots from willow warbler occupancy model. ESS refers to the effective sample size.
 #| label: fig-warbler_forest
-az.plot_forest(warbler_idata, var_names=['Alpha', "Beta"], 
+az.plot_forest(warbler_idata, var_names=['Alpha', "Beta"],
                figsize=(6,4),
                hdi_prob=0.95, ess=True, combined=True);
-```
-
-## Model comparison
-
-PyMC also has handy tools for model comparison. I demonstrate these by fitting a model to the warbler data with a constant probability of detection. 
-
-```{python}
-#| fig-cap: Visual representaion of the warbler occupancy model with constant $p.$
-#| label: fig-warbler_pdot
-Y_sum = Y.sum(axis=1)
-
-with pm.Model(coords=coords) as warbler_constantp:
-
-    # occurrence process priors 
-    Beta = pm.Normal("Beta", mu=0, sigma=2, dims="beta_coefs")
-    
-    # linear model
-    mu = pm.math.dot(X, Beta)
-    psi = pm.Deterministic("psi", pm.math.invlogit(mu))
-
-    # detection process priors
-    p = pm.Uniform('p', 0, 1)
-
-    # likelihood
-    pm.ZeroInflatedBinomial('y', p=p, psi=psi, n=J, observed=Y_sum)
-
-pm.model_to_graphviz(warbler_constantp)
-```
-
-```{python}
-with warbler_constantp:
-    warbler_constantp_idata = pm.sample(4000)
-```
-
-Next, I caclculate the leave-one-out (loo) cross-validation score for each model [@vehtari2017]. This involves first computing the log likelihood for each model. 
-
-```{python}
-with warbler:
-    pm.compute_log_likelihood(warbler_idata)
-```
-
-```{python}
-warbler_loo = az.loo(warbler_idata)
-
-warbler_loo
-```
-
-```{python}
-with warbler_constantp:
-    pm.compute_log_likelihood(warbler_constantp_idata)
-```
-
-```{python}
-warbler_constantp_loo = az.loo(warbler_constantp_idata)
-
-warbler_constantp_loo
-```
-
-Arviz has handy tools for comparing the results. First, I generate a tabular summary. 
-
-```{python}
-df_comp_loo = az.compare({r"$p(visit,wheight)$": warbler_idata, 
-                          r"$p(\cdot)$": warbler_constantp_idata})
-df_comp_loo
-```
-
-This indicates that the $p(\cdot)$ model is favored over the $p(visit,wheight)$ model. 
-
-Arviz also generates plots for these comparisons. 
-
-```{python}
-#| fig-cap: 'Comparison between the $p(visit,wheight)$ and the $p(\cdot)$ models in terms of loo.'
-#| label: fig-warbler_comp
-az.plot_compare(df_comp_loo, insample_dev=False);
 ```
 
 ```{python}
 %load_ext watermark
 
-%watermark -n -u -v -iv -w 
+%watermark -n -u -v -iv -w
 ```
 

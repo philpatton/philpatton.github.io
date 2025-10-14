@@ -12,12 +12,12 @@ format:
     html-math-method: mathjax
     code-overflow: wrap
 bibliography: refs.bib
-jupyter: python3
+jupyter: pymc_env
 ---
 
-In this notebook, I explore fitting closed population capture-recapture models in PyMC. Capture-recapture, at least the Lincoln-Peterson estimator, has been around for almost 100 years. Since then, countless varieties of capture-recapture models have been developed for closed populations [@otis1978]. 
+In this notebook, I explore fitting closed population capture-recapture models in PyMC. Capture-recapture, at least the Lincoln-Peterson estimator, has been around for almost 100 years. Since then, countless varieties of capture-recapture models have been developed for closed populations [@otis1978].
 
-The basic steps in capture-recapture are: capture several individuals--e.g., via trapping--from the population of interest, mark these animals, then release them. We repeat this process several times, each time noting when we recapture individuals. 
+The basic steps in capture-recapture are: capture several individuals--e.g., via trapping--from the population of interest, mark these animals, then release them. We repeat this process several times, each time noting when we recapture individuals.
 
 | Individual  | $t_1$ | $t_2$ | $t_3$ | $t_4$ |
 | ----------- | ----- | ----- | ----- | ----- |
@@ -28,20 +28,27 @@ The basic steps in capture-recapture are: capture several individuals--e.g., via
 
 This produces a capture history for each individual, which allows us to estimate the probability of capture and the number of individuals in the population $N$.
 
-# Model $M_0$
+# Salamander Example
+
+I use the salamander dataset from @bailey2004, as demonstrated in @hooten2019, Chapter 24. These data were collected on two salamander species, the red-cheeked salamander (*Plethodon jordani*) and the pygmy salamander (*Desmognathus wrighti*), in Great Smoky Mountains National Park. The salamanders were counted in 15m by 15m square plots. There were $n=92$ individual red-cheeked and $n=132$ pygmy salamanders captured during the course of the survey.
 
 ```{python}
 %config InlineBackend.figure_format = 'retina'
 
-# libraries 
-from pymc.distributions.dist_math import binomln, logpow
+# libraries
 from scipy.stats import binom
 import arviz as az
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pymc as pm
+import pymc_extras as pmx
 import seaborn as sns
+
+# only necessary on MacOS Sequoia
+# https://discourse.pymc.io/t/pytensor-fails-to-compile-model-after-upgrading-to-mac-os-15-4/16796/5
+import pytensor
+pytensor.config.cxx = '/usr/bin/clang++'
 
 # plotting parameters
 plt.style.use('fivethirtyeight')
@@ -53,17 +60,19 @@ plt.rcParams['axes.spines.top'] = False
 plt.rcParams['axes.spines.bottom'] = False
 sns.set_palette("tab10")
 
-# hyperparameters 
+# hyperparameters
 SEED = 808
 RNG = np.random.default_rng(SEED)
 ```
 
-I explore fitting the simplest closed capture-recapture model, Model $M_0,$ through parameter-expanded data-augmentation [PX-DA, @royle2008]. The idea with PX-DA is to augment the capture histories with $M-n$ all zero capture-histories, where $M$ is a hyperparameter that should be much greater than the true population size $N,$ and $n$ is the total number of individuals that were captured during the study. This allows us to treat the data as a zero-inflated binomial distribution (see below).
+## Model $M_0$
+
+I explore fitting the simplest closed capture-recapture model, Model $M_0,$ through parameter-expanded data-augmentation [PX-DA, @royle2008]. The idea with PX-DA is to augment the capture histories with $M-n$ all zero capture-histories, where $M$ is a hyperparameter that should be much greater than the true population size $N,$ and $n$ is the total number of individuals that were captured during the study. This allows us to treat the data as a zero-inflated binomial distribution (see below). In this case, we augment the history by setting $M=1500$
 
 ```{python}
 def augment_history(history, M):
     '''Augment a capture history with all-zero histories.'''
-    
+
     animals_captured, T = history.shape
 
     # create M - n all zero histories
@@ -73,22 +82,18 @@ def augment_history(history, M):
     # tack those on to the capture history
     augmented = np.vstack((history, zero_history))
 
-    return augmented 
-```
+    return augmented
 
-To demonstrate this approach, I use the salamander dataset from @bailey2004, as demonstrated in @hooten2019, Chapter 24. These data were collected on two salamander species, the red-cheeked salamander (*Plethodon jordani*) and the pygmy salamander (*Desmognathus wrighti*), in Great Smoky Mountains National Park. The salamanders were counted in 15m by 15m square plots. In this case, we augment the history by setting $M=1500$. There were $n=92$ individual red-cheeked and $n=132$ pygmy salamanders captured during the course of the survey.
-
-```{python}
 def get_histories():
     '''Read, augment, and recombine the salamander histories.'''
-    
-    # read in salamander data 
+
+    # read in salamander data
     sal_data = pd.read_csv('sal_data.csv')
-    
-    # labels for capture history columns 
+
+    # labels for capture history columns
     col_labs = [f'y{t}' for t in range(1, 5)]
 
-    # subset each dataset before augmenting 
+    # subset each dataset before augmenting
     is_pyg = sal_data.spp == 1
     is_red = sal_data.spp == 0
 
@@ -102,7 +107,7 @@ def augment_histories(histories, M):
     pyg_augmented = augment_history(histories['pyg'], M=M)
     red_augmented = augment_history(histories['red'], M=M)
 
-    # recombine into one history 
+    # recombine into one history
     history = np.concatenate((pyg_augmented, red_augmented))
 
     return history
@@ -120,7 +125,7 @@ history_summarized = history_augmented.sum(axis=1)
 
 For this model, I use the `pm.ZeroInflatedBinomial` class, just as I did in the [occupancy notebook](https://philpatton.github.io/occ.html). That said, the parameters here are different. First, $p$ represents the probability of capturing a given individual during the survey. Second, $\psi$ represents a mysterious entity known as the inclusion probability. That is, the probability that an individual from the hypothetical superpopulation $M$ is included in the population of interest $N.$ Then, we can simulate the posterior distribution for $N$ using $M$ and the posterior distributions of $\psi.$
 
-In this example, I combine the two species into one `pm.Model` object, making use of `coords`. That said, the parameters for each species are treated as independent. In other words, this is a "no-pooling" model. 
+In this example, I combine the two species into one `pm.Model` object, making use of `coords`. That said, the parameters for each species are treated as independent. In other words, this is a "no-pooling" model.
 
 ```{python}
 #| fig-cap: Visual representation of model $M_0.$ `MarginalMixture` refers to the zero-inflated binomial distribution.
@@ -129,7 +134,7 @@ In this example, I combine the two species into one `pm.Model` object, making us
 # index for each species
 species_idx = np.repeat([0, 1], M)
 
-# coordinates identifying parameter each species  
+# coordinates identifying parameter each species
 coords = {'species': ['pygmy', 'red_cheeked']}
 
 with pm.Model(coords=coords) as M0:
@@ -140,13 +145,13 @@ with pm.Model(coords=coords) as M0:
 
     # likelihood for the summarized data
     pm.ZeroInflatedBinomial(
-        'history', 
-        p=p[species_idx], 
-        psi=psi[species_idx], 
+        'history',
+        p=p[species_idx],
+        psi=psi[species_idx],
         n=T,
         observed=history_summarized
     )
-    
+
 pm.model_to_graphviz(M0)
 ```
 
@@ -186,7 +191,7 @@ N_pyg = n_pyg + number_undetected_pyg
 N_red = n_red + number_undetected_red
 ```
 
-Below I plotted the posterior distributions of $N$ for both species, adding the estimates from @hooten2019, Chapter 24. Although note that they used a different prior for $\psi.$ 
+Below I plotted the posterior distributions of $N$ for both species, adding the estimates from @hooten2019, Chapter 24. Although note that they used a different prior for $\psi.$
 
 ```{python}
 #| fig-cap: Posterior distributions of $N$ from the $M_0$ model. Estimates from @hooten2019 are shown by the vertical lines'
@@ -204,7 +209,7 @@ ax.legend()
 plt.show()
 ```
 
-We might expect estimates of capture probability $p$ and the abundance $N$ to be somewhat correlated. We can explore this relationship visually by plotting the posterior draws. 
+We might expect estimates of capture probability $p$ and the abundance $N$ to be somewhat correlated. We can explore this relationship visually by plotting the posterior draws.
 
 ```{python}
 #| fig-cap: Posterior draws of $N$ and $p$ for both species of salamander.
@@ -221,10 +226,10 @@ ax.scatter(p_samps[1], N_red, s=10, alpha=0.2, label=labs[1])
 
 # this removes the opacity for the dots in the legend
 leg = ax.legend()
-for lh in leg.legend_handles: 
+for lh in leg.legend_handles:
     lh.set(sizes=[25], alpha=[1])
 
-# update aesthetics 
+# update aesthetics
 ax.spines.right.set_visible(False)
 ax.spines.top.set_visible(False)
 
@@ -235,11 +240,13 @@ ax.set_title('Posterior draws')
 plt.show()
 ```
 
-# Model $M_b$
+# *Mircotus* Example
 
-Next, I fit model $M_b,$ which accounts for the possibility that the capture probability changes after the animal is first caught. This could be from trap happiness, whereby animals are more likely to be trapped after their first time. Conversely, this could be from subsequent trap avoidance. 
+Mirroring [@royle2008, Chapter 5], I fit the next set of models to the *Microtus* dataset reported in [@williams2002, Page 525]. This version of the [dataset](https://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/chapters.htm) includes encounter histories of $n=56$ adult males that were captured on $T=5$ consecutive days.
 
-Mirroring [@royle2008, Chapter 5], I fit this model to the *Microtus* dataset reported in [@williams2002, Page 525]. This version of the [dataset](https://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/chapters.htm) includes encounter histories of $n=56$ adult males that were captured on $T=5$ consecutive days.
+## Model $M_b$
+
+Next, I fit model $M_b,$ which accounts for the possibility that the capture probability changes after the animal is first caught. This could be from trap happiness, whereby animals are more likely to be trapped after their first time. Conversely, this could be from subsequent trap avoidance.
 
 ```{python}
 # read in the microtus data
@@ -266,26 +273,11 @@ x_int = np.ones((M, T))
 X = np.stack((x_int, behavior_effect), axis=2)
 ```
 
-I use the same custom distribution as the occupancy notebook, the zero-inflated model, except the zero-inflation happens at the row-level. 
+Just like in the occupancy notebook, the detection probability will now be a matrix, i.e., it depends on the individual *and* the occasion. As such, we can no longer rely on `pm.ZeroInflatedBinomial`. Again, just like the occupancy notebook, we will write the model in terms of the latent $z_i$ state, then marginalize it out with `pymc_extras.marginalize()`.
 
 ```{python}
 #| fig-cap: Visual representation of model $M_b.$
 #| label: fig-mb
-
-def logp(value, n, p, psi):
-    
-    binom = binomln(n, value) + logpow(p, value) + logpow(1 - p, n - value)
-    bin_sum = pm.math.sum(binom, axis=1)
-    bin_exp = pm.math.exp(bin_sum)
-
-    res = pm.math.switch(
-        value.sum(axis=1) > 0,
-        bin_exp * psi,
-        bin_exp * psi + (1 - psi)
-    )
-    
-    return pm.math.log(res)
-
 coords = {'alpha_coeffs': ['Intercept', 'B_Response']}
 with pm.Model(coords=coords) as mb:
 
@@ -293,24 +285,23 @@ with pm.Model(coords=coords) as mb:
     psi = pm.Beta('psi', 0.001, 1)
     Alpha = pm.Normal('Alpha', 0, 2, dims='alpha_coeffs')
 
+    # linear model for the capture probability
     nu = pm.math.dot(X, Alpha)
     p = pm.Deterministic('p', pm.math.invlogit(nu))
 
-    # likelihood 
-    pm.CustomDist(
-        'y',
-        1,
-        p,
-        psi,
-        logp=logp,
-        observed=micro_augmented
-    )
-    
+    # included / excluded state
+    z = pm.Bernoulli('z', psi, shape=M)
+
+    # likelihood for detection given inclusion
+    mu_y = z[:, None] * p
+    pm.Bernoulli('y', mu_y, observed=micro_augmented)
+
 pm.model_to_graphviz(mb)
 ```
 
 ```{python}
-with mb:
+mb_marginal = pmx.marginalize(mb, ['z'])
+with mb_marginal:
     mb_idata = pm.sample()
 ```
 
@@ -321,17 +312,16 @@ az.summary(mb_idata, var_names=['Alpha', 'psi'])
 ```{python}
 #| fig-cap: Forest plot showing the catchability parameters from model $M_b.$
 #| label: fig-forest
-
 az.plot_forest(mb_idata, var_names=['Alpha'], combined=True, ess=True, figsize=(6,2));
 ```
 
-The forest plot indicates that there is some evidence of a weak, positive behavioral response. Although note that the 94% credible intervals between the baseline capture rate and the behavioral effect overlap considerably. 
+The forest plot indicates that there is some evidence of a weak, positive behavioral response. Although note that the 94% credible intervals between the baseline capture rate and the behavioral effect overlap considerably.
 
 ```{python}
 #| fig-cap: Posterior distribution of $N$ from model $M_b.$ The number voles that were detected $n$ is shown by the vertical red line.
 #| label: fig-mb_N
 
-# # simulate draws of N 
+# # simulate draws of N
 psi_samps = az.extract(mb_idata).psi.values
 p_samps = az.extract(mb_idata).p.values
 
@@ -345,7 +335,6 @@ number_undetected = RNG.binomial(M - n, p_if_present / p_total)
 # simulate N
 N = n + number_undetected
 
-
 # create the plot
 fig, ax = plt.subplots(figsize=(4, 3))
 
@@ -354,11 +343,11 @@ N_values, N_counts = np.unique(N, return_counts=True)
 ax.bar(N_values, N_counts)
 
 ax.annotate(
-    'Number\ndetected $n$', 
+    'Number\ndetected $n$',
     ha='left',
-    xy=(N_values[0], N_counts[0]), 
+    xy=(N_values[0], N_counts[0]),
     color='black',
-    xytext=(n+5, 6.2e5), 
+    xytext=(n+5, 6.2e5),
     arrowprops=dict(arrowstyle="->", color='black', linewidth=1,
                     connectionstyle="angle3,angleA=90,angleB=0")
 )
@@ -370,7 +359,7 @@ ax.set_title('Posterior of $N$')
 plt.show()
 ```
 
-Most of the posterior density of $N$ is at $n,$ the number of animals detected. The discovery curve hints at why this may be the case. It seems that all the voles in the population may have been captured by the end of the study. 
+Most of the posterior density of $N$ is at $n,$ the number of animals detected. The discovery curve hints at why this may be the case. It seems that all the voles in the population may have been captured by the end of the study.
 
 ```{python}
 #| fig-cap: Discovery curve for the *Microtus* study.
@@ -395,7 +384,7 @@ ax.set_ylabel('Unique voles captured')
 plt.show()
 ```
 
-We can also look at the behavioral effect by visualizing the posterior distributions of $p.$ As we can see, the voles who have been captured before are more likely to be captured again. 
+We can also look at the behavioral effect by visualizing the posterior distributions of $p.$ As we can see, the voles who have been captured before are more likely to be captured again.
 
 ```{python}
 #| fig-cap: Posterior distributions for the probability of detection given the behavioral effect.
@@ -415,9 +404,110 @@ ax.legend()
 plt.show()
 ```
 
+## Model $M_t$
+
+We can also look at time varying effects with model $M_t.$
+
+```{python}
+#| fig-cap: Visual representation of model $M_b.$
+#| label: fig-mt
+coords = {'occasion': np.arange(T)}
+with pm.Model(coords=coords) as mt:
+
+    # priors for the capture and inclusion probabilities
+    psi = pm.Beta('psi', 0.001, 1)
+    p = pm.Uniform('p', 0, 1, dims='occasion')
+
+    # included / excluded state
+    z = pm.Bernoulli('z', psi, shape=M)
+
+    # likelihood for detection given inclusion
+    mu_y = z[:, None] * p
+    pm.Bernoulli('y', mu_y, observed=micro_augmented)
+
+pm.model_to_graphviz(mt)
+```
+
+Broadcasting `z` across `p`, now that `p` is a vector, produces a matrix. The first row of this matrix, `mu_y[0]`, contains the first value of the state variable, `z[0]`, multiplied against every value of the detection probability vector `p[0:T]`, i.e., `p`.
+
+```{python}
+mt_marginal = pmx.marginalize(mt, ['z'])
+with mt_marginal:
+    mt_idata = pm.sample()
+```
+
+```{python}
+az.summary(mt_idata, var_names=['p', 'psi'])
+```
+
+```{python}
+#| fig-cap: Forest plot showing the variation in the detection probability from model $M_b.$
+#| label: fig-forest-mt
+az.plot_forest(mt_idata, var_names=['p'], combined=True, ess=True, figsize=(6,2));
+```
+
+For the most part, it doesn't look as if the detection prbobability varied dramatically across the study.
+
+## Model $M_{h}$
+
+We can also model individual effects with model $M_h$. Following [this PyMC notebook](https://www.pymc.io/projects/examples/en/latest/case_studies/hierarchical_partial_pooling.html#approach), I use a bounded Pareto distribution, which goes on to inform the individual-level recapture probabilities, which are Beta-distributed. See their notebook for deatils.
+
+```{python}
+#| fig-cap: Visual representation of model $M_h.$
+#| label: fig-mh
+coords = {'individual': np.arange(M)}
+with pm.Model(coords=coords) as mh:
+
+    # priors for the capture and inclusion probabilities
+    psi = pm.Beta('psi', 0.001, 1)
+
+    # overall average
+    phi = pm.Uniform("phi", lower=0.0, upper=1.0)
+
+    # individual level variation
+    kappa_log = pm.Exponential("kappa_log", lam=1.5)
+    kappa = pm.Deterministic("kappa", pm.math.exp(kappa_log))
+    theta = pm.Beta("theta", alpha=phi * kappa, beta=(1.0 - phi) * kappa, dims="individual")
+
+    pm.ZeroInflatedBinomial(
+        'y',
+        p=theta,
+        psi=psi,
+        n=T,
+        observed=micro_augmented.sum(axis=1)
+    )
+
+pm.model_to_graphviz(mh)
+```
+
+This model is a little trickier to fit than the models above. As such, I increased the number of tuning draws and post-tune draws to 2000. Moreover, I increased the target acceptance rate of the sampler to 0.95.
+
+```{python}
+with mh:
+    mh_idata = pm.sample(tune=2000, draws=2000, target_accept=0.99)
+```
+
+```{python}
+az.summary(mh_idata, var_names=['psi', 'phi', 'kappa'])
+```
+
+```{python}
+ax = az.plot_trace(mh_idata, var_names=['psi', 'phi', 'kappa'])
+plt.subplots_adjust(hspace=0.4)
+```
+
+```{python}
+fig, axes = plt.subplots(1, 2, figsize=(7, 13), sharey=True)
+
+az.plot_forest(mh_idata, var_names="theta", combined=True, ess=True, ax=axes,
+               coords={'individual': np.arange(50)});
+```
+
+We see that there is notable variation in capture probability among individuals. Further, we see that the inclusion probability has increased considerable, with some samples near the boundary. If we were interested in this model, we would likely have to increase the number of augmented individuals in the analysis.
+
 ```{python}
 %load_ext watermark
 
-%watermark -n -u -v -iv -w 
+%watermark -n -u -v -iv -w
 ```
 
