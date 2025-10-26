@@ -1,0 +1,279 @@
+---
+title: Dynamic occupancy
+description: Estimating patch colonization and extinction with Numpyro
+author:
+  name: Philip T. Patton
+  affiliation:
+    - Marine Mammal Research Program
+    - Hawaiʻi Institute of Marine Biology
+date: today
+bibliography: refs.bib
+jupyter: python3
+execute:
+  cache: true
+---
+
+I started exploring NumPyro because of its ability to marginalize discrete latent states in Hidden Markov Models (HMMs). Thankfully, the NumPyro website includes a [handy tutorial](https://num.pyro.ai/en/stable/examples/capture_recapture.html) on how to fit a Cormack-Jolly-Seber model in NumPyro. Unfortunately, this tutorial also assumes familiarity with many NumPyro concepts. As such, it took me some time to grasp everything that was going on within it. This notebook will hopefully be a gentler introduction to ecological HMMs in NumPyro.
+
+In this notebook, I will demonstrate how to estimate patch colonization and extinction with dynamic occupancy models in NumPyro. In a dynamic occupancy model, occupied patches can go extinct ($\epsilon$) or remain occupied ($1-\epsilon$). Additionally, unoccupied patches can be colonized ($\gamma$) or remain unoccupied ($1-\gamma$) (@fig-diagram). The proportion of patches occupied at the first time step is dictated by the parameter $\psi$, i.e., the initial occupancy probability.
+
+```{dot}
+//| fig-cap: "Dynamic occupancy model with latent state variable z"
+//| label: fig-diagram
+
+digraph occupancy {
+    rankdir=LR;
+    node [shape=circle, style=filled];
+
+    U1 [label="z₁ = 0\nUnoccupied", fillcolor="#e8f4f8"];
+    O1 [label="z₁ = 1\nOccupied", fillcolor="#7eb6d4"];
+    U2 [label="z₂ = 0\nUnoccupied", fillcolor="#e8f4f8"];
+    O2 [label="z₂ = 1\nOccupied", fillcolor="#7eb6d4"];
+
+    Start [label="Initial", shape=box, style=filled, fillcolor=white];
+
+    Start -> U1 [label="1-ψ"];
+    Start -> O1 [label="ψ"];
+
+    U1 -> O2 [label="γ"];
+    O1 -> U2 [label="ε"];
+    U1 -> U2 [label="1-γ", style=dashed];
+    O1 -> O2 [label="1-ε", style=dashed];
+}
+```
+
+
+```{python}
+from jax import random
+from numpyro.contrib.control_flow import scan
+from numpyro.infer import NUTS, MCMC, Predictive
+import arviz as az
+import jax.numpy as jnp
+import matplotlib.pyplot as plt
+import numpy as np
+import numpyro
+import numpyro.distributions as dist
+import seaborn as sns
+
+# plotting defaults
+plt.style.use('fivethirtyeight')
+plt.rcParams['axes.facecolor'] = 'white'
+plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['axes.spines.left'] = False
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['axes.spines.bottom'] = False
+sns.set_palette("tab10")
+
+# hyperparameters
+RANDOM_SEED = 1792
+
+## true values for colext model
+PSI_TRUE = 0.6
+EPSILON_TRUE = 0.3
+GAMMA_TRUE = 0.15
+P_TRUE = 0.4
+SITE_COUNT = 250
+SURVEY_COUNT = 3
+SEASON_COUNT = 10
+
+def simulate_data():
+    """Simulate detection/non-detection data from a dynamic occupancy model"""
+
+    rng = np.random.default_rng(RANDOM_SEED)
+
+    # empty array to fill in the occupancy states later
+    z = np.zeros((SITE_COUNT, SEASON_COUNT), dtype=int)
+
+    # initial values for the occupancy state
+    z[:, 0] = rng.binomial(n=1, p=PSI_TRUE, size=SITE_COUNT)
+
+    # simulate transitions
+    for t in range(1, SEASON_COUNT):
+
+        # patches can be colonized, go extinct, remain occupied, or remain unoccupied
+        mu_z = z[:, t-1] * (1 - EPSILON_TRUE) + (1 - z[:, t-1]) * GAMMA_TRUE
+        z[:, t] = rng.binomial(n=1, p=mu_z)
+
+    # simulate detection non-detection data
+    mu_x = z * P_TRUE
+    x = rng.binomial(n=1, p=mu_x[:, :, None],
+                    size=(SITE_COUNT, SEASON_COUNT, SURVEY_COUNT))
+    return x
+```
+
+As with the static occupancy model, we can parameterize the model in terms of its latent $z_{i,j}$ state, which indicates if site $i$ was occupied. The primary difference is that $\mathbf{Z}$ is now a matrix, where $j$ indicates the "season", or primary period. States can transition between seasons. States are however, constant between *surveys*, or secondary periods, which take place within a season. As such, $\mathbf{Y}$ is now an array, with shape `(site_count, season_count, survey_count)`, where $y_{i,j,k} \sim \text{Bern}(z_{i,j} \, p)$. It's possible to include covariate effects on any of the four probabilities in the model: $\psi, \gamma, \epsilon$, and $p.$ Nevertheless, we will introduce the NumPyro syntax with a simple model where every parameter is constant across sites, seasons, and visits.
+
+# Defining the model
+
+Just like in the [introductory notebook to NumPyro](numpyro-intro.qmd), we will define our dynamic occupancy model with a Python function, `dynamic_occupancy()`, that contains NumPyro random variables. This model, however, will contain a new character, the `scan()` function, as well as an additional function within our model `transition_and_detect()`. The `scan()` function sequentially applies the `transition_and_detect()` to our occupancy data, starting with initial values.
+
+```{python}
+def dynamic_occupancy(detection_history):
+    '''Dynamic occupancy model in NumPyro.'''
+    site_count, season_count, survey_count = detection_history.shape
+
+    # scalar priors for the four probabilistic parameters
+    psi = numpyro.sample("psi", dist.Uniform(0, 1))  # initial occupancy prob
+    gamma = numpyro.sample("gamma", dist.Uniform(0, 1)) # colonization prob
+    epsilon = numpyro.sample("epsilon", dist.Uniform(0, 1)) # extinction prob
+    p = numpyro.sample("p", dist.Uniform(0, 1))  # recapture prob
+
+    def transition_and_detect(carry, y_t):
+        """Transitions betweens states and defines the likelihood."""
+
+        # unpack the values that are returned from the transition function at
+        # the previous time step
+        z_prev, t = carry
+
+        # transition the latent state at every site
+        with numpyro.plate("sites", site_count):
+
+            # probability of transitioning according to the previous state
+            mu_z_t = z_prev * (1 - epsilon) + (1 - z_prev) * gamma
+
+            # dist.util.clamp_probs() helps the sampler avoid boundary regions
+            z = numpyro.sample(
+                "z",
+                dist.Bernoulli(dist.util.clamp_probs(mu_z_t)),
+                infer={"enumerate": "parallel"}, # this is where we marginalize!
+            )
+
+            # the likelihood of each observation at each site
+            mu_y = z * p
+            with numpyro.plate('surveys', survey_count):
+                numpyro.sample(
+                    "y",
+                    dist.Bernoulli(dist.util.clamp_probs(mu_y)),
+                    obs=y_t.T
+                )
+
+            # carry forward the current z state and incremented time index
+            # None indicates we don't return/accumulate any outputs from scan
+            return (z, t + 1), None
+
+    # the initial state only depends on psi
+    with numpyro.plate('sites', site_count):
+        z0 = numpyro.sample(
+            "z0",
+            dist.Bernoulli(dist.util.clamp_probs(psi)),
+            infer={"enumerate": "parallel"},
+        )
+
+        # compute the likelihood of the detection data for just the first season
+        mu_y = z0 * p
+        with numpyro.plate('surveys', survey_count):
+            numpyro.sample(
+                "y0",
+                dist.Bernoulli(dist.util.clamp_probs(mu_y)),
+                obs=detection_history[:, 0].T # just the first occasion!
+            )
+
+    # now we scan (or apply) the transition function across the remaining seasons
+    scan(
+        transition_and_detect,                        # function to scan
+        (z0, 0),                                      # initial states
+        jnp.swapaxes(detection_history[:, 1:], 0, 1), # scan across first dimension of data
+    )
+```
+
+As the name suggests, `transition_and_detect()` transitions the discrete latent states (the process model) and detects animals during the surveys (the observation model). As such, it contains our unobserved random variable `z` as well as our observed random variable `y`. `scan()` requires that our inner function, `transition_and_detect()`, return a tuple, where the first element contains the input to the next iteration of `transition_and_detect()`. The next element is anything we want to report or accumulate (in this case, `None`, since we don't need to track anything).
+
+For the most part, the `transition_and_detect()` function is not much different than our model in the [NumPyro static occupancy notebook](numpyro-intro.qmd). One difference is the use of `dist.util.clamp_probs()`. This is a helper function that keeps the sampler out of boundary regions, for example, by keeping $\psi$ between $[1 \times 10^{-7}, 1 - 1 \times 10^{-7}]$ rather than $[0, 1]$.
+
+We begin the scan **after** the first occasion. The $z_{i,j}$ state at the first occasion only depends on $\psi$. After this first occasion, we transition the states such that patches can be colonized or go extinct.
+
+```{python}
+detections = simulate_data()
+rng_key = random.PRNGKey(RANDOM_SEED)
+
+# specify which sampler you want to use
+nuts_kernel = NUTS(dynamic_occupancy)
+
+# configure the MCMC run
+mcmc = MCMC(nuts_kernel, num_warmup=500, num_samples=1000, num_chains=4)
+
+# run the MCMC then inspect the output
+mcmc.run(rng_key, detections)
+mcmc.print_summary()
+```
+
+```{python}
+#| fig-cap: Traceplots for the dynamic occupancy model.
+#| label: fig-trace
+
+labeller = az.labels.MapLabeller(
+    var_name_map={"psi": r"$\psi$", 'gamma':  r"$\gamma$",
+                  'epsilon': r"$\epsilon$", 'p':  r"$p$" }
+)
+
+samples = mcmc.get_samples(group_by_chain=True)
+idata = az.from_dict(samples)
+
+az.plot_trace(
+    idata,
+    figsize=(8,8),
+    var_names=['psi', 'gamma', 'epsilon', 'p'],
+    labeller=labeller,
+    lines=[
+        ("psi", {}, [PSI_TRUE]),
+        ("gamma", {}, [GAMMA_TRUE]),
+        ("epsilon", {}, [EPSILON_TRUE]),
+        ("p", {}, [P_TRUE]),
+    ]
+)
+plt.subplots_adjust(hspace=0.4)
+```
+
+We see that the model model recovers parameters well. While $\epsilon$ is underestimated, I suspect that this is simply a function of Monte Carlo error.
+
+# Prediction
+
+We can recover the latent $z_{i,j}$ states with the `Predictive` class in NumPyro. This allows us to generate posterior predictive samples given the detection data. In this case, we may want to know the total number of occupied sites throughout the study.
+
+```{python}
+def sample_z(model, posterior_samples, detection_history):
+    '''Samples the posterior predictive distribution for z given the histories'''
+
+    # initialize the posterior predictive distribution
+    predictive = Predictive(
+        model,
+        posterior_samples=posterior_samples,
+        return_sites=["z0", 'z']
+    )
+
+    # sample z
+    rng_key = random.PRNGKey(RANDOM_SEED)
+    latent_samples = predictive(rng_key, detection_history)
+
+    # z has shape (chain_count * sample_count, interval_count, site_count)
+    z_state = jnp.insert(latent_samples["z"], 0, latent_samples["z0"], axis=1)
+    return z_state
+
+# generate the posterior predictive distribution for N
+samples = mcmc.get_samples()
+z = sample_z(dynamic_occupancy, samples, detections)
+total_occupied = z.sum(axis=2)
+```
+
+```{python}
+#| fig-cap: Number of occupied sites over time.
+#| label: fig-prediction
+
+fig, ax = plt.subplots(figsize=(6,4))
+
+t = np.arange(SEASON_COUNT)
+
+total_occupied_median = np.median(total_occupied, axis=0)
+
+ax.plot(t, total_occupied_median, linestyle='dotted', color='lightgray', linewidth=2)
+ax.violinplot(total_occupied, t, showmedians=True, showextrema=False)
+
+ax.set_xlabel(r'Season')
+ax.set_ylabel(r'Total occupied sites')
+ax.set_title(r'Occupied area decreases over time')
+
+plt.show()
+```
+
+

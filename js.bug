@@ -1,0 +1,87 @@
+model {
+    # -----------------------------------
+    # Parameters:
+    # phi: survival probability
+    # gamma: removal entry probability
+    # p: capture probability
+    # -----------------------------------
+    # States (S):
+    # 1 not yet entered
+    # 2 alive
+    # 3 dead
+    # Observations (O):
+    # 1 seen
+    # 2 not seen
+    # -----------------------------------
+    # Priors and constraints
+    for (t in 1:(n.occasions-1)){
+        phi[t] <- mean.phi
+        gamma[t] ~ dunif(0, 1) # Prior for entry probabilities
+        p[t] <- mean.p
+    }
+    mean.phi ~ dunif(0, 1) # Prior for mean survival
+    mean.p ~ dunif(0, 1) # Prior for mean capture
+
+    # Define state-transition and observation matrices
+    for (i in 1:M){
+        # Define probabilities of state S(t+1) given S(t)
+        for (t in 1:(n.occasions-1)){
+            ps[1,i,t,1] <- 1-gamma[t]
+            ps[1,i,t,2] <- gamma[t]
+            ps[1,i,t,3] <- 0
+            ps[2,i,t,1] <- 0
+            ps[2,i,t,2] <- phi[t]
+            ps[2,i,t,3] <- 1-phi[t]
+            ps[3,i,t,1] <- 0
+            ps[3,i,t,2] <- 0
+            ps[3,i,t,3] <- 1
+            # Define probabilities of O(t) given S(t)
+            po[1,i,t,1] <- 0
+            po[1,i,t,2] <- 1
+            po[2,i,t,1] <- p[t]
+            po[2,i,t,2] <- 1-p[t]
+            po[3,i,t,1] <- 0
+            po[3,i,t,2] <- 1
+        } #t
+    } #i
+    # Likelihood
+    for (i in 1:M){
+        # Define latent state at first occasion
+        z[i,1] <- 1 # Make sure that all M individuals are in state 1 at t=1
+        for (t in 2:n.occasions){
+            # State process: draw S(t) given S(t-1)
+            z[i,t] ~ dcat(ps[z[i,t-1], i, t-1,])
+            # Observation process: draw O(t) given S(t)
+            y[i,t] ~ dcat(po[z[i,t], i, t-1,])
+        } #t
+    } #i
+    # Calculate derived population parameters
+    for (t in 1:(n.occasions-1)){
+        qgamma[t] <- 1-gamma[t]
+    }
+    cprob[1] <- gamma[1]
+    for (t in 2:(n.occasions-1)){
+        cprob[t] <- gamma[t] * prod(qgamma[1:(t-1)])
+    } #t
+    psi <- sum(cprob[]) # Inclusion probability
+    for (t in 1:(n.occasions-1)){
+        b[t] <- cprob[t] / psi # Entry probability
+    } #t
+    for (i in 1:M){
+        for (t in 2:n.occasions){
+            al[i,t-1] <- equals(z[i,t], 2)
+        } #t
+        for (t in 1:(n.occasions-1)){
+            d[i,t] <- equals(z[i,t]-al[i,t],0)
+        } #t
+        alive[i] <- sum(al[i,])
+    } #i
+    for (t in 1:(n.occasions-1)){
+        N[t] <- sum(al[,t])
+        B[t] <- sum(d[,t])
+    } #t
+    for (i in 1:M){
+        w[i] <- 1-equals(alive[i],0)
+    } #i
+    Nsuper <- sum(w[]) # Actual population size
+}

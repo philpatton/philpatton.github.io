@@ -3,10 +3,18 @@ title: "Code"
 bibliography: refs.bib
 ---
 
-Please find here any jupyter notebooks that I may have thought would be of general interest. For now, these are all about [PyMC](https://www.pymc.io/welcome.html), a Python library for doing Bayesian analysis.  
+Please find here any jupyter notebooks that I may have thought would be of general interest. For now, these are all about Bayesian data analysis in Python. The majority of these are on how to fit ecological models in [PyMC](https://www.pymc.io/welcome.html). There are also a handful of notebooks on [NumPyro](https://num.pyro.ai/en/stable/getting_started.html), another Python library,
 
-# PyMC
+## PyMC
 
-There are many valuable tools for fitting hierarchical models in ecology, including [unmarked](https://rbchan.github.io/unmarked/), [JAGS](https://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/), [NIMBLE](https://r-nimble.org) and [Stan](https://fukamilab.github.io/BIO202/09-C-occupancy-models.html). These are, for the most part, R libraries or programs called from R. There are relatively fewer examples of how to fit these models in Python. While most ecologists use R, they may find some benefit from using Python. For example, despite ecology being a lucrative industry, some of us might have to pivot to another field where Python may be more common. Also, Python is widely used for machine learning, which is increasingly applied in ecology.  
+There are many valuable tools for fitting hierarchical models in ecology, including [unmarked](https://rbchan.github.io/unmarked/), [JAGS](https://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/), [NIMBLE](https://r-nimble.org) and [Stan](https://fukamilab.github.io/BIO202/09-C-occupancy-models.html). These are, for the most part, R libraries or programs called from R. There are relatively fewer examples of how to fit these models in Python. While most ecologists use R, they may find some benefit from using Python. For example, despite ecology being a lucrative industry, some of us might have to pivot to another field where Python may be more common. Also, Python is widely used for machine learning, which is increasingly applied in ecology.
 
-In the PyMC jupyter notebooks, I try to demonstrate how to use PyMC to train the most common hierarchical models in ecology. For this, I have drawn considerable inspiration from @royle2008, @kery2011, @mccrea2014, and @hooten2019, oftentimes simply porting their code, ideas, and analyses. In doing so, I hope to demonstrate PyMC's core features, and highlight its strengths and weakenesses. The PyMC notebooks are somewhat sequential, with earlier notebooks explaining more basic features.
+In the PyMC jupyter notebooks, I try to demonstrate how to use PyMC to train the most common hierarchical models in ecology. For this, I have drawn considerable inspiration from @royle2008, @kery2011, @mccrea2014, and @hooten2019, oftentimes simply porting their code, ideas, and analyses. In doing so, I hope to demonstrate PyMC's core features, and highlight its strengths and weaknesses. The PyMC notebooks are somewhat sequential, with earlier notebooks explaining more basic features.
+
+## NumPyro
+
+NumPyro is another Python library for Bayesian data analysis. NumPyro runs on JAX, meaning that it utilizes your GPU for sampling. As such, NumPyro can be very fast for large datasets. PyMC conveniently allows users to sample models written in PyMC with the NumPyro backend (see [this notebook](scr.qmd) for details). This is especially handy because NumPyro's model syntax is different than PyMC, meaning that theoretically you only have to learn one syntax to reap the benefits!
+
+So, why learn NumPyro at all? NumPyro has powerful tools for marginalizing discrete latent states in Hidden Markov Model (HMMs). HMMs form the theoretical background for many Bayesian population modeling frameworks, including  Cormack-Jolly-Seber, Jolly-Seber, multistate, dynamic occupancy, and open-SCR. From what I can tell, PyMC lacks these features. As such, I think it is worth learning NumPyro if you are inerested in "open" models broadly. Moreover, NumPyro can fit closed models as well. Nevertheless, the NumPyro community seems less active than the PyMC community.
+
+Also, I must plug the incredible [biolith](https://github.com/timmh/biolith) package in Python, which is written in NumPyro and contains many of the most common models in ecology.

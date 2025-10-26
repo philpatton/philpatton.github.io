@@ -33,22 +33,32 @@ website:
         - notebooks.qmd
         - section: "PyMC"
           contents:
-            - href: occupancy.qmd
+            - href: pymc-occupancy.qmd
               text: Occupancy
-            - href: closed_cmr.qmd
+            - href: pymc-closed-cmr.qmd
               text: Closed capture-recapture
-            - href: distance.qmd
+            - href: pymc-distance.qmd
               text: Distance sampling
-            - href: scr.qmd
+            - href: pymc-scr.qmd
               text: Spatial capture-recapture
-            - href: msom.qmd
+            - href: pymc-msom.qmd
               text: Community occupancy
-            - href: cjs.qmd
+            - href: pymc-cjs.qmd
               text: Cormack-Jolly-Seber
-            - href: jssa.qmd
-              text: Jolly-Seber 
-            - href: comparison.qmd
-              text: Model comparison
+            - href: pymc-jssa.qmd
+              text: Jolly-Seber
+            # - href: comparison.qmd
+            #   text: Model comparison
+        - section: "NumPyro"
+          contents:
+            - href: numpyro-intro.qmd
+              text: Introduction
+            - href: numpyro-occ.qmd
+              text: Dynamic occupancy
+            - href: numpyro-js.qmd
+              text: Jolly-Seber
+            - href: numpyro-cjs.qmd
+              text: Cormack-Jolly-Seber
 format:
   html:
     theme: yeti
