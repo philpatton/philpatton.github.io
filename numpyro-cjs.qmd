@@ -1,0 +1,131 @@
+---
+title: Cormack-Jolly-Seber
+description: Estimating survival with Numpyro
+author:
+  name: Philip T. Patton
+  affiliation:
+    - Marine Mammal Research Program
+    - Hawaiʻi Institute of Marine Biology
+date: today
+bibliography: refs.bib
+jupyter: python3
+execute:
+  cache: true
+---
+
+In this notebook, I demonstrate how to estimate survival with Cormack-Jolly-Seber models in NumPyro. This notebook is a near carbon copy of the [CJS notebook](https://num.pyro.ai/en/stable/examples/capture_recapture.html) on the NumPyro documentation page. Nevertheless, I hope that this notebook will be useful in its own right, primarily for folks who are more familiar with CJS models and less familiar with NumPyro.
+
+```{python}
+from jax import random
+from jax.scipy.special import expit
+from numpyro import handlers
+from numpyro.contrib.control_flow import scan
+from numpyro.infer import NUTS, MCMC
+import arviz as az
+import jax.numpy as jnp
+import matplotlib.pyplot as plt
+import numpy as np
+import numpyro
+import numpyro.distributions as dist
+import seaborn as sns
+
+# plotting defaults
+plt.style.use('fivethirtyeight')
+plt.rcParams['axes.facecolor'] = 'white'
+plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['axes.spines.left'] = False
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['axes.spines.bottom'] = False
+sns.set_palette("tab10")
+
+# make the labels on arviz plots nicer
+labeller = az.labels.MapLabeller(
+    var_name_map={"psi": r"$\psi$", 'gamma':  r"$\gamma$", 'alpha': r'$\alpha$',
+                  'epsilon': r"$\epsilon$", 'p':  r"$p$" , 'beta': r'$\beta$',
+                  'phi': r'$\phi$', 'alpha_t': r'$\alpha_t$',}
+)
+
+# hyperparameters
+RANDOM_SEED = 1792
+CHAIN_COUNT = 4
+WARMUP_COUNT = 500
+SAMPLE_COUNT = 1000
+
+```
+
+# Model definition
+
+This model is very similar to the one defined in the [NumPyro Jolly-Seber notebook](numpyro-js.qmd). In some ways, this model is actually much simpler because we do not have to worry about recruitment into the population. This model does, however, introduce a new character from the NumPyro-verse: `handlers.mask()`.
+
+`handlers.mask()` tells NumPyro: do not include this the `sample` of `z` in the log probability computation when the `mask` is False. In this case, the mask, `has_been_captured`, indicates whether the animal has been captured by time `t`. As such, we essentially ignore the `z` state until the animal is captured. We include the mask in the `carry`, and update it with new data after we transition the `z` state (i.e., after the animal has survived or died between intervals).
+
+The model requires one more trick to run. Essentially, we need to ensure that `z[t]=1` during the occasion of the animal's first capture. To do so, we employ the mask: `mu_z_t = has_been_captured * phi * z + (1 - has_been_captured)`. This forces `z[t]=1` until the animals first capture. After the animal's first capture, the `z` state is included in the log probability calculation, and `mu_z_t` simplifies to `phi * z`.
+
+```{python}
+def p_dot_phi_dot(capture_history):
+
+    capture_count, _ = capture_history.shape
+    phi = numpyro.sample("phi", dist.Uniform(0.0, 1.0))
+    p = numpyro.sample("p", dist.Uniform(0.0, 1.0))
+
+    def transition_fn(carry, y):
+
+        has_been_captured, z = carry
+
+        with numpyro.plate("animals", capture_count, dim=-1):
+
+            # only compute log probs for animals where has_been_captured is True
+            with handlers.mask(mask=has_been_captured):
+
+                # force mu_z_t=1 during the occasion of the animal's first capture
+                mu_z_t = has_been_captured * phi * z + (1 - has_been_captured)
+                z = numpyro.sample(
+                    "z",
+                    dist.Bernoulli(dist.util.clamp_probs(mu_z_t)),
+                    infer={"enumerate": "parallel"},
+                )
+
+                mu_y_t = p * z
+                numpyro.sample(
+                    "y", dist.Bernoulli(dist.util.clamp_probs(mu_y_t)), obs=y
+                )
+
+        has_been_captured = has_been_captured | y.astype(bool)
+        return (has_been_captured, z), None
+
+    z = jnp.ones(capture_count, dtype=jnp.int32)
+    has_been_captured = capture_history[:, 0].astype(bool)
+    scan(
+        transition_fn,
+        (has_been_captured, z),
+        jnp.swapaxes(capture_history[:, 1:], 0, 1),
+    )
+
+```
+
+```{python}
+# data
+dipper = np.loadtxt('dipper.csv', delimiter=',', dtype=np.int32)
+
+rng_key = random.PRNGKey(RANDOM_SEED)
+
+# specify which sampler you want to use
+nuts_kernel = NUTS(p_dot_phi_dot) # 11 seconds
+
+# configure the MCMC run
+mcmc = MCMC(nuts_kernel, num_warmup=WARMUP_COUNT, num_samples=SAMPLE_COUNT,
+            num_chains=CHAIN_COUNT)
+
+# run the MCMC then inspect the output
+mcmc.run(rng_key, dipper)
+mcmc.print_summary()
+```
+
+```{python}
+samples = mcmc.get_samples(group_by_chain=True)
+idata = az.from_dict(samples)
+
+az.plot_trace(idata, figsize=(8,4), var_names=['p', 'phi'], labeller=labeller)
+plt.subplots_adjust(hspace=0.4)
+```

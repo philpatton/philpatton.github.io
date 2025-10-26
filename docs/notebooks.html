@@ -50,7 +50,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./occupancy.html" rel="next">
+<link href="./pymc-occupancy.html" rel="next">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -189,13 +189,13 @@ div.csl-indent {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./occupancy.html" class="sidebar-item-text sidebar-link">
+  <a href="./pymc-occupancy.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Occupancy</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./closed_cmr.html" class="sidebar-item-text sidebar-link">
+  <a href="./pymc-closed-cmr.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Closed capture-recapture</span></a>
   </div>
 </li>
@@ -213,19 +213,19 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./msom.html" class="sidebar-item-text sidebar-link">
+  <a href="./pymc-msom.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Community occupancy</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./cjs.html" class="sidebar-item-text sidebar-link">
+  <a href="./pymc-cjs.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Cormack-Jolly-Seber</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./jssa.html" class="sidebar-item-text sidebar-link">
+  <a href="./pymc-jssa.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Jolly-Seber</span></a>
   </div>
 </li>
@@ -233,6 +233,41 @@ div.csl-indent {
   <div class="sidebar-item-container"> 
   <a href="./comparison.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Model comparison</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">NumPyro</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numpyro-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numpyro-occ.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dynamic occupancy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numpyro-js.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Jolly-Seber</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numpyro-cjs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cormack-Jolly-Seber</span></a>
   </div>
 </li>
       </ul>
@@ -248,6 +283,7 @@ div.csl-indent {
    
   <ul>
   <li><a href="#pymc" id="toc-pymc" class="nav-link active" data-scroll-target="#pymc">PyMC</a></li>
+  <li><a href="#numpyro" id="toc-numpyro" class="nav-link" data-scroll-target="#numpyro">NumPyro</a></li>
   </ul>
 </nav>
     </div>
@@ -273,11 +309,17 @@ div.csl-indent {
 </header>
 
 
-<p>Please find here any jupyter notebooks that I may have thought would be of general interest. For now, these are all about <a href="https://www.pymc.io/welcome.html">PyMC</a>, a Python library for doing Bayesian analysis.</p>
-<section id="pymc" class="level1">
-<h1>PyMC</h1>
+<p>Please find here any jupyter notebooks that I may have thought would be of general interest. For now, these are all about Bayesian data analysis in Python. The majority of these are on how to fit ecological models in <a href="https://www.pymc.io/welcome.html">PyMC</a>. There are also a handful of notebooks on <a href="https://num.pyro.ai/en/stable/getting_started.html">NumPyro</a>, another Python library,</p>
+<section id="pymc" class="level2">
+<h2 class="anchored" data-anchor-id="pymc">PyMC</h2>
 <p>There are many valuable tools for fitting hierarchical models in ecology, including <a href="https://rbchan.github.io/unmarked/">unmarked</a>, <a href="https://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/">JAGS</a>, <a href="https://r-nimble.org">NIMBLE</a> and <a href="https://fukamilab.github.io/BIO202/09-C-occupancy-models.html">Stan</a>. These are, for the most part, R libraries or programs called from R. There are relatively fewer examples of how to fit these models in Python. While most ecologists use R, they may find some benefit from using Python. For example, despite ecology being a lucrative industry, some of us might have to pivot to another field where Python may be more common. Also, Python is widely used for machine learning, which is increasingly applied in ecology.</p>
-<p>In the PyMC jupyter notebooks, I try to demonstrate how to use PyMC to train the most common hierarchical models in ecology. For this, I have drawn considerable inspiration from <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, <span class="citation" data-cites="kery2011">Kéry and Schaub (<a href="#ref-kery2011" role="doc-biblioref">2011</a>)</span>, <span class="citation" data-cites="mccrea2014">McCrea and Morgan (<a href="#ref-mccrea2014" role="doc-biblioref">2014</a>)</span>, and <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, oftentimes simply porting their code, ideas, and analyses. In doing so, I hope to demonstrate PyMC’s core features, and highlight its strengths and weakenesses. The PyMC notebooks are somewhat sequential, with earlier notebooks explaining more basic features.</p>
+<p>In the PyMC jupyter notebooks, I try to demonstrate how to use PyMC to train the most common hierarchical models in ecology. For this, I have drawn considerable inspiration from <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, <span class="citation" data-cites="kery2011">Kéry and Schaub (<a href="#ref-kery2011" role="doc-biblioref">2011</a>)</span>, <span class="citation" data-cites="mccrea2014">McCrea and Morgan (<a href="#ref-mccrea2014" role="doc-biblioref">2014</a>)</span>, and <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, oftentimes simply porting their code, ideas, and analyses. In doing so, I hope to demonstrate PyMC’s core features, and highlight its strengths and weaknesses. The PyMC notebooks are somewhat sequential, with earlier notebooks explaining more basic features.</p>
+</section>
+<section id="numpyro" class="level2">
+<h2 class="anchored" data-anchor-id="numpyro">NumPyro</h2>
+<p>NumPyro is another Python library for Bayesian data analysis. NumPyro runs on JAX, meaning that it utilizes your GPU for sampling. As such, NumPyro can be very fast for large datasets. PyMC conveniently allows users to sample models written in PyMC with the NumPyro backend (see <a href="./scr.html">this notebook</a> for details). This is especially handy because NumPyro’s model syntax is different than PyMC, meaning that theoretically you only have to learn one syntax to reap the benefits!</p>
+<p>So, why learn NumPyro at all? NumPyro has powerful tools for marginalizing discrete latent states in Hidden Markov Model (HMMs). HMMs form the theoretical background for many Bayesian population modeling frameworks, including Cormack-Jolly-Seber, Jolly-Seber, multistate, dynamic occupancy, and open-SCR. From what I can tell, PyMC lacks these features. As such, I think it is worth learning NumPyro if you are inerested in “open” models broadly. Moreover, NumPyro can fit closed models as well. Nevertheless, the NumPyro community seems less active than the PyMC community.</p>
+<p>Also, I must plug the incredible <a href="https://github.com/timmh/biolith">biolith</a> package in Python, which is written in NumPyro and contains many of the most common models in ecology.</p>
 
 
 
@@ -701,7 +743,7 @@ Royle, J Andrew, and Robert M Dorazio. 2008. <em>Hierarchical Modeling and Infer
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./occupancy.html" class="pagination-link" aria-label="Occupancy">
+      <a href="./pymc-occupancy.html" class="pagination-link" aria-label="Occupancy">
         <span class="nav-page-text">Occupancy</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
