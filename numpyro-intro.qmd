@@ -13,7 +13,7 @@ jupyter: python3
 
 Before I forced myself to learn it, I found the NumPyro syntax utterly beguiling. In this notebook, I hope to introduce the library in a way that I would have found helpful. Hopefully this will be helpful for you too.
 
-As a motivating example, I will use the same occupancy dataset from the [PyMC occupancy notebook](occupancy.qmd). These data come from @henden2013, and were used as a demonstration in @hooten2019, Chapter 23. They represent detection/non-detection data of Willow Warblers from Finnmark, Norway. The $J=27$ sites were sampled $K=3$ times. Replicating the analysis in Box 23.7 in @hooten2019, I use two covariates for site: site area (`Pland`) and willow tree height (`wheight`). Further, I use two covariates for visit: an indicator for the visit and willow tree height.
+As a motivating example, I will use the same occupancy dataset from the [PyMC occupancy notebook](pymc-occupancy.qmd). These data come from @henden2013, and were used as a demonstration in @hooten2019, Chapter 23. They represent detection/non-detection data of Willow Warblers from Finnmark, Norway. The $J=27$ sites were sampled $K=3$ times. Replicating the analysis in Box 23.7 in @hooten2019, I use two covariates for site: site area (`Pland`) and willow tree height (`wheight`). Further, I use two covariates for visit: an indicator for the visit and willow tree height.
 
 ```{python}
 from jax import random
@@ -221,7 +221,7 @@ az.plot_forest(warbler_idata, var_names=['Alpha', "Beta"],
                hdi_prob=0.95, ess=True, combined=True);
 ```
 
-As we can see, we get virtually the same estimates as the [PyMC occupancy notebook](occupancy.qmd).
+As we can see, we get virtually the same estimates as the [PyMC occupancy notebook](pymc-occupancy.qmd).
 
 # Prediction
 

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Philip T. Patton">
-<meta name="dcterms.date" content="2025-10-15">
+<meta name="dcterms.date" content="2025-10-30">
 <meta name="description" content="Closed spatial capture-recapture models in PyMC">
 
 <title>Spatial capture-recapture – Philip T. Patton</title>
@@ -81,15 +81,13 @@ div.csl-indent {
 }</style>
 
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./msom.html" rel="next">
-<link href="./distance.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -130,9 +128,6 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
-
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -167,7 +162,7 @@ window.Quarto = {
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed quarto-light">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -187,7 +182,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -222,129 +217,17 @@ window.Quarto = {
 </div>
       </div> <!-- /container-fluid -->
     </nav>
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
-      </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./scr.html">Spatial capture-recapture</a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
-    </div>
-  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="./index.html" class="sidebar-logo-link">
-      </a>
-      </div>
-    <div class="sidebar-menu-container"> 
-    <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./notebooks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Code</span></a>
-  </div>
-</li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">PyMC</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./occupancy.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Occupancy</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./closed_cmr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Closed capture-recapture</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./distance.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Distance sampling</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./scr.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Spatial capture-recapture</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./msom.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Community occupancy</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./cjs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Cormack-Jolly-Seber</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./jssa.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Jolly-Seber</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./comparison.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Model comparison</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">NumPyro</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./numpyro-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Introduction</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./numpyro-occ.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Dynamic occupancy</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-    </ul>
-    </div>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#simulation" id="toc-simulation" class="nav-link active" data-scroll-target="#simulation">Simulation</a>
-  <ul class="collapse">
-  <li><a href="#nuts-sampler" id="toc-nuts-sampler" class="nav-link" data-scroll-target="#nuts-sampler">NUTS sampler</a></li>
-  </ul></li>
+  <li><a href="#simulation" id="toc-simulation" class="nav-link active" data-scroll-target="#simulation">Simulation</a></li>
   <li><a href="#ovenbird-density" id="toc-ovenbird-density" class="nav-link" data-scroll-target="#ovenbird-density">Ovenbird density</a></li>
   </ul>
 </nav>
@@ -352,7 +235,7 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./occupancy.html">PyMC</a></li><li class="breadcrumb-item"><a href="./scr.html">Spatial capture-recapture</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Spatial capture-recapture</h1>
 </div>
@@ -386,7 +269,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 15, 2025</p>
+      <p class="date">October 30, 2025</p>
     </div>
   </div>
   
@@ -401,7 +284,9 @@ window.Quarto = {
 <p>In this notebook, I show how to train spatial capture-recapture (SCR) models in PyMC. SCR expands upon traditional capture-recapture by incorporating the location of the traps in the analysis. This matters because, typically, animals that live near a particular trap are more likely to be caught in it. In doing so, SCR links individual-level processes to the population-level, expanding the scientific scope of simple designs.</p>
 <p>In this notebook, I train the simplest possible SCR model, SCR0 <span class="citation" data-cites="royle2013">(<a href="#ref-royle2013" role="doc-biblioref">Royle et al. 2013, chap. 5</a>)</span>, where the goal is estimating the true population size <span class="math inline">\(N\)</span>. Similar to the other closed population notebooks, I do so using parameter-expanded data-augmentation (PX-DA). I also borrow the concept of the <em>detection function</em> from the distance sampling notebook.</p>
 <p>As a motivating example, I use the <a href="https://www.otago.ac.nz/density/examples/index.html">ovenbird mist netting dataset</a> provided by Murray Efford via the secr package in R. The design of the study is outlined in <span class="citation" data-cites="efford2004">Efford, Dawson, and Robbins (<a href="#ref-efford2004" role="doc-biblioref">2004</a>)</span> and <span class="citation" data-cites="borchers2008">Borchers and Efford (<a href="#ref-borchers2008" role="doc-biblioref">2008</a>)</span>. In this dataset, ovenbirds were trapped in 44 mist nets over 8 to 10 consecutive days during the summers of 2005 to 2009.</p>
-<div id="cell-fig-nets" class="cell" data-execution_count="2">
+<div id="fig-nets" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-nets-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
@@ -504,22 +389,15 @@ window.Quarto = {
 <span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Mist net locations'</span>)</span>
 <span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">False</span>)</span>
 <span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div id="fig-nets" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-nets-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="scr_files/figure-html/fig-nets-output-1.png" width="284" height="471" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nets-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Locations of the mist nets in the ovenbird dataset <span class="citation" data-cites="efford2004">(<a href="#ref-efford2004" role="doc-biblioref">Efford, Dawson, and Robbins 2004</a>)</span>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-nets-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
 </figcaption>
 </figure>
 </div>
-</div>
-</div>
 <p>One difference between spatial and traditional (non-spatial) capture is the addition of the trap identifier in the capture history. Whereas a traditional capture history is <code>[individual, occasion]</code>, a spatial capture history might be <code>[individual, occasion, trap]</code>.</p>
 <p>In the ovenbird example, I ignore the <code>year</code> dimension, pooling parameters across years, which allows for better estimation of the detection parameters. My hack for doing so is treating every band/year combination as a unique individual in a combined year capture history. This is easy to implement, creates an awkward interpretation of <span class="math inline">\(N\)</span> (see below).</p>
-<div id="90d1c576" class="cell" data-execution_count="3">
+<div id="cell-3" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ovenbird capture history</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>oven_ch <span class="op">=</span> pd.read_csv(<span class="st">'ovenbirdcapt.txt'</span>, delimiter<span class="op">=</span><span class="st">' '</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -536,113 +414,12 @@ Figure&nbsp;1: Locations of the mist nets in the ovenbird dataset <span class="c
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>ovenbird.head(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">ID</th>
-<th data-quarto-table-cell-role="th">Day</th>
-<th data-quarto-table-cell-role="th">Net</th>
-<th data-quarto-table-cell-role="th">x</th>
-<th data-quarto-table-cell-role="th">y</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>0.0</td>
-<td>1.0</td>
-<td>2</td>
-<td>-50.0</td>
-<td>-255.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
-<td>1.0</td>
-<td>9.0</td>
-<td>20</td>
-<td>-50.0</td>
-<td>285.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>1.0</td>
-<td>1.0</td>
-<td>15</td>
-<td>-50.0</td>
-<td>135.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
-<td>2.0</td>
-<td>6.0</td>
-<td>17</td>
-<td>-50.0</td>
-<td>195.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">4</th>
-<td>2.0</td>
-<td>9.0</td>
-<td>27</td>
-<td>49.0</td>
-<td>165.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">5</th>
-<td>2.0</td>
-<td>1.0</td>
-<td>15</td>
-<td>-50.0</td>
-<td>135.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">6</th>
-<td>2.0</td>
-<td>1.0</td>
-<td>14</td>
-<td>-50.0</td>
-<td>105.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">7</th>
-<td>3.0</td>
-<td>1.0</td>
-<td>41</td>
-<td>49.0</td>
-<td>-255.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">8</th>
-<td>3.0</td>
-<td>3.0</td>
-<td>39</td>
-<td>49.0</td>
-<td>-195.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">9</th>
-<td>3.0</td>
-<td>1.0</td>
-<td>42</td>
-<td>49.0</td>
-<td>-285.0</td>
-</tr>
-</tbody>
-</table>
-
 </div>
-</div>
-</div>
-<section id="simulation" class="level1">
-<h1>Simulation</h1>
+<section id="simulation" class="level2">
+<h2 class="anchored" data-anchor-id="simulation">Simulation</h2>
 <p>Before estimating the parameters, I perform a small simulation. The simulation starts with a core idea of SCR: the <em>activity center</em>. The activity center <span class="math inline">\(\mathbf{s}_i\)</span> is the most likely place that you’d find an individual <span class="math inline">\(i\)</span> over the course of the trapping study. In this case, I assume that activity centers are uniformly distributed across the sample space.</p>
 <p>I compute the probability of detection for individual <span class="math inline">\(i\)</span> at trap <span class="math inline">\(j\)</span> as <span class="math inline">\(p_{i,j}=g_0 \exp(-d_{i,j}^2/2\sigma^2),\)</span> where <span class="math inline">\(g_0\)</span> is the probability of detecting an individual when it’s activity center is at the trap, <span class="math inline">\(d_{i,j}\)</span> is the euclidean distance between the trap and the activity center, and <span class="math inline">\(\sigma\)</span> is the detection range parameter.</p>
-<div id="4e5d21c6" class="cell" data-execution_count="4">
+<div id="cell-5" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># true population size</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">150</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -666,7 +443,9 @@ Figure&nbsp;1: Locations of the mist nets in the ovenbird dataset <span class="c
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>n_detected <span class="op">=</span> <span class="bu">int</span>(was_detected.<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Following <span class="citation" data-cites="royle2013">Royle et al. (<a href="#ref-royle2013" role="doc-biblioref">2013</a>)</span>, Chapter 5, I first fit the version of the model where we assume that we know the true population size. In this case, I’m only estimating the detection parameters and the activity center locations.</p>
-<div id="cell-fig-known" class="cell" data-execution_count="5">
+<div id="fig-known" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-known-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># upper bound for the uniform prior on sigma</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>U_SIGMA <span class="op">=</span> <span class="dv">150</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -692,273 +471,40 @@ Figure&nbsp;1: Locations of the mist nets in the ovenbird dataset <span class="c
 <span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(known)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
-<div id="fig-known" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-known-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="scr_files/figure-html/fig-known-output-1.svg" class="img-fluid figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-known-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Visual representation of the model where <span class="math inline">\(N\)</span> is known.
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-known-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2
 </figcaption>
 </figure>
 </div>
-</div>
-</div>
-<section id="nuts-sampler" class="level2">
-<h2 class="anchored" data-anchor-id="nuts-sampler">NUTS sampler</h2>
-<p>Throughout these notebooks, I have been estimating parameters with the default NUTS sampler in PyMC. One of PyMC’s great strengths is that it allows you to select different samplers with the same model code. We saw one version of this in the <a href="./occupancy.html">occupancy notebook</a>, where we had a Binary Gibbs Sampler for the discrete <span class="math inline">\(z_i\)</span> state and a NUTS sampler for the continuous parameters. But PyMC goes one step further, allowing you to choose different NUTS samplers. These include <code>numpyro</code>, which is itself a <a href="https://num.pyro.ai/en/latest/getting_started.html">package</a> for MCMC that can run on GPUs. Additionally, there is the <code>nutpie</code> sampler that is ultimately written in Rust. In most cases, <code>nutpie</code> is much faster than the default PyMC sampler. That said, <code>nutpie</code> can slightly less flexible.</p>
-<p>Since the SCR models in this notebook take a little longer to run, I will use the <code>nutpie</code> sampler throughout. The difference can be substantial. For instance, the unknown <span class="math inline">\(N\)</span> model below takes 39 seconds with the default sampler, and 13 seconds with the <code>nutpie</code> sampler.</p>
-<div id="51cc8350" class="cell" data-execution_count="6">
+<div id="cell-8" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> known:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    known_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-
-<style>
-    :root {
-        --column-width-1: 40%; /* Progress column width */
-        --column-width-2: 15%; /* Chain column width */
-        --column-width-3: 15%; /* Divergences column width */
-        --column-width-4: 15%; /* Step Size column width */
-        --column-width-5: 15%; /* Gradients/Draw column width */
-    }
-
-    .nutpie {
-        max-width: 800px;
-        margin: 10px auto;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        //color: #333;
-        //background-color: #fff;
-        padding: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        border-radius: 8px;
-        font-size: 14px; /* Smaller font size for a more compact look */
-    }
-    .nutpie table {
-        width: 100%;
-        border-collapse: collapse; /* Remove any extra space between borders */
-    }
-    .nutpie th, .nutpie td {
-        padding: 8px 10px; /* Reduce padding to make table more compact */
-        text-align: left;
-        border-bottom: 1px solid #888;
-    }
-    .nutpie th {
-        //background-color: #f0f0f0;
-    }
-
-    .nutpie th:nth-child(1) { width: var(--column-width-1); }
-    .nutpie th:nth-child(2) { width: var(--column-width-2); }
-    .nutpie th:nth-child(3) { width: var(--column-width-3); }
-    .nutpie th:nth-child(4) { width: var(--column-width-4); }
-    .nutpie th:nth-child(5) { width: var(--column-width-5); }
-
-    .nutpie progress {
-        width: 100%;
-        height: 15px; /* Smaller progress bars */
-        border-radius: 5px;
-    }
-    progress::-webkit-progress-bar {
-        background-color: #eee;
-        border-radius: 5px;
-    }
-    progress::-webkit-progress-value {
-        background-color: #5cb85c;
-        border-radius: 5px;
-    }
-    progress::-moz-progress-bar {
-        background-color: #5cb85c;
-        border-radius: 5px;
-    }
-    .nutpie .progress-cell {
-        width: 100%;
-    }
-
-    .nutpie p strong { font-size: 16px; font-weight: bold; }
-
-    @media (prefers-color-scheme: dark) {
-        .nutpie {
-            //color: #ddd;
-            //background-color: #1e1e1e;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        }
-        .nutpie table, .nutpie th, .nutpie td {
-            border-color: #555;
-            color: #ccc;
-        }
-        .nutpie th {
-            background-color: #2a2a2a;
-        }
-        .nutpie progress::-webkit-progress-bar {
-            background-color: #444;
-        }
-        .nutpie progress::-webkit-progress-value {
-            background-color: #3178c6;
-        }
-        .nutpie progress::-moz-progress-bar {
-            background-color: #3178c6;
-        }
-    }
-</style>
 </div>
-<div class="cell-output cell-output-display">
-<div class="nutpie">
-    <p><strong>Sampler Progress</strong></p>
-    <p>Total Chains: <span id="total-chains">4</span></p>
-    <p>Active Chains: <span id="active-chains">0</span></p>
-    <p>
-        Finished Chains:
-        <span id="active-chains">4</span>
-    </p>
-    <p>Sampling for now</p>
-    <p>
-        Estimated Time to Completion:
-        <span id="eta">now</span>
-    </p>
-
-    <progress id="total-progress-bar" max="8000" value="8000">
-    </progress>
-    <table>
-        <thead>
-            <tr>
-                <th>Progress</th>
-                <th>Draws</th>
-                <th>Divergences</th>
-                <th>Step Size</th>
-                <th>Gradients/Draw</th>
-            </tr>
-        </thead>
-        <tbody id="chain-details">
-            
-                <tr>
-                    <td class="progress-cell">
-                        <progress max="2000" value="2000">
-                        </progress>
-                    </td>
-                    <td>2000</td>
-                    <td>0</td>
-                    <td>0.33</td>
-                    <td>15</td>
-                </tr>
-            
-                <tr>
-                    <td class="progress-cell">
-                        <progress max="2000" value="2000">
-                        </progress>
-                    </td>
-                    <td>2000</td>
-                    <td>0</td>
-                    <td>0.33</td>
-                    <td>15</td>
-                </tr>
-            
-                <tr>
-                    <td class="progress-cell">
-                        <progress max="2000" value="2000">
-                        </progress>
-                    </td>
-                    <td>2000</td>
-                    <td>0</td>
-                    <td>0.33</td>
-                    <td>15</td>
-                </tr>
-            
-                <tr>
-                    <td class="progress-cell">
-                        <progress max="2000" value="2000">
-                        </progress>
-                    </td>
-                    <td>2000</td>
-                    <td>0</td>
-                    <td>0.34</td>
-                    <td>15</td>
-                </tr>
-            
-            
-        </tbody>
-    </table>
-</div>
-</div>
-</div>
-<div id="21055852" class="cell" data-execution_count="7">
+<div id="cell-9" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>az.summary(known_idata, var_names<span class="op">=</span>[<span class="st">'g0'</span>, <span class="st">'sigma'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="24">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">mean</th>
-<th data-quarto-table-cell-role="th">sd</th>
-<th data-quarto-table-cell-role="th">hdi_3%</th>
-<th data-quarto-table-cell-role="th">hdi_97%</th>
-<th data-quarto-table-cell-role="th">mcse_mean</th>
-<th data-quarto-table-cell-role="th">mcse_sd</th>
-<th data-quarto-table-cell-role="th">ess_bulk</th>
-<th data-quarto-table-cell-role="th">ess_tail</th>
-<th data-quarto-table-cell-role="th">r_hat</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">g0</th>
-<td>0.022</td>
-<td>0.003</td>
-<td>0.017</td>
-<td>0.028</td>
-<td>0.000</td>
-<td>0.000</td>
-<td>864.0</td>
-<td>1497.0</td>
-<td>1.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">sigma</th>
-<td>94.783</td>
-<td>7.965</td>
-<td>80.985</td>
-<td>109.960</td>
-<td>0.344</td>
-<td>0.228</td>
-<td>557.0</td>
-<td>1103.0</td>
-<td>1.0</td>
-</tr>
-</tbody>
-</table>
-
 </div>
-</div>
-</div>
-<div id="cell-fig-known_trace" class="cell" data-execution_count="8">
+<div id="fig-known_trace" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-known_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    known_idata,</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    var_names<span class="op">=</span>[<span class="st">'g0'</span>, <span class="st">'sigma'</span>],</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>),</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    lines<span class="op">=</span>[(<span class="st">"g0"</span>, {}, [g0_true]), (<span class="st">"sigma"</span>, {}, [sigma_true])]</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div id="fig-known_trace" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-known_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="scr_files/figure-html/fig-known_trace-output-1.png" width="696" height="367" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-known_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Trace plots for model where <span class="math inline">\(N\)</span> is known. The true parameter values are shown by vertical and horizontal lines.
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-known_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3
 </figcaption>
 </figure>
 </div>
-</div>
-</div>
 <p>The trace plots show reasonable agreement between the true parameter values and the estimated values, although <span class="math inline">\(g_0\)</span> appears to be overestimated.</p>
 </section>
-</section>
-<section id="ovenbird-density" class="level1">
-<h1>Ovenbird density</h1>
+<section id="ovenbird-density" class="level2">
+<h2 class="anchored" data-anchor-id="ovenbird-density">Ovenbird density</h2>
 <p>Now, I estimate the density <span class="math inline">\(D\)</span> for the ovenbird population. Like distance sampling, SCR can robustly estimate the density of the population, regardless of the size of the state space. The difference between the model above and this one is that we use PX-DA to estimate the inclusion probability <span class="math inline">\(\psi,\)</span> and subsequently <span class="math inline">\(N.\)</span> First, I convert the <code>DataFrame</code> to a <code>(n_detected, n_traps)</code> array of binomial counts.</p>
-<div id="bb27c83c" class="cell" data-execution_count="9">
+<div id="cell-12" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_Y(ch):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Get a (individual_count, trap_count) array of detections.'''</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -979,7 +525,9 @@ Figure&nbsp;3: Trace plots for model where <span class="math inline">\(N\)</span
 <span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>Y_augmented <span class="op">=</span> np.vstack((Y, all_zero_history))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>As with the other closed models in this series, I will write the model in terms of the latent inclusion state <span class="math inline">\(z_i\)</span>. Interestingly, .</p>
-<div id="cell-fig-oven" class="cell" data-execution_count="10">
+<div id="fig-oven" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-oven-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> oven:</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priors</span></span>
@@ -1005,256 +553,23 @@ Figure&nbsp;3: Trace plots for model where <span class="math inline">\(N\)</span
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    pm.Binomial(<span class="st">'y'</span>, p<span class="op">=</span>mu_y, n<span class="op">=</span>occasion_count, observed<span class="op">=</span>Y_augmented)</span>
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(oven)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="27">
-<div id="fig-oven" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-oven-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="scr_files/figure-html/fig-oven-output-1.svg" class="img-fluid figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-oven-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: Visual representation of the ovenbird model using data augmentation.
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-oven-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4
 </figcaption>
 </figure>
 </div>
-</div>
-</div>
-<div id="90ca5578" class="cell" data-execution_count="11">
+<div id="cell-15" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>oven_marginal <span class="op">=</span> pmx.marginalize(oven, [<span class="st">'z'</span>])</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> oven_marginal:</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    oven_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-
-<style>
-    :root {
-        --column-width-1: 40%; /* Progress column width */
-        --column-width-2: 15%; /* Chain column width */
-        --column-width-3: 15%; /* Divergences column width */
-        --column-width-4: 15%; /* Step Size column width */
-        --column-width-5: 15%; /* Gradients/Draw column width */
-    }
-
-    .nutpie {
-        max-width: 800px;
-        margin: 10px auto;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        //color: #333;
-        //background-color: #fff;
-        padding: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        border-radius: 8px;
-        font-size: 14px; /* Smaller font size for a more compact look */
-    }
-    .nutpie table {
-        width: 100%;
-        border-collapse: collapse; /* Remove any extra space between borders */
-    }
-    .nutpie th, .nutpie td {
-        padding: 8px 10px; /* Reduce padding to make table more compact */
-        text-align: left;
-        border-bottom: 1px solid #888;
-    }
-    .nutpie th {
-        //background-color: #f0f0f0;
-    }
-
-    .nutpie th:nth-child(1) { width: var(--column-width-1); }
-    .nutpie th:nth-child(2) { width: var(--column-width-2); }
-    .nutpie th:nth-child(3) { width: var(--column-width-3); }
-    .nutpie th:nth-child(4) { width: var(--column-width-4); }
-    .nutpie th:nth-child(5) { width: var(--column-width-5); }
-
-    .nutpie progress {
-        width: 100%;
-        height: 15px; /* Smaller progress bars */
-        border-radius: 5px;
-    }
-    progress::-webkit-progress-bar {
-        background-color: #eee;
-        border-radius: 5px;
-    }
-    progress::-webkit-progress-value {
-        background-color: #5cb85c;
-        border-radius: 5px;
-    }
-    progress::-moz-progress-bar {
-        background-color: #5cb85c;
-        border-radius: 5px;
-    }
-    .nutpie .progress-cell {
-        width: 100%;
-    }
-
-    .nutpie p strong { font-size: 16px; font-weight: bold; }
-
-    @media (prefers-color-scheme: dark) {
-        .nutpie {
-            //color: #ddd;
-            //background-color: #1e1e1e;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        }
-        .nutpie table, .nutpie th, .nutpie td {
-            border-color: #555;
-            color: #ccc;
-        }
-        .nutpie th {
-            background-color: #2a2a2a;
-        }
-        .nutpie progress::-webkit-progress-bar {
-            background-color: #444;
-        }
-        .nutpie progress::-webkit-progress-value {
-            background-color: #3178c6;
-        }
-        .nutpie progress::-moz-progress-bar {
-            background-color: #3178c6;
-        }
-    }
-</style>
 </div>
-<div class="cell-output cell-output-display">
-<div class="nutpie">
-    <p><strong>Sampler Progress</strong></p>
-    <p>Total Chains: <span id="total-chains">4</span></p>
-    <p>Active Chains: <span id="active-chains">0</span></p>
-    <p>
-        Finished Chains:
-        <span id="active-chains">4</span>
-    </p>
-    <p>Sampling for 13 seconds</p>
-    <p>
-        Estimated Time to Completion:
-        <span id="eta">now</span>
-    </p>
-
-    <progress id="total-progress-bar" max="8000" value="8000">
-    </progress>
-    <table>
-        <thead>
-            <tr>
-                <th>Progress</th>
-                <th>Draws</th>
-                <th>Divergences</th>
-                <th>Step Size</th>
-                <th>Gradients/Draw</th>
-            </tr>
-        </thead>
-        <tbody id="chain-details">
-            
-                <tr>
-                    <td class="progress-cell">
-                        <progress max="2000" value="2000">
-                        </progress>
-                    </td>
-                    <td>2000</td>
-                    <td>0</td>
-                    <td>0.29</td>
-                    <td>15</td>
-                </tr>
-            
-                <tr>
-                    <td class="progress-cell">
-                        <progress max="2000" value="2000">
-                        </progress>
-                    </td>
-                    <td>2000</td>
-                    <td>0</td>
-                    <td>0.29</td>
-                    <td>15</td>
-                </tr>
-            
-                <tr>
-                    <td class="progress-cell">
-                        <progress max="2000" value="2000">
-                        </progress>
-                    </td>
-                    <td>2000</td>
-                    <td>0</td>
-                    <td>0.29</td>
-                    <td>15</td>
-                </tr>
-            
-                <tr>
-                    <td class="progress-cell">
-                        <progress max="2000" value="2000">
-                        </progress>
-                    </td>
-                    <td>2000</td>
-                    <td>0</td>
-                    <td>0.29</td>
-                    <td>15</td>
-                </tr>
-            
-            
-        </tbody>
-    </table>
-</div>
-</div>
-</div>
-<div id="eab01e8a" class="cell" data-execution_count="12">
+<div id="cell-16" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>az.summary(oven_idata, var_names<span class="op">=</span>[<span class="st">'g0'</span>, <span class="st">'sigma'</span>, <span class="st">'psi'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="29">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">mean</th>
-<th data-quarto-table-cell-role="th">sd</th>
-<th data-quarto-table-cell-role="th">hdi_3%</th>
-<th data-quarto-table-cell-role="th">hdi_97%</th>
-<th data-quarto-table-cell-role="th">mcse_mean</th>
-<th data-quarto-table-cell-role="th">mcse_sd</th>
-<th data-quarto-table-cell-role="th">ess_bulk</th>
-<th data-quarto-table-cell-role="th">ess_tail</th>
-<th data-quarto-table-cell-role="th">r_hat</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">g0</th>
-<td>0.029</td>
-<td>0.004</td>
-<td>0.023</td>
-<td>0.037</td>
-<td>0.000</td>
-<td>0.000</td>
-<td>1264.0</td>
-<td>2200.0</td>
-<td>1.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">sigma</th>
-<td>71.371</td>
-<td>4.563</td>
-<td>63.488</td>
-<td>80.193</td>
-<td>0.172</td>
-<td>0.098</td>
-<td>724.0</td>
-<td>1263.0</td>
-<td>1.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">psi</th>
-<td>0.700</td>
-<td>0.056</td>
-<td>0.598</td>
-<td>0.808</td>
-<td>0.001</td>
-<td>0.001</td>
-<td>3391.0</td>
-<td>2484.0</td>
-<td>1.0</td>
-</tr>
-</tbody>
-</table>
-
 </div>
-</div>
-</div>
-<div id="cell-fig-oven_trace" class="cell" data-execution_count="13">
+<div id="fig-oven_trace" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-oven_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>g0_mle <span class="op">=</span> [<span class="fl">0.025</span>]</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>sigma_mle <span class="op">=</span> [<span class="dv">73</span>]</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1264,22 +579,15 @@ Figure&nbsp;4: Visual representation of the ovenbird model using data augmentati
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">4</span>),</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    lines<span class="op">=</span>[(<span class="st">"g0"</span>, {}, [g0_mle]), (<span class="st">"sigma"</span>, {}, [sigma_mle])]</span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div id="fig-oven_trace" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-oven_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="scr_files/figure-html/fig-oven_trace-output-1.png" width="687" height="367" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-oven_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: Trace plots for the ovenbird model using data augmentation. Maximum likelihood estimates are shown by vertical and horizontal lines.
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-oven_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5
 </figcaption>
 </figure>
 </div>
-</div>
-</div>
 <p>The estimates are quite close to the maximum likelihood estimates, which I estimated with the secr package in R.</p>
 <p>Finally, I estimate density <span class="math inline">\(D\)</span> using the results. As in the closed capture-recapture and distance sampling notebooks, I use the posterior samples of <span class="math inline">\(\psi\)</span> and <span class="math inline">\(M\)</span> to sample the posterior of <span class="math inline">\(N.\)</span> This <span class="math inline">\(N,\)</span> however, has an awkward interpretation because I pooled across the years by combining all the detection histories. To get around this, I compute the average annual abundance by dividing by the total number of years in the sample. Then, I divide by the area of the state space.</p>
-<div id="00909164" class="cell" data-execution_count="14">
+<div id="cell-19" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sim_N(idata, n, K):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    psi_samps <span class="op">=</span> az.extract(idata).psi.to_numpy()</span>
@@ -1295,7 +603,9 @@ Figure&nbsp;5: Trace plots for the ovenbird model using data augmentation. Maxim
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> N_samps</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="cell-fig-density" class="cell" data-execution_count="15">
+<div id="fig-density" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>N_samps <span class="op">=</span> sim_N(oven_idata, detected_count, occasion_count)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># kludgy way of calculating avergage abundance</span></span>
@@ -1317,21 +627,16 @@ Figure&nbsp;5: Trace plots for the ovenbird model using data augmentation. Maxim
 <span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Number of samples'</span>)</span>
 <span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="fl">1.4</span>, <span class="dv">800</span>, <span class="vs">rf'</span><span class="dv">$</span><span class="er">\</span><span class="vs">hat</span><span class="ch">{{</span><span class="vs">D</span><span class="ch">}}</span><span class="dv">$</span><span class="vs">=</span><span class="sc">{</span>D_samples<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="vs">'</span>, va<span class="op">=</span><span class="st">'bottom'</span>, ha<span class="op">=</span><span class="st">'left'</span>)</span>
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div id="fig-density" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="scr_files/figure-html/fig-density-output-1.png" width="420" height="380" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: Posterior distribution of the density <span class="math inline">\(D\)</span> of ovenbirds. The maximum likelihood estimate is shown by the dotted red line.
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-density-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6
 </figcaption>
 </figure>
 </div>
-</div>
-</div>
 <p>Sometimes, the location of the activity centers is of interest. Below, I plot the posterior median for the activity centers for the detected individuals.</p>
-<div id="cell-fig-activity" class="cell" data-execution_count="16">
+<div id="fig-activity" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-activity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>s_samps <span class="op">=</span> az.extract(oven_idata).S</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>s_mean <span class="op">=</span> np.median(s_samps[:detected_count], axis<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1352,21 +657,16 @@ Figure&nbsp;6: Posterior distribution of the density <span class="math inline">\
 <span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">'equal'</span>)</span>
 <span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Estimated activity centers'</span>)</span>
 <span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div id="fig-activity" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-activity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="scr_files/figure-html/fig-activity-output-1.png" width="372" height="671" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-activity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7: Estimated activity centers for the detected individuals
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-activity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7
 </figcaption>
 </figure>
 </div>
-</div>
-</div>
 <p>We can also look at the uncertainty around those estimates. Below, I plot the posterior distribution of the activity centers for two individuals.</p>
-<div id="cell-fig-activity-post" class="cell" data-execution_count="17">
+<div id="fig-activity-post" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-activity-post-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>one <span class="op">=</span> <span class="dv">49</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>one_samps <span class="op">=</span> s_samps[one]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1397,21 +697,16 @@ Figure&nbsp;7: Estimated activity centers for the detected individuals
 <span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Posterior of two activity centers'</span>)</span>
 <span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">False</span>)</span>
 <span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div id="fig-activity-post" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-activity-post-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="scr_files/figure-html/fig-activity-post-output-1.png" width="447" height="671" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-activity-post-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8: Posterior distributions for two activity centers.
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-activity-post-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8
 </figcaption>
 </figure>
 </div>
-</div>
-</div>
 <p>Finally, I plot the posterior distribution of the detection function.</p>
-<div id="cell-fig-func" class="cell" data-execution_count="18">
+<div id="fig-func" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>xx <span class="op">=</span> np.arange(BUFFER <span class="op">*</span> <span class="dv">2</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>sigma_samps <span class="op">=</span> az.extract(oven_idata).sigma.values.flatten()</span>
@@ -1435,44 +730,16 @@ Figure&nbsp;8: Posterior distributions for two activity centers.
 <span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'Distance </span><span class="kw">(</span><span class="vs">m</span><span class="kw">)</span><span class="vs">'</span>)</span>
 <span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display">
-<div id="fig-func" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="scr_files/figure-html/fig-func-output-1.png" width="511" height="408" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9: Posterior distribution for the detection function. The line represents the posterior mean while the shaded area is the 96% interval.
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-func-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9
 </figcaption>
 </figure>
 </div>
-</div>
-</div>
-<div id="a7ce2bc6" class="cell" data-execution_count="19">
+<div id="cell-27" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">-</span>n <span class="op">-</span>u <span class="op">-</span>v <span class="op">-</span>iv <span class="op">-</span>w</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>The watermark extension is already loaded. To reload it, use:
-  %reload_ext watermark
-Last updated: Tue Oct 14 2025
-
-Python implementation: CPython
-Python version       : 3.13.3
-IPython version      : 9.2.0
-
-pytensor   : 2.31.7
-pandas     : 2.2.3
-matplotlib : 3.10.1
-arviz      : 0.21.0
-seaborn    : 0.13.2
-numpy      : 2.2.5
-pymc_extras: 0.5.0
-pymc       : 5.25.1
-
-Watermark: 2.5.0
-</code></pre>
-</div>
 </div>
 
 
@@ -1890,18 +1157,6 @@ Royle, J Andrew, Richard B Chandler, Rahel Sollmann, and Beth Gardner. 2013. <em
     }
   });
   </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-      <a href="./distance.html" class="pagination-link" aria-label="Distance sampling">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Distance sampling</span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="./msom.html" class="pagination-link" aria-label="Community occupancy">
-        <span class="nav-page-text">Community occupancy</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
 
 

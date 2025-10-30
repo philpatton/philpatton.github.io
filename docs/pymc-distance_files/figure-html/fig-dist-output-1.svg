@@ -27,7 +27,7 @@
 <text xml:space="preserve" text-anchor="middle" x="28.81" y="-176.93" font-family="Times,serif" font-size="14.00">Beta</text>
 </g>
 <!-- y -->
-<g id="node5" class="node">
+<g id="node4" class="node">
 <title>y</title>
 <ellipse fill="lightgrey" stroke="black" cx="119.81" cy="-81.16" rx="42.6" ry="40.66"/>
 <text xml:space="preserve" text-anchor="middle" x="119.81" y="-92.61" font-family="Times,serif" font-size="14.00">y</text>
@@ -35,7 +35,7 @@
 <text xml:space="preserve" text-anchor="middle" x="119.81" y="-59.61" font-family="Times,serif" font-size="14.00">Mixture</text>
 </g>
 <!-- psi&#45;&gt;y -->
-<g id="edge4" class="edge">
+<g id="edge3" class="edge">
 <title>psi&#45;&gt;y</title>
 <path fill="none" stroke="black" d="M50.15,-170.44C61.22,-156.42 74.97,-138.99 87.33,-123.33"/>
 <polygon fill="black" stroke="black" points="90.02,-125.56 93.47,-115.54 84.53,-121.23 90.02,-125.56"/>
@@ -49,7 +49,7 @@
 <text xml:space="preserve" text-anchor="middle" x="61.81" y="-298.74" font-family="Times,serif" font-size="14.00">Uniform</text>
 </g>
 <!-- p -->
-<g id="node4" class="node">
+<g id="node5" class="node">
 <title>p</title>
 <polygon fill="none" stroke="black" points="165.94,-227.23 75.69,-227.23 75.69,-169.73 165.94,-169.73 165.94,-227.23"/>
 <text xml:space="preserve" text-anchor="middle" x="120.81" y="-209.93" font-family="Times,serif" font-size="14.00">p</text>
@@ -57,7 +57,7 @@
 <text xml:space="preserve" text-anchor="middle" x="120.81" y="-176.93" font-family="Times,serif" font-size="14.00">Deterministic</text>
 </g>
 <!-- sigma&#45;&gt;p -->
-<g id="edge1" class="edge">
+<g id="edge2" class="edge">
 <title>sigma&#45;&gt;p</title>
 <path fill="none" stroke="black" d="M79.84,-282.69C86.87,-268.41 94.94,-252.02 102.05,-237.59"/>
 <polygon fill="black" stroke="black" points="105.07,-239.36 106.35,-228.85 98.8,-236.27 105.07,-239.36"/>
@@ -71,13 +71,13 @@
 <text xml:space="preserve" text-anchor="middle" x="189.81" y="-298.74" font-family="Times,serif" font-size="14.00">Uniform</text>
 </g>
 <!-- x_unobserved&#45;&gt;p -->
-<g id="edge2" class="edge">
+<g id="edge1" class="edge">
 <title>x_unobserved&#45;&gt;p</title>
 <path fill="none" stroke="black" d="M168.17,-281.71C160.03,-267.57 150.77,-251.5 142.62,-237.34"/>
 <polygon fill="black" stroke="black" points="145.68,-235.65 137.66,-228.73 139.62,-239.14 145.68,-235.65"/>
 </g>
 <!-- p&#45;&gt;y -->
-<g id="edge3" class="edge">
+<g id="edge4" class="edge">
 <title>p&#45;&gt;y</title>
 <path fill="none" stroke="black" d="M120.57,-169.27C120.48,-158.44 120.37,-145.73 120.26,-133.41"/>
 <polygon fill="black" stroke="black" points="123.76,-133.75 120.18,-123.78 116.76,-133.81 123.76,-133.75"/>

@@ -40,30 +40,8 @@
 <path fill="none" stroke="black" d="M40.1,-173.01C44.07,-159.97 48.61,-145.11 52.84,-131.24"/>
 <polygon fill="black" stroke="black" points="56.14,-132.41 55.71,-121.83 49.45,-130.37 56.14,-132.41"/>
 </g>
-<!-- phi -->
-<g id="node2" class="node">
-<title>phi</title>
-<ellipse fill="none" stroke="black" cx="51.81" cy="-328.29" rx="44.72" ry="40.66"/>
-<text xml:space="preserve" text-anchor="middle" x="51.81" y="-339.74" font-family="Times,serif" font-size="14.00">phi</text>
-<text xml:space="preserve" text-anchor="middle" x="51.81" y="-323.24" font-family="Times,serif" font-size="14.00">~</text>
-<text xml:space="preserve" text-anchor="middle" x="51.81" y="-306.74" font-family="Times,serif" font-size="14.00">Uniform</text>
-</g>
-<!-- theta -->
-<g id="node5" class="node">
-<title>theta</title>
-<ellipse fill="none" stroke="black" cx="105.81" cy="-210.98" rx="29.88" ry="40.66"/>
-<text xml:space="preserve" text-anchor="middle" x="105.81" y="-222.43" font-family="Times,serif" font-size="14.00">theta</text>
-<text xml:space="preserve" text-anchor="middle" x="105.81" y="-205.93" font-family="Times,serif" font-size="14.00">~</text>
-<text xml:space="preserve" text-anchor="middle" x="105.81" y="-189.43" font-family="Times,serif" font-size="14.00">Beta</text>
-</g>
-<!-- phi&#45;&gt;theta -->
-<g id="edge2" class="edge">
-<title>phi&#45;&gt;theta</title>
-<path fill="none" stroke="black" d="M69.05,-290.49C74.2,-279.49 79.9,-267.32 85.24,-255.9"/>
-<polygon fill="black" stroke="black" points="88.31,-257.61 89.38,-247.07 81.97,-254.64 88.31,-257.61"/>
-</g>
 <!-- kappa_log -->
-<g id="node3" class="node">
+<g id="node2" class="node">
 <title>kappa_log</title>
 <ellipse fill="none" stroke="black" cx="159.81" cy="-445.61" rx="57.45" ry="40.66"/>
 <text xml:space="preserve" text-anchor="middle" x="159.81" y="-457.06" font-family="Times,serif" font-size="14.00">kappa_log</text>
@@ -83,6 +61,28 @@
 <title>kappa_log&#45;&gt;kappa</title>
 <path fill="none" stroke="black" d="M159.81,-404.6C159.81,-392.89 159.81,-380.11 159.81,-368.45"/>
 <polygon fill="black" stroke="black" points="163.31,-368.77 159.81,-358.77 156.31,-368.77 163.31,-368.77"/>
+</g>
+<!-- phi -->
+<g id="node3" class="node">
+<title>phi</title>
+<ellipse fill="none" stroke="black" cx="51.81" cy="-328.29" rx="44.72" ry="40.66"/>
+<text xml:space="preserve" text-anchor="middle" x="51.81" y="-339.74" font-family="Times,serif" font-size="14.00">phi</text>
+<text xml:space="preserve" text-anchor="middle" x="51.81" y="-323.24" font-family="Times,serif" font-size="14.00">~</text>
+<text xml:space="preserve" text-anchor="middle" x="51.81" y="-306.74" font-family="Times,serif" font-size="14.00">Uniform</text>
+</g>
+<!-- theta -->
+<g id="node5" class="node">
+<title>theta</title>
+<ellipse fill="none" stroke="black" cx="105.81" cy="-210.98" rx="29.88" ry="40.66"/>
+<text xml:space="preserve" text-anchor="middle" x="105.81" y="-222.43" font-family="Times,serif" font-size="14.00">theta</text>
+<text xml:space="preserve" text-anchor="middle" x="105.81" y="-205.93" font-family="Times,serif" font-size="14.00">~</text>
+<text xml:space="preserve" text-anchor="middle" x="105.81" y="-189.43" font-family="Times,serif" font-size="14.00">Beta</text>
+</g>
+<!-- phi&#45;&gt;theta -->
+<g id="edge2" class="edge">
+<title>phi&#45;&gt;theta</title>
+<path fill="none" stroke="black" d="M69.05,-290.49C74.2,-279.49 79.9,-267.32 85.24,-255.9"/>
+<polygon fill="black" stroke="black" points="88.31,-257.61 89.38,-247.07 81.97,-254.64 88.31,-257.61"/>
 </g>
 <!-- kappa&#45;&gt;theta -->
 <g id="edge3" class="edge">

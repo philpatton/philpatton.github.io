@@ -201,13 +201,13 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./distance.html" class="sidebar-item-text sidebar-link">
+  <a href="./pymc-distance.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Distance sampling</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./scr.html" class="sidebar-item-text sidebar-link">
+  <a href="./pymc-scr.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Spatial capture-recapture</span></a>
   </div>
 </li>
@@ -227,12 +227,6 @@ div.csl-indent {
   <div class="sidebar-item-container"> 
   <a href="./pymc-jssa.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Jolly-Seber</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./comparison.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Model comparison</span></a>
   </div>
 </li>
       </ul>
@@ -268,6 +262,12 @@ div.csl-indent {
   <div class="sidebar-item-container"> 
   <a href="./numpyro-cjs.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Cormack-Jolly-Seber</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numpyro-scr.ipynb" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Spatial Jolly-Seber</span></a>
   </div>
 </li>
       </ul>
@@ -317,7 +317,7 @@ div.csl-indent {
 </section>
 <section id="numpyro" class="level2">
 <h2 class="anchored" data-anchor-id="numpyro">NumPyro</h2>
-<p>NumPyro is another Python library for Bayesian data analysis. NumPyro runs on JAX, meaning that it utilizes your GPU for sampling. As such, NumPyro can be very fast for large datasets. PyMC conveniently allows users to sample models written in PyMC with the NumPyro backend (see <a href="./scr.html">this notebook</a> for details). This is especially handy because NumPyro’s model syntax is different than PyMC, meaning that theoretically you only have to learn one syntax to reap the benefits!</p>
+<p>NumPyro is another Python library for Bayesian data analysis. NumPyro runs on JAX, meaning that it utilizes your GPU for sampling. As such, NumPyro can be very fast for large datasets. PyMC conveniently allows users to sample models written in PyMC with other backends, including NumPyro (see <a href="./pymc-scr.html">this notebook</a> for details). This is especially handy because NumPyro’s model syntax is different than PyMC, meaning that theoretically you only have to learn one syntax to reap the benefits!</p>
 <p>So, why learn NumPyro at all? NumPyro has powerful tools for marginalizing discrete latent states in Hidden Markov Model (HMMs). HMMs form the theoretical background for many Bayesian population modeling frameworks, including Cormack-Jolly-Seber, Jolly-Seber, multistate, dynamic occupancy, and open-SCR. From what I can tell, PyMC lacks these features. As such, I think it is worth learning NumPyro if you are inerested in “open” models broadly. Moreover, NumPyro can fit closed models as well. Nevertheless, the NumPyro community seems less active than the PyMC community.</p>
 <p>Also, I must plug the incredible <a href="https://github.com/timmh/biolith">biolith</a> package in Python, which is written in NumPyro and contains many of the most common models in ecology.</p>
 

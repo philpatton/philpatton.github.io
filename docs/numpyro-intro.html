@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Philip T. Patton">
-<meta name="dcterms.date" content="2025-10-25">
+<meta name="dcterms.date" content="2025-10-30">
 <meta name="description" content="Demonstrating core features by site occupancy">
 
 <title>Introduction to NumPyro – Philip T. Patton</title>
@@ -332,6 +332,12 @@ window.Quarto = {
  <span class="menu-text">Cormack-Jolly-Seber</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numpyro-scr.ipynb" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Spatial Jolly-Seber</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -389,7 +395,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 25, 2025</p>
+      <p class="date">October 30, 2025</p>
     </div>
   </div>
   
@@ -402,8 +408,8 @@ window.Quarto = {
 
 
 <p>Before I forced myself to learn it, I found the NumPyro syntax utterly beguiling. In this notebook, I hope to introduce the library in a way that I would have found helpful. Hopefully this will be helpful for you too.</p>
-<p>As a motivating example, I will use the same occupancy dataset from the <a href="occupancy.qmd">PyMC occupancy notebook</a>. These data come from <span class="citation" data-cites="henden2013">Henden et al. (<a href="#ref-henden2013" role="doc-biblioref">2013</a>)</span>, and were used as a demonstration in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 23. They represent detection/non-detection data of Willow Warblers from Finnmark, Norway. The <span class="math inline">\(J=27\)</span> sites were sampled <span class="math inline">\(K=3\)</span> times. Replicating the analysis in Box 23.7 in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, I use two covariates for site: site area (<code>Pland</code>) and willow tree height (<code>wheight</code>). Further, I use two covariates for visit: an indicator for the visit and willow tree height.</p>
-<div id="1c5fcb60" class="cell" data-execution_count="1">
+<p>As a motivating example, I will use the same occupancy dataset from the <a href="./pymc-occupancy.html">PyMC occupancy notebook</a>. These data come from <span class="citation" data-cites="henden2013">Henden et al. (<a href="#ref-henden2013" role="doc-biblioref">2013</a>)</span>, and were used as a demonstration in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 23. They represent detection/non-detection data of Willow Warblers from Finnmark, Norway. The <span class="math inline">\(J=27\)</span> sites were sampled <span class="math inline">\(K=3\)</span> times. Replicating the analysis in Box 23.7 in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, I use two covariates for site: site area (<code>Pland</code>) and willow tree height (<code>wheight</code>). Further, I use two covariates for visit: an indicator for the visit and willow tree height.</p>
+<div id="dbc4d7ac" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> jax <span class="im">import</span> random</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> jax.scipy.special <span class="im">import</span> expit</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpyro.infer <span class="im">import</span> NUTS, MCMC</span>
@@ -474,7 +480,7 @@ window.Quarto = {
 <section id="defining-the-model" class="level1">
 <h1>Defining the model</h1>
 <p>We define our NumPyro model as a Python function. Let’s look at one of these functions: an occupancy model with site and visit covariates.</p>
-<div id="547c90b0" class="cell" data-execution_count="2">
+<div id="f2b48849" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> occupancy_model(data_dictionary):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    detection_data <span class="op">=</span> data_dictionary[<span class="st">'detection_data'</span>]</span>
@@ -526,7 +532,7 @@ window.Quarto = {
     beta[i] ~ dnorm(0, 0.5)
 }</code></pre>
 <p>In NumPyro, we can write this as,</p>
-<div id="afb27ef9" class="cell" data-execution_count="3">
+<div id="c34aefc8" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> numpyro.plate(<span class="st">'site-effects'</span>, <span class="dv">3</span>):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> numpyro.sample(<span class="st">'beta'</span>, dist.Normal(<span class="dv">0</span>, <span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -548,7 +554,7 @@ P(\mathbf{y}_j)=
 <section id="inference" class="level1">
 <h1>Inference</h1>
 <p>Inference is fairly straightforward in NumPyro, although more verbose than PyMC. First, we define which sampler we would like to use on our model. We input this <em>kernel</em> into the MCMC initializer, specifying the configuration (chains, draws, tune, etc.). Finally, we run the MCMC algorithm.</p>
-<div id="734f8704" class="cell" data-execution_count="4">
+<div id="60bf9295" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>warbler_data <span class="op">=</span> get_warbler_data()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>rng_key <span class="op">=</span> random.PRNGKey(RANDOM_SEED)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -562,12 +568,12 @@ P(\mathbf{y}_j)=
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>mcmc.run(rng_key, warbler_data)</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>mcmc.print_summary()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/7b/nb0vyhy90mdf30_65xwqzl300000gn/T/ipykernel_79767/1360101409.py:8: UserWarning: There are not enough devices to run parallel chains: expected 4 but got 1. Chains will be drawn sequentially. If you are running MCMC in CPU, consider using `numpyro.set_host_device_count(4)` at the beginning of your program. You can double-check how many devices are available in your system using `jax.local_device_count()`.
+<pre><code>/var/folders/7b/nb0vyhy90mdf30_65xwqzl300000gn/T/ipykernel_15026/1360101409.py:8: UserWarning: There are not enough devices to run parallel chains: expected 4 but got 1. Chains will be drawn sequentially. If you are running MCMC in CPU, consider using `numpyro.set_host_device_count(4)` at the beginning of your program. You can double-check how many devices are available in your system using `jax.local_device_count()`.
   mcmc = MCMC(nuts_kernel, num_warmup=500, num_samples=1000, num_chains=4)
-  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;17:49,  1.40it/s, 3 steps of size 2.34e+00. acc. prob=0.00]warmup:  20%|██        | 303/1500 [00:00&lt;00:02, 505.00it/s, 3 steps of size 2.31e-01. acc. prob=0.78]sample:  44%|████▍     | 666/1500 [00:00&lt;00:00, 1106.37it/s, 7 steps of size 5.37e-01. acc. prob=0.89]sample:  71%|███████   | 1060/1500 [00:01&lt;00:00, 1717.41it/s, 7 steps of size 5.37e-01. acc. prob=0.89]sample:  97%|█████████▋| 1448/1500 [00:01&lt;00:00, 2225.17it/s, 15 steps of size 5.37e-01. acc. prob=0.89]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 1329.80it/s, 15 steps of size 5.37e-01. acc. prob=0.89]
-  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;17:26,  1.43it/s, 1 steps of size 2.34e+00. acc. prob=0.00]warmup:  24%|██▎       | 353/1500 [00:00&lt;00:01, 599.15it/s, 7 steps of size 9.32e-01. acc. prob=0.79]sample:  49%|████▉     | 739/1500 [00:00&lt;00:00, 1235.55it/s, 7 steps of size 5.36e-01. acc. prob=0.89]sample:  76%|███████▌  | 1135/1500 [00:00&lt;00:00, 1828.89it/s, 7 steps of size 5.36e-01. acc. prob=0.89]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 1373.12it/s, 7 steps of size 5.36e-01. acc. prob=0.89]
-  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;19:04,  1.31it/s, 1 steps of size 2.34e+00. acc. prob=0.00]warmup:  22%|██▏       | 334/1500 [00:00&lt;00:02, 525.75it/s, 7 steps of size 6.90e-01. acc. prob=0.79]sample:  48%|████▊     | 720/1500 [00:00&lt;00:00, 1137.97it/s, 7 steps of size 5.21e-01. acc. prob=0.90]sample:  73%|███████▎  | 1099/1500 [00:01&lt;00:00, 1688.95it/s, 7 steps of size 5.21e-01. acc. prob=0.91]sample:  99%|█████████▊| 1479/1500 [00:01&lt;00:00, 2172.20it/s, 3 steps of size 5.21e-01. acc. prob=0.91]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 1281.82it/s, 7 steps of size 5.21e-01. acc. prob=0.91]
-  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;18:07,  1.38it/s, 3 steps of size 2.34e+00. acc. prob=0.00]warmup:  24%|██▎       | 354/1500 [00:00&lt;00:01, 581.67it/s, 7 steps of size 4.64e-01. acc. prob=0.79]sample:  49%|████▉     | 737/1500 [00:00&lt;00:00, 1199.50it/s, 7 steps of size 4.75e-01. acc. prob=0.90]sample:  75%|███████▍  | 1120/1500 [00:01&lt;00:00, 1761.31it/s, 3 steps of size 4.75e-01. acc. prob=0.91]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 1332.56it/s, 7 steps of size 4.75e-01. acc. prob=0.91]</code></pre>
+  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;17:28,  1.43it/s, 3 steps of size 2.34e+00. acc. prob=0.00]warmup:  26%|██▋       | 396/1500 [00:00&lt;00:01, 670.86it/s, 7 steps of size 8.92e-01. acc. prob=0.79]sample:  57%|█████▋    | 853/1500 [00:00&lt;00:00, 1430.59it/s, 7 steps of size 5.37e-01. acc. prob=0.89]sample:  87%|████████▋ | 1300/1500 [00:01&lt;00:00, 2091.77it/s, 7 steps of size 5.37e-01. acc. prob=0.89]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 1434.77it/s, 15 steps of size 5.37e-01. acc. prob=0.89]
+  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;18:08,  1.38it/s, 1 steps of size 2.34e+00. acc. prob=0.00]warmup:  26%|██▋       | 396/1500 [00:00&lt;00:01, 650.20it/s, 7 steps of size 4.20e-01. acc. prob=0.79]sample:  55%|█████▌    | 829/1500 [00:00&lt;00:00, 1349.72it/s, 3 steps of size 5.36e-01. acc. prob=0.89]sample:  85%|████████▍ | 1269/1500 [00:01&lt;00:00, 2000.65it/s, 3 steps of size 5.36e-01. acc. prob=0.90]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 1390.73it/s, 7 steps of size 5.36e-01. acc. prob=0.89]
+  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;14:35,  1.71it/s, 1 steps of size 2.34e+00. acc. prob=0.00]warmup:  25%|██▌       | 380/1500 [00:00&lt;00:01, 745.80it/s, 7 steps of size 7.04e-01. acc. prob=0.79]sample:  55%|█████▍    | 818/1500 [00:00&lt;00:00, 1541.81it/s, 7 steps of size 5.21e-01. acc. prob=0.90]sample:  84%|████████▎ | 1253/1500 [00:00&lt;00:00, 2210.76it/s, 7 steps of size 5.21e-01. acc. prob=0.91]sample: 100%|██████████| 1500/1500 [00:00&lt;00:00, 1592.79it/s, 7 steps of size 5.21e-01. acc. prob=0.91]
+  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;16:23,  1.52it/s, 3 steps of size 2.34e+00. acc. prob=0.00]warmup:  27%|██▋       | 407/1500 [00:00&lt;00:01, 727.16it/s, 7 steps of size 5.37e-01. acc. prob=0.79]sample:  56%|█████▌    | 838/1500 [00:00&lt;00:00, 1455.03it/s, 31 steps of size 4.75e-01. acc. prob=0.91]sample:  85%|████████▌ | 1282/1500 [00:00&lt;00:00, 2126.47it/s, 7 steps of size 4.75e-01. acc. prob=0.91]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 1487.24it/s, 7 steps of size 4.75e-01. acc. prob=0.91]</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -627,7 +633,7 @@ Figure&nbsp;2: Forest plots from willow warbler occupancy model. ESS refers to t
 </div>
 </div>
 </div>
-<p>As we can see, we get virtually the same estimates as the <a href="occupancy.qmd">PyMC occupancy notebook</a>.</p>
+<p>As we can see, we get virtually the same estimates as the <a href="./pymc-occupancy.html">PyMC occupancy notebook</a>.</p>
 </section>
 <section id="prediction" class="level1">
 <h1>Prediction</h1>

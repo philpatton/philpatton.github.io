@@ -13,7 +13,7 @@ In the PyMC jupyter notebooks, I try to demonstrate how to use PyMC to train the
 
 ## NumPyro
 
-NumPyro is another Python library for Bayesian data analysis. NumPyro runs on JAX, meaning that it utilizes your GPU for sampling. As such, NumPyro can be very fast for large datasets. PyMC conveniently allows users to sample models written in PyMC with the NumPyro backend (see [this notebook](scr.qmd) for details). This is especially handy because NumPyro's model syntax is different than PyMC, meaning that theoretically you only have to learn one syntax to reap the benefits!
+NumPyro is another Python library for Bayesian data analysis. NumPyro runs on JAX, meaning that it utilizes your GPU for sampling. As such, NumPyro can be very fast for large datasets. PyMC conveniently allows users to sample models written in PyMC with other backends, including NumPyro (see [this notebook](pymc-scr.qmd) for details). This is especially handy because NumPyro's model syntax is different than PyMC, meaning that theoretically you only have to learn one syntax to reap the benefits!
 
 So, why learn NumPyro at all? NumPyro has powerful tools for marginalizing discrete latent states in Hidden Markov Model (HMMs). HMMs form the theoretical background for many Bayesian population modeling frameworks, including  Cormack-Jolly-Seber, Jolly-Seber, multistate, dynamic occupancy, and open-SCR. From what I can tell, PyMC lacks these features. As such, I think it is worth learning NumPyro if you are inerested in "open" models broadly. Moreover, NumPyro can fit closed models as well. Nevertheless, the NumPyro community seems less active than the PyMC community.
 
