@@ -39,10 +39,6 @@ plt.rcParams['axes.spines.bottom'] = False
 sns.set_palette("tab10")
 
 # hyperparameters
-M = 1500
-TUNING_DRAWS = 1000
-DRAWS = 1000
-CHAINS = 1
 RANDOM_SEED = 17
 
 def scale(x):
@@ -83,7 +79,7 @@ def get_warbler_data():
     }
 ```
 
-Our observations are a matrix of of binary detection data, $\mathbf{Y}$, where the $y_{i,j}=1$ if a warbler was detected at site $i$ during survey $j$, and $\mathbf{Y}$ has shape $(J, K)$. We encode our site level covariates as a matrix $\mathbf{X},$ with shape $(J, 3),$ where each row contains an intercept, `pland` and `wheight`. We model the effects of these covariates on the probability that each site is occupied with $z_{i} \sim \text{Bern}(\psi)$ where $\psi = \mathbf{X}\beta.$ We assume that warblers can only be detected at occupied sites with probability $p_{ij}$. As such, we model each observation as $y_{i,j} \sim \text{Bern}(z_i p_{i,j})$. We encode visit-level covariates was an array $\mathbf{W}$ with shape $(J, K, 3)$, where the last dimension contains an intercept, a visit indicator, and the `wheight`. We model the effect of these covariates on the probability of detection with $\mathbf{P}=\mathbf{W}\alpha.$
+Our observations are a matrix of of binary detection data, $\mathbf{Y}$, where the $y_{i,j}=1$ if a warbler was detected at site $i$ during survey $j$, and $\mathbf{Y}$ has shape $(J, K)$. We encode our site level covariates as a matrix $\mathbf{X},$ with shape $(J, 3),$ where each row contains a `1` for the intercept, and the values for `pland` and `wheight` at that site. We model the effects of these covariates on the probability that each site is occupied with $z_{i} \sim \text{Bern}(\psi)$ where $\psi = \text{expit}(\mathbf{X}\beta)$. We assume that warblers can only be detected at occupied sites with probability $p_{ij}$. As such, we model each observation as $y_{i,j} \sim \text{Bern}(z_i p_{i,j})$. We encode visit-level covariates was an array $\mathbf{W}$ with shape $(J, K, 3)$, where the last dimension contains a `1` for the intercept, an integer value indicating which visit this is, and the `wheight` value at that site. We model the effect of these covariates on the probability of detection with $\mathbf{P}=\text{expit}(\mathbf{W}\alpha)$.
 
 # Defining the model
 
@@ -136,8 +132,6 @@ def occupancy_model(data_dictionary):
             numpyro.sample("y", dist.Bernoulli(mu_y), obs=detection_data.T)
 ```
 
-You might notice that the function lacks a `return` statement, which can look a bit odd. That's because NumPyro *registers* random variables in the function to a *handler*, such as an MCMC sampler. This gives the language and syntax flexibility to exchange handlers and models.
-
 There are two NumPyro functions that are called repeatedly in the `occupancy_model` function: `numpyro.sample` and `numpyro.plate`. The `numpyro.plate` function can be thought of as a vectorized loop over conditionally independent dimensions. For example, each one of our `site-effects`, that is, the $\beta$ values in the linear model for $\psi$, is independent conditional on the hyperparameters $\mu=0$ and $\sigma=2$. In JAGS, we might write this code as:
 
 ```
@@ -159,6 +153,8 @@ which creates a vector of `beta` effects for our linear model.
 The `numpyro.sample` sample function is how we define random variables. The first argument is the name, i.e., how we'll access the variable later. The second argument is the actual distribution we're assigning to the random variable. These distribution functions reside in NumPyro's `distributions` module. This syntax should be familiar with PyMC users. In PyMC, the above statement would be `beta = pm.Normal('beta', 0, 2, dims='site-effects')`.
 
 The `obs` argument in `numpyro.sample` defines whether each random variable is observed. In the occupancy model, the unobserved random variables include the priors for the coefficients in the linear model, $\alpha$ and $\beta$, as well as the discrete latent variable $\mathbf{z}$. Recall that $\mathbf{z}$ is a vector of length `site_count` because it within the `plate` for sites. The one observed random variable is $\mathbf{Y}$. As such, the distribution for $\mathbf{Y}$ encodes the likelihood. Since $\mathbf{Y}$ is two dimensional, we include another plate for the visits.
+
+You might notice that the function `occupancy_model()` lacks a `return` statement, which can look a bit odd. That's because NumPyro *registers* random variables in the function to a *handler*, such as an MCMC sampler. This gives the language and syntax flexibility to exchange handlers and models.
 
 # Automated marginalization
 
