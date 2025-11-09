@@ -8,7 +8,7 @@ author:
     - Hawaiʻi Institute of Marine Biology
 date: today
 bibliography: refs.bib
-jupyter: pymc_env
+jupyter: python3
 execute:
   cache: true
 ---

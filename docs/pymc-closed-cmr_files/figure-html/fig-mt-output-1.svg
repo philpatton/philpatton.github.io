@@ -62,13 +62,13 @@
 <text xml:space="preserve" text-anchor="middle" x="120" y="-59.61" font-family="Times,serif" font-size="14.00">Bernoulli</text>
 </g>
 <!-- p&#45;&gt;y -->
-<g id="edge2" class="edge">
+<g id="edge3" class="edge">
 <title>p&#45;&gt;y</title>
 <path fill="none" stroke="black" d="M161.93,-173.01C155.69,-159.48 148.54,-143.98 141.93,-129.66"/>
 <polygon fill="black" stroke="black" points="145.23,-128.48 137.87,-120.86 138.88,-131.41 145.23,-128.48"/>
 </g>
 <!-- z&#45;&gt;y -->
-<g id="edge3" class="edge">
+<g id="edge2" class="edge">
 <title>z&#45;&gt;y</title>
 <path fill="none" stroke="black" d="M79.64,-172.66C85.67,-159.14 92.56,-143.69 98.92,-129.43"/>
 <polygon fill="black" stroke="black" points="101.95,-131.24 102.82,-120.68 95.55,-128.39 101.95,-131.24"/>

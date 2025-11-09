@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Philip T. Patton">
-<meta name="dcterms.date" content="2025-10-30">
+<meta name="dcterms.date" content="2025-11-09">
 <meta name="description" content="Estimating density with spatial capture-recapture in PyMC">
 
 <title>Spatial capture-recapture – Philip T. Patton</title>
@@ -398,7 +398,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 30, 2025</p>
+      <p class="date">November 9, 2025</p>
     </div>
   </div>
   
@@ -413,7 +413,7 @@ window.Quarto = {
 <p>In this notebook, I show how to train spatial capture-recapture (SCR) models in PyMC. SCR expands upon traditional capture-recapture by incorporating the location of the traps in the analysis. This matters because, typically, animals that live near a particular trap are more likely to be caught in it. In doing so, SCR links individual-level processes to the population-level, expanding the scientific scope of simple designs.</p>
 <p>In this notebook, I train the simplest possible SCR model, SCR0 <span class="citation" data-cites="royle2013">(<a href="#ref-royle2013" role="doc-biblioref">Royle et al. 2013, chap. 5</a>)</span>, where the goal is estimating the true population size <span class="math inline">\(N\)</span>. Similar to the other closed population notebooks, I do so using parameter-expanded data-augmentation (PX-DA). I also borrow the concept of the <em>detection function</em> from the distance sampling notebook.</p>
 <p>As a motivating example, I use the <a href="https://www.otago.ac.nz/density/examples/index.html">ovenbird mist netting dataset</a> provided by Murray Efford via the secr package in R. The design of the study is outlined in <span class="citation" data-cites="efford2004">Efford, Dawson, and Robbins (<a href="#ref-efford2004" role="doc-biblioref">2004</a>)</span> and <span class="citation" data-cites="borchers2008">Borchers and Efford (<a href="#ref-borchers2008" role="doc-biblioref">2008</a>)</span>. In this dataset, ovenbirds were trapped in 44 mist nets over 8 to 10 consecutive days during the summers of 2005 to 2009.</p>
-<div id="cell-fig-nets" class="cell" data-execution_count="2">
+<div id="cell-fig-nets" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> arviz <span class="im">as</span> az</span>
@@ -531,7 +531,7 @@ Figure&nbsp;1: Locations of the mist nets in the ovenbird dataset <span class="c
 </div>
 <p>One difference between spatial and traditional (non-spatial) capture is the addition of the trap identifier in the capture history. Whereas a traditional capture history is <code>[individual, occasion]</code>, a spatial capture history might be <code>[individual, occasion, trap]</code>.</p>
 <p>In the ovenbird example, I ignore the <code>year</code> dimension, pooling parameters across years, which allows for better estimation of the detection parameters. My hack for doing so is treating every band/year combination as a unique individual in a combined year capture history. This is easy to implement, creates an awkward interpretation of <span class="math inline">\(N\)</span> (see below).</p>
-<div id="90d1c576" class="cell" data-execution_count="3">
+<div id="a8ce396e" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ovenbird capture history</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>oven_ch <span class="op">=</span> pd.read_csv(<span class="st">'ovenbirdcapt.txt'</span>, delimiter<span class="op">=</span><span class="st">' '</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -548,7 +548,7 @@ Figure&nbsp;1: Locations of the mist nets in the ovenbird dataset <span class="c
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>ovenbird.head(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
+<div class="cell-output cell-output-display" data-execution_count="2">
 <div>
 
 
@@ -654,7 +654,7 @@ Figure&nbsp;1: Locations of the mist nets in the ovenbird dataset <span class="c
 <h1>Simulation</h1>
 <p>Before estimating the parameters, I perform a small simulation. The simulation starts with a core idea of SCR: the <em>activity center</em>. The activity center <span class="math inline">\(\mathbf{s}_i\)</span> is the most likely place that you’d find an individual <span class="math inline">\(i\)</span> over the course of the trapping study. In this case, I assume that activity centers are uniformly distributed across the sample space.</p>
 <p>I compute the probability of detection for individual <span class="math inline">\(i\)</span> at trap <span class="math inline">\(j\)</span> as <span class="math inline">\(p_{i,j}=g_0 \exp(-d_{i,j}^2/2\sigma^2),\)</span> where <span class="math inline">\(g_0\)</span> is the probability of detecting an individual when it’s activity center is at the trap, <span class="math inline">\(d_{i,j}\)</span> is the euclidean distance between the trap and the activity center, and <span class="math inline">\(\sigma\)</span> is the detection range parameter.</p>
-<div id="4e5d21c6" class="cell" data-execution_count="4">
+<div id="ff421010" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># true population size</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">150</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -678,7 +678,7 @@ Figure&nbsp;1: Locations of the mist nets in the ovenbird dataset <span class="c
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>n_detected <span class="op">=</span> <span class="bu">int</span>(was_detected.<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Following <span class="citation" data-cites="royle2013">Royle et al. (<a href="#ref-royle2013" role="doc-biblioref">2013</a>)</span>, Chapter 5, I first fit the version of the model where we assume that we know the true population size. In this case, I’m only estimating the detection parameters and the activity center locations.</p>
-<div id="cell-fig-known" class="cell" data-execution_count="5">
+<div id="cell-fig-known" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># upper bound for the uniform prior on sigma</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>U_SIGMA <span class="op">=</span> <span class="dv">150</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -704,7 +704,7 @@ Figure&nbsp;1: Locations of the mist nets in the ovenbird dataset <span class="c
 <span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(known)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
+<div class="cell-output cell-output-display" data-execution_count="4">
 <div id="fig-known" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-known-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -721,7 +721,7 @@ Figure&nbsp;2: Visual representation of the model where <span class="math inline
 <h2 class="anchored" data-anchor-id="nuts-sampler">NUTS sampler</h2>
 <p>Throughout these notebooks, I have been estimating parameters with the default NUTS sampler in PyMC. One of PyMC’s great strengths is that it allows you to select different samplers with the same model code. We saw one version of this in the <a href="occupancy.qmd">occupancy notebook</a>, where we had a Binary Gibbs Sampler for the discrete <span class="math inline">\(z_i\)</span> state and a NUTS sampler for the continuous parameters. But PyMC goes one step further, allowing you to choose different NUTS samplers. These include <code>numpyro</code>, which is itself a <a href="https://num.pyro.ai/en/latest/getting_started.html">package</a> for MCMC that can run on GPUs. Additionally, there is the <code>nutpie</code> sampler that is ultimately written in Rust. In most cases, <code>nutpie</code> is much faster than the default PyMC sampler. That said, <code>nutpie</code> can slightly less flexible.</p>
 <p>Since the SCR models in this notebook take a little longer to run, I will use the <code>nutpie</code> sampler throughout. The difference can be substantial. For instance, the unknown <span class="math inline">\(N\)</span> model below takes 39 seconds with the default sampler, and 13 seconds with the <code>nutpie</code> sampler.</p>
-<div id="51cc8350" class="cell" data-execution_count="6">
+<div id="fb207466" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> known:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    known_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
@@ -882,7 +882,7 @@ Figure&nbsp;2: Visual representation of the model where <span class="math inline
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.34</td>
+                    <td>0.32</td>
                     <td>15</td>
                 </tr>
             
@@ -892,9 +892,9 @@ Figure&nbsp;2: Visual representation of the model where <span class="math inline
 </div>
 </div>
 </div>
-<div id="21055852" class="cell" data-execution_count="7">
+<div id="72ad909b" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>az.summary(known_idata, var_names<span class="op">=</span>[<span class="st">'g0'</span>, <span class="st">'sigma'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="24">
+<div class="cell-output cell-output-display" data-execution_count="6">
 <div>
 
 
@@ -918,24 +918,24 @@ Figure&nbsp;2: Visual representation of the model where <span class="math inline
 <th data-quarto-table-cell-role="th">g0</th>
 <td>0.022</td>
 <td>0.003</td>
-<td>0.017</td>
-<td>0.028</td>
+<td>0.016</td>
+<td>0.027</td>
+<td>0.00</td>
 <td>0.000</td>
-<td>0.000</td>
-<td>864.0</td>
-<td>1497.0</td>
+<td>945.0</td>
+<td>1359.0</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">sigma</th>
-<td>94.783</td>
-<td>7.965</td>
-<td>80.985</td>
-<td>109.960</td>
-<td>0.344</td>
-<td>0.228</td>
-<td>557.0</td>
-<td>1103.0</td>
+<td>95.080</td>
+<td>8.146</td>
+<td>80.790</td>
+<td>109.932</td>
+<td>0.35</td>
+<td>0.339</td>
+<td>568.0</td>
+<td>954.0</td>
 <td>1.0</td>
 </tr>
 </tbody>
@@ -944,7 +944,7 @@ Figure&nbsp;2: Visual representation of the model where <span class="math inline
 </div>
 </div>
 </div>
-<div id="cell-fig-known_trace" class="cell" data-execution_count="8">
+<div id="cell-fig-known_trace" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    known_idata,</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    var_names<span class="op">=</span>[<span class="st">'g0'</span>, <span class="st">'sigma'</span>],</span>
@@ -955,7 +955,7 @@ Figure&nbsp;2: Visual representation of the model where <span class="math inline
 <div id="fig-known_trace" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-known_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="pymc-scr_files/figure-html/fig-known_trace-output-1.png" width="696" height="367" class="figure-img">
+<img src="pymc-scr_files/figure-html/fig-known_trace-output-1.png" width="687" height="367" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-known_trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: Trace plots for model where <span class="math inline">\(N\)</span> is known. The true parameter values are shown by vertical and horizontal lines.
@@ -970,7 +970,7 @@ Figure&nbsp;3: Trace plots for model where <span class="math inline">\(N\)</span
 <section id="ovenbird-density" class="level1">
 <h1>Ovenbird density</h1>
 <p>Now, I estimate the density <span class="math inline">\(D\)</span> for the ovenbird population. Like distance sampling, SCR can robustly estimate the density of the population, regardless of the size of the state space. The difference between the model above and this one is that we use PX-DA to estimate the inclusion probability <span class="math inline">\(\psi,\)</span> and subsequently <span class="math inline">\(N.\)</span> First, I convert the <code>DataFrame</code> to a <code>(n_detected, n_traps)</code> array of binomial counts.</p>
-<div id="bb27c83c" class="cell" data-execution_count="9">
+<div id="c6769308" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_Y(ch):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Get a (individual_count, trap_count) array of detections.'''</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -991,7 +991,7 @@ Figure&nbsp;3: Trace plots for model where <span class="math inline">\(N\)</span
 <span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>Y_augmented <span class="op">=</span> np.vstack((Y, all_zero_history))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>As with the other closed models in this series, I will write the model in terms of the latent inclusion state <span class="math inline">\(z_i\)</span>. Interestingly, .</p>
-<div id="cell-fig-oven" class="cell" data-execution_count="10">
+<div id="cell-fig-oven" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> oven:</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Priors</span></span>
@@ -1017,7 +1017,7 @@ Figure&nbsp;3: Trace plots for model where <span class="math inline">\(N\)</span
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    pm.Binomial(<span class="st">'y'</span>, p<span class="op">=</span>mu_y, n<span class="op">=</span>occasion_count, observed<span class="op">=</span>Y_augmented)</span>
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(oven)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="27">
+<div class="cell-output cell-output-display" data-execution_count="9">
 <div id="fig-oven" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-oven-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1030,7 +1030,7 @@ Figure&nbsp;4: Visual representation of the ovenbird model using data augmentati
 </div>
 </div>
 </div>
-<div id="90ca5578" class="cell" data-execution_count="11">
+<div id="5abad110" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>oven_marginal <span class="op">=</span> pmx.marginalize(oven, [<span class="st">'z'</span>])</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> oven_marginal:</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    oven_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1132,7 +1132,7 @@ Figure&nbsp;4: Visual representation of the ovenbird model using data augmentati
         Finished Chains:
         <span id="active-chains">4</span>
     </p>
-    <p>Sampling for 13 seconds</p>
+    <p>Sampling for 11 seconds</p>
     <p>
         Estimated Time to Completion:
         <span id="eta">now</span>
@@ -1159,7 +1159,7 @@ Figure&nbsp;4: Visual representation of the ovenbird model using data augmentati
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.29</td>
+                    <td>0.30</td>
                     <td>15</td>
                 </tr>
             
@@ -1202,9 +1202,9 @@ Figure&nbsp;4: Visual representation of the ovenbird model using data augmentati
 </div>
 </div>
 </div>
-<div id="eab01e8a" class="cell" data-execution_count="12">
+<div id="10876f99" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>az.summary(oven_idata, var_names<span class="op">=</span>[<span class="st">'g0'</span>, <span class="st">'sigma'</span>, <span class="st">'psi'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="29">
+<div class="cell-output cell-output-display" data-execution_count="11">
 <div>
 
 
@@ -1228,37 +1228,37 @@ Figure&nbsp;4: Visual representation of the ovenbird model using data augmentati
 <th data-quarto-table-cell-role="th">g0</th>
 <td>0.029</td>
 <td>0.004</td>
-<td>0.023</td>
+<td>0.022</td>
 <td>0.037</td>
 <td>0.000</td>
 <td>0.000</td>
-<td>1264.0</td>
-<td>2200.0</td>
-<td>1.0</td>
+<td>1060.0</td>
+<td>1463.0</td>
+<td>1.01</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">sigma</th>
-<td>71.371</td>
-<td>4.563</td>
-<td>63.488</td>
-<td>80.193</td>
-<td>0.172</td>
-<td>0.098</td>
-<td>724.0</td>
-<td>1263.0</td>
-<td>1.0</td>
+<td>71.510</td>
+<td>4.746</td>
+<td>63.028</td>
+<td>80.301</td>
+<td>0.188</td>
+<td>0.123</td>
+<td>661.0</td>
+<td>1281.0</td>
+<td>1.00</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">psi</th>
-<td>0.700</td>
-<td>0.056</td>
-<td>0.598</td>
-<td>0.808</td>
+<td>0.701</td>
+<td>0.057</td>
+<td>0.592</td>
+<td>0.804</td>
 <td>0.001</td>
 <td>0.001</td>
-<td>3391.0</td>
-<td>2484.0</td>
-<td>1.0</td>
+<td>2461.0</td>
+<td>1874.0</td>
+<td>1.00</td>
 </tr>
 </tbody>
 </table>
@@ -1266,7 +1266,7 @@ Figure&nbsp;4: Visual representation of the ovenbird model using data augmentati
 </div>
 </div>
 </div>
-<div id="cell-fig-oven_trace" class="cell" data-execution_count="13">
+<div id="cell-fig-oven_trace" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>g0_mle <span class="op">=</span> [<span class="fl">0.025</span>]</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>sigma_mle <span class="op">=</span> [<span class="dv">73</span>]</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1291,7 +1291,7 @@ Figure&nbsp;5: Trace plots for the ovenbird model using data augmentation. Maxim
 </div>
 <p>The estimates are quite close to the maximum likelihood estimates, which I estimated with the secr package in R.</p>
 <p>Finally, I estimate density <span class="math inline">\(D\)</span> using the results. As in the closed capture-recapture and distance sampling notebooks, I use the posterior samples of <span class="math inline">\(\psi\)</span> and <span class="math inline">\(M\)</span> to sample the posterior of <span class="math inline">\(N.\)</span> This <span class="math inline">\(N,\)</span> however, has an awkward interpretation because I pooled across the years by combining all the detection histories. To get around this, I compute the average annual abundance by dividing by the total number of years in the sample. Then, I divide by the area of the state space.</p>
-<div id="00909164" class="cell" data-execution_count="14">
+<div id="ced9527d" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sim_N(idata, n, K):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    psi_samps <span class="op">=</span> az.extract(idata).psi.to_numpy()</span>
@@ -1307,7 +1307,7 @@ Figure&nbsp;5: Trace plots for the ovenbird model using data augmentation. Maxim
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> N_samps</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="cell-fig-density" class="cell" data-execution_count="15">
+<div id="cell-fig-density" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>N_samps <span class="op">=</span> sim_N(oven_idata, detected_count, occasion_count)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># kludgy way of calculating avergage abundance</span></span>
@@ -1343,7 +1343,7 @@ Figure&nbsp;6: Posterior distribution of the density <span class="math inline">\
 </div>
 </div>
 <p>Sometimes, the location of the activity centers is of interest. Below, I plot the posterior median for the activity centers for the detected individuals.</p>
-<div id="cell-fig-activity" class="cell" data-execution_count="16">
+<div id="cell-fig-activity" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>s_samps <span class="op">=</span> az.extract(oven_idata).S</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>s_mean <span class="op">=</span> np.median(s_samps[:detected_count], axis<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1378,7 +1378,7 @@ Figure&nbsp;7: Estimated activity centers for the detected individuals
 </div>
 </div>
 <p>We can also look at the uncertainty around those estimates. Below, I plot the posterior distribution of the activity centers for two individuals.</p>
-<div id="cell-fig-activity-post" class="cell" data-execution_count="17">
+<div id="cell-fig-activity-post" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>one <span class="op">=</span> <span class="dv">49</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>one_samps <span class="op">=</span> s_samps[one]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1423,7 +1423,7 @@ Figure&nbsp;8: Posterior distributions for two activity centers.
 </div>
 </div>
 <p>Finally, I plot the posterior distribution of the detection function.</p>
-<div id="cell-fig-func" class="cell" data-execution_count="18">
+<div id="cell-fig-func" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>xx <span class="op">=</span> np.arange(BUFFER <span class="op">*</span> <span class="dv">2</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>sigma_samps <span class="op">=</span> az.extract(oven_idata).sigma.values.flatten()</span>
@@ -1460,27 +1460,25 @@ Figure&nbsp;9: Posterior distribution for the detection function. The line repre
 </div>
 </div>
 </div>
-<div id="a7ce2bc6" class="cell" data-execution_count="19">
+<div id="ca1b2cc0" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">-</span>n <span class="op">-</span>u <span class="op">-</span>v <span class="op">-</span>iv <span class="op">-</span>w</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>The watermark extension is already loaded. To reload it, use:
-  %reload_ext watermark
-Last updated: Tue Oct 14 2025
+<pre><code>Last updated: Sun Nov 09 2025
 
 Python implementation: CPython
-Python version       : 3.13.3
-IPython version      : 9.2.0
+Python version       : 3.13.7
+IPython version      : 9.6.0
 
-pytensor   : 2.31.7
-pandas     : 2.2.3
-matplotlib : 3.10.1
-arviz      : 0.21.0
-seaborn    : 0.13.2
-numpy      : 2.2.5
-pymc_extras: 0.5.0
+matplotlib : 3.10.6
+pandas     : 2.3.3
 pymc       : 5.25.1
+numpy      : 2.3.3
+pymc_extras: 0.5.0
+seaborn    : 0.13.2
+pytensor   : 2.31.7
+arviz      : 0.22.0
 
 Watermark: 2.5.0
 </code></pre>
