@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Philip T. Patton">
-<meta name="dcterms.date" content="2025-11-09">
+<meta name="dcterms.date" content="2026-01-14">
 <meta name="description" content="Estimating patch colonization and extinction with Numpyro">
 
 <title>Dynamic occupancy – Philip T. Patton</title>
@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-242a7e6346f5e2fd6d6599311e0369af.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -151,8 +151,6 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Philip T. Patton</span>
     </a>
@@ -164,7 +162,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -172,7 +170,7 @@ window.Quarto = {
 <span class="menu-text">CV</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./notebooks.html"> 
+    <a class="nav-link active" href="./notebooks.html" aria-current="page"> 
 <span class="menu-text">Code</span></a>
   </li>  
   <li class="nav-item">
@@ -214,10 +212,6 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="./index.html" class="sidebar-logo-link">
-      </a>
-      </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -312,12 +306,6 @@ window.Quarto = {
  <span class="menu-text">Cormack-Jolly-Seber</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./numpyro-scr.ipynb" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Spatial Jolly-Seber</span></a>
-  </div>
-</li>
       </ul>
   </li>
     </ul>
@@ -372,7 +360,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 9, 2025</p>
+      <p class="date">January 14, 2026</p>
     </div>
   </div>
   
@@ -483,7 +471,7 @@ Figure&nbsp;1: Dynamic occupancy model with latent state variable z
 </div>
 </div>
 </div>
-<div id="aa4faa6c" class="cell" data-execution_count="2">
+<div id="1523ed47" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> jax <span class="im">import</span> random</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpyro.contrib.control_flow <span class="im">import</span> scan</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpyro.infer <span class="im">import</span> NUTS, MCMC, Predictive</span>
@@ -545,7 +533,7 @@ Figure&nbsp;1: Dynamic occupancy model with latent state variable z
 <section id="defining-the-model" class="level1">
 <h1>Defining the model</h1>
 <p>Just like in the <a href="./numpyro-intro.html">introductory notebook to NumPyro</a>, we will define our dynamic occupancy model with a Python function, <code>dynamic_occupancy()</code>, that contains NumPyro random variables. This model, however, will contain a new character, the <code>scan()</code> function, as well as an additional function within our model <code>transition_and_detect()</code>. The <code>scan()</code> function sequentially applies the <code>transition_and_detect()</code> to our occupancy data, starting with initial values.</p>
-<div id="0dfdff44" class="cell" data-execution_count="3">
+<div id="00d76f1c" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dynamic_occupancy(detection_history):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Dynamic occupancy model in NumPyro.'''</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    site_count, season_count, survey_count <span class="op">=</span> detection_history.shape</span>
@@ -616,7 +604,7 @@ Figure&nbsp;1: Dynamic occupancy model with latent state variable z
 <p>As the name suggests, <code>transition_and_detect()</code> transitions the discrete latent states (the process model) and detects animals during the surveys (the observation model). As such, it contains our unobserved random variable <code>z</code> as well as our observed random variable <code>y</code>. <code>scan()</code> requires that our inner function, <code>transition_and_detect()</code>, return a tuple, where the first element contains the input to the next iteration of <code>transition_and_detect()</code>. The next element is anything we want to report or accumulate (in this case, <code>None</code>, since we don’t need to track anything).</p>
 <p>For the most part, the <code>transition_and_detect()</code> function is not much different than our model in the <a href="./numpyro-intro.html">NumPyro static occupancy notebook</a>. One difference is the use of <code>dist.util.clamp_probs()</code>. This is a helper function that keeps the sampler out of boundary regions, for example, by keeping <span class="math inline">\(\psi\)</span> between <span class="math inline">\([1 \times 10^{-7}, 1 - 1 \times 10^{-7}]\)</span> rather than <span class="math inline">\([0, 1]\)</span>.</p>
 <p>We begin the scan <strong>after</strong> the first occasion. The <span class="math inline">\(z_{i,j}\)</span> state at the first occasion only depends on <span class="math inline">\(\psi\)</span>. After this first occasion, we transition the states such that patches can be colonized or go extinct.</p>
-<div id="87c538ed" class="cell" data-execution_count="4">
+<div id="c9190378" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>detections <span class="op">=</span> simulate_data()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>rng_key <span class="op">=</span> random.PRNGKey(RANDOM_SEED)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -630,54 +618,51 @@ Figure&nbsp;1: Dynamic occupancy model with latent state variable z
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>mcmc.run(rng_key, detections)</span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>mcmc.print_summary()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/7b/nb0vyhy90mdf30_65xwqzl300000gn/T/ipykernel_31434/1038765192.py:8: UserWarning: There are not enough devices to run parallel chains: expected 4 but got 1. Chains will be drawn sequentially. If you are running MCMC in CPU, consider using `numpyro.set_host_device_count(4)` at the beginning of your program. You can double-check how many devices are available in your system using `jax.local_device_count()`.
+<pre><code>/var/folders/y8/cz021w550rbb072f7qhxyylh0000gq/T/ipykernel_15481/1038765192.py:8: UserWarning: There are not enough devices to run parallel chains: expected 4 but got 1. Chains will be drawn sequentially. If you are running MCMC in CPU, consider using `numpyro.set_host_device_count(4)` at the beginning of your program. You can double-check how many devices are available in your system using `jax.local_device_count()`.
   mcmc = MCMC(nuts_kernel, num_warmup=500, num_samples=1000, num_chains=4)
-  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:01&lt;32:17,  1.29s/it, 1 steps of size 2.34e+00. acc. prob=0.00]warmup:   3%|▎         | 49/1500 [00:01&lt;00:29, 48.44it/s, 3 steps of size 3.90e-02. acc. prob=0.75]warmup:   8%|▊         | 115/1500 [00:01&lt;00:11, 124.35it/s, 7 steps of size 1.26e+00. acc. prob=0.78]warmup:  13%|█▎        | 198/1500 [00:01&lt;00:05, 230.05it/s, 15 steps of size 6.17e-01. acc. prob=0.78]warmup:  20%|█▉        | 297/1500 [00:01&lt;00:03, 364.04it/s, 7 steps of size 9.94e-01. acc. prob=0.78] warmup:  27%|██▋       | 403/1500 [00:01&lt;00:02, 504.24it/s, 7 steps of size 1.18e+00. acc. prob=0.79]warmup:  33%|███▎      | 499/1500 [00:01&lt;00:01, 605.96it/s, 3 steps of size 4.21e-01. acc. prob=0.79]sample:  39%|███▉      | 590/1500 [00:01&lt;00:01, 678.99it/s, 7 steps of size 6.41e-01. acc. prob=0.92]sample:  46%|████▌     | 683/1500 [00:02&lt;00:01, 742.01it/s, 7 steps of size 6.41e-01. acc. prob=0.92]sample:  52%|█████▏    | 777/1500 [00:02&lt;00:00, 793.70it/s, 7 steps of size 6.41e-01. acc. prob=0.93]sample:  58%|█████▊    | 869/1500 [00:02&lt;00:00, 821.54it/s, 3 steps of size 6.41e-01. acc. prob=0.92]sample:  64%|██████▍   | 960/1500 [00:02&lt;00:00, 834.89it/s, 7 steps of size 6.41e-01. acc. prob=0.92]sample:  70%|███████   | 1056/1500 [00:02&lt;00:00, 869.72it/s, 7 steps of size 6.41e-01. acc. prob=0.92]sample:  77%|███████▋  | 1149/1500 [00:02&lt;00:00, 884.57it/s, 7 steps of size 6.41e-01. acc. prob=0.92]sample:  83%|████████▎ | 1241/1500 [00:02&lt;00:00, 892.29it/s, 7 steps of size 6.41e-01. acc. prob=0.93]sample:  89%|████████▉ | 1335/1500 [00:02&lt;00:00, 906.25it/s, 7 steps of size 6.41e-01. acc. prob=0.92]sample:  95%|█████████▌| 1428/1500 [00:02&lt;00:00, 896.48it/s, 7 steps of size 6.41e-01. acc. prob=0.92]sample: 100%|██████████| 1500/1500 [00:02&lt;00:00, 501.45it/s, 7 steps of size 6.41e-01. acc. prob=0.92]
-  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   4%|▍         | 58/1500 [00:00&lt;00:02, 574.81it/s, 7 steps of size 6.90e-02. acc. prob=0.76]warmup:   8%|▊         | 121/1500 [00:00&lt;00:02, 602.86it/s, 7 steps of size 6.07e-01. acc. prob=0.78]warmup:  13%|█▎        | 201/1500 [00:00&lt;00:01, 688.79it/s, 15 steps of size 5.23e-01. acc. prob=0.78]warmup:  20%|█▉        | 294/1500 [00:00&lt;00:01, 781.49it/s, 3 steps of size 6.85e-01. acc. prob=0.78] warmup:  26%|██▋       | 395/1500 [00:00&lt;00:01, 861.17it/s, 7 steps of size 8.77e-01. acc. prob=0.79]warmup:  33%|███▎      | 491/1500 [00:00&lt;00:01, 892.35it/s, 7 steps of size 1.14e+00. acc. prob=0.79]sample:  40%|███▉      | 595/1500 [00:00&lt;00:00, 940.32it/s, 7 steps of size 7.81e-01. acc. prob=0.87]sample:  47%|████▋     | 700/1500 [00:00&lt;00:00, 974.76it/s, 7 steps of size 7.81e-01. acc. prob=0.87]sample:  54%|█████▎    | 804/1500 [00:00&lt;00:00, 993.30it/s, 7 steps of size 7.81e-01. acc. prob=0.88]sample:  60%|██████    | 906/1500 [00:01&lt;00:00, 997.76it/s, 7 steps of size 7.81e-01. acc. prob=0.89]sample:  67%|██████▋   | 1009/1500 [00:01&lt;00:00, 1005.75it/s, 3 steps of size 7.81e-01. acc. prob=0.89]sample:  74%|███████▍  | 1110/1500 [00:01&lt;00:00, 1002.63it/s, 3 steps of size 7.81e-01. acc. prob=0.89]sample:  81%|████████  | 1212/1500 [00:01&lt;00:00, 1006.31it/s, 3 steps of size 7.81e-01. acc. prob=0.89]sample:  88%|████████▊ | 1316/1500 [00:01&lt;00:00, 1016.34it/s, 7 steps of size 7.81e-01. acc. prob=0.89]sample:  95%|█████████▍| 1418/1500 [00:01&lt;00:00, 995.56it/s, 3 steps of size 7.81e-01. acc. prob=0.89] sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 935.59it/s, 7 steps of size 7.81e-01. acc. prob=0.89]
-  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   4%|▎         | 55/1500 [00:00&lt;00:02, 545.77it/s, 15 steps of size 5.81e-02. acc. prob=0.76]warmup:   7%|▋         | 110/1500 [00:00&lt;00:02, 542.73it/s, 15 steps of size 6.69e-01. acc. prob=0.77]warmup:  12%|█▏        | 180/1500 [00:00&lt;00:02, 610.19it/s, 15 steps of size 5.20e-01. acc. prob=0.78]warmup:  18%|█▊        | 274/1500 [00:00&lt;00:01, 736.98it/s, 7 steps of size 3.97e-01. acc. prob=0.78] warmup:  25%|██▌       | 379/1500 [00:00&lt;00:01, 847.67it/s, 3 steps of size 1.47e+00. acc. prob=0.79]warmup:  32%|███▏      | 478/1500 [00:00&lt;00:01, 895.31it/s, 3 steps of size 1.33e+00. acc. prob=0.79]sample:  38%|███▊      | 575/1500 [00:00&lt;00:01, 919.59it/s, 3 steps of size 6.80e-01. acc. prob=0.90]sample:  45%|████▍     | 672/1500 [00:00&lt;00:00, 933.40it/s, 7 steps of size 6.80e-01. acc. prob=0.90]sample:  51%|█████     | 766/1500 [00:00&lt;00:00, 922.07it/s, 7 steps of size 6.80e-01. acc. prob=0.91]sample:  58%|█████▊    | 866/1500 [00:01&lt;00:00, 943.80it/s, 7 steps of size 6.80e-01. acc. prob=0.91]sample:  64%|██████▍   | 961/1500 [00:01&lt;00:00, 934.93it/s, 7 steps of size 6.80e-01. acc. prob=0.91]sample:  70%|███████   | 1057/1500 [00:01&lt;00:00, 940.80it/s, 3 steps of size 6.80e-01. acc. prob=0.91]sample:  77%|███████▋  | 1152/1500 [00:01&lt;00:00, 918.00it/s, 7 steps of size 6.80e-01. acc. prob=0.91]sample:  83%|████████▎ | 1244/1500 [00:01&lt;00:00, 809.01it/s, 7 steps of size 6.80e-01. acc. prob=0.91]sample:  89%|████████▊ | 1328/1500 [00:01&lt;00:00, 715.70it/s, 3 steps of size 6.80e-01. acc. prob=0.91]sample:  95%|█████████▍| 1423/1500 [00:01&lt;00:00, 772.62it/s, 7 steps of size 6.80e-01. acc. prob=0.91]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 831.93it/s, 7 steps of size 6.80e-01. acc. prob=0.91]
-  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   5%|▍         | 71/1500 [00:00&lt;00:02, 703.03it/s, 15 steps of size 4.14e-02. acc. prob=0.76]warmup:   9%|▉         | 142/1500 [00:00&lt;00:01, 682.67it/s, 7 steps of size 6.19e-01. acc. prob=0.78]warmup:  16%|█▌        | 236/1500 [00:00&lt;00:01, 796.20it/s, 7 steps of size 5.39e-01. acc. prob=0.78]warmup:  22%|██▏       | 327/1500 [00:00&lt;00:01, 836.82it/s, 7 steps of size 7.94e-01. acc. prob=0.78]warmup:  29%|██▉       | 432/1500 [00:00&lt;00:01, 910.31it/s, 7 steps of size 8.38e-01. acc. prob=0.79]sample:  35%|███▌      | 527/1500 [00:00&lt;00:01, 921.97it/s, 7 steps of size 6.84e-01. acc. prob=0.94]sample:  41%|████▏     | 621/1500 [00:00&lt;00:00, 920.73it/s, 15 steps of size 6.84e-01. acc. prob=0.92]sample:  48%|████▊     | 723/1500 [00:00&lt;00:00, 949.31it/s, 7 steps of size 6.84e-01. acc. prob=0.92] sample:  55%|█████▍    | 818/1500 [00:00&lt;00:00, 937.57it/s, 7 steps of size 6.84e-01. acc. prob=0.92]sample:  61%|██████    | 914/1500 [00:01&lt;00:00, 942.27it/s, 7 steps of size 6.84e-01. acc. prob=0.92]sample:  67%|██████▋   | 1012/1500 [00:01&lt;00:00, 953.62it/s, 7 steps of size 6.84e-01. acc. prob=0.91]sample:  74%|███████▍  | 1112/1500 [00:01&lt;00:00, 966.08it/s, 3 steps of size 6.84e-01. acc. prob=0.91]sample:  81%|████████  | 1209/1500 [00:01&lt;00:00, 966.72it/s, 3 steps of size 6.84e-01. acc. prob=0.91]sample:  87%|████████▋ | 1306/1500 [00:01&lt;00:00, 952.67it/s, 7 steps of size 6.84e-01. acc. prob=0.91]sample:  93%|█████████▎| 1402/1500 [00:01&lt;00:00, 952.56it/s, 7 steps of size 6.84e-01. acc. prob=0.91]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 958.72it/s, 7 steps of size 6.84e-01. acc. prob=0.91]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 922.54it/s, 7 steps of size 6.84e-01. acc. prob=0.91]</code></pre>
+  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;19:01,  1.31it/s, 1 steps of size 2.34e+00. acc. prob=0.00]warmup:   5%|▍         | 70/1500 [00:00&lt;00:12, 110.07it/s, 15 steps of size 5.91e-02. acc. prob=0.76]warmup:  10%|▉         | 147/1500 [00:00&lt;00:05, 231.34it/s, 15 steps of size 4.55e-01. acc. prob=0.78]warmup:  18%|█▊        | 263/1500 [00:01&lt;00:02, 424.34it/s, 3 steps of size 1.29e+00. acc. prob=0.78] warmup:  25%|██▌       | 379/1500 [00:01&lt;00:01, 592.69it/s, 1 steps of size 4.43e-01. acc. prob=0.78]sample:  34%|███▎      | 503/1500 [00:01&lt;00:01, 751.76it/s, 7 steps of size 7.21e-01. acc. prob=0.99]sample:  42%|████▏     | 624/1500 [00:01&lt;00:01, 869.67it/s, 7 steps of size 7.21e-01. acc. prob=0.91]sample:  49%|████▉     | 738/1500 [00:01&lt;00:00, 941.28it/s, 7 steps of size 7.21e-01. acc. prob=0.91]sample:  57%|█████▋    | 850/1500 [00:01&lt;00:00, 989.86it/s, 3 steps of size 7.21e-01. acc. prob=0.91]sample:  64%|██████▍   | 963/1500 [00:01&lt;00:00, 1027.97it/s, 7 steps of size 7.21e-01. acc. prob=0.91]sample:  72%|███████▏  | 1080/1500 [00:01&lt;00:00, 1066.97it/s, 7 steps of size 7.21e-01. acc. prob=0.91]sample:  80%|███████▉  | 1197/1500 [00:01&lt;00:00, 1094.54it/s, 7 steps of size 7.21e-01. acc. prob=0.91]sample:  87%|████████▋ | 1312/1500 [00:01&lt;00:00, 1109.24it/s, 3 steps of size 7.21e-01. acc. prob=0.91]sample:  95%|█████████▌| 1426/1500 [00:02&lt;00:00, 1099.77it/s, 7 steps of size 7.21e-01. acc. prob=0.91]sample: 100%|██████████| 1500/1500 [00:02&lt;00:00, 701.76it/s, 3 steps of size 7.21e-01. acc. prob=0.91] 
+  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   5%|▍         | 72/1500 [00:00&lt;00:01, 719.46it/s, 15 steps of size 4.38e-02. acc. prob=0.76]warmup:  10%|█         | 155/1500 [00:00&lt;00:01, 783.10it/s, 3 steps of size 1.54e+00. acc. prob=0.78]warmup:  17%|█▋        | 258/1500 [00:00&lt;00:01, 890.94it/s, 7 steps of size 1.64e+00. acc. prob=0.78]warmup:  24%|██▍       | 366/1500 [00:00&lt;00:01, 958.99it/s, 15 steps of size 5.51e-01. acc. prob=0.78]warmup:  32%|███▏      | 484/1500 [00:00&lt;00:00, 1035.53it/s, 7 steps of size 8.45e-01. acc. prob=0.79]sample:  40%|████      | 603/1500 [00:00&lt;00:00, 1087.39it/s, 3 steps of size 7.64e-01. acc. prob=0.89]sample:  48%|████▊     | 722/1500 [00:00&lt;00:00, 1118.97it/s, 3 steps of size 7.64e-01. acc. prob=0.89]sample:  56%|█████▌    | 838/1500 [00:00&lt;00:00, 1130.40it/s, 7 steps of size 7.64e-01. acc. prob=0.90]sample:  64%|██████▎   | 954/1500 [00:00&lt;00:00, 1138.84it/s, 3 steps of size 7.64e-01. acc. prob=0.90]sample:  71%|███████   | 1068/1500 [00:01&lt;00:00, 1134.46it/s, 3 steps of size 7.64e-01. acc. prob=0.90]sample:  79%|███████▉  | 1182/1500 [00:01&lt;00:00, 1135.75it/s, 3 steps of size 7.64e-01. acc. prob=0.90]sample:  87%|████████▋ | 1298/1500 [00:01&lt;00:00, 1140.63it/s, 7 steps of size 7.64e-01. acc. prob=0.90]sample:  94%|█████████▍| 1413/1500 [00:01&lt;00:00, 1120.33it/s, 7 steps of size 7.64e-01. acc. prob=0.90]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 1077.67it/s, 7 steps of size 7.64e-01. acc. prob=0.90]
+  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   4%|▍         | 64/1500 [00:00&lt;00:02, 623.87it/s, 31 steps of size 3.74e-02. acc. prob=0.76]warmup:   9%|▊         | 131/1500 [00:00&lt;00:02, 648.42it/s, 7 steps of size 1.57e+00. acc. prob=0.78]warmup:  16%|█▌        | 241/1500 [00:00&lt;00:01, 851.54it/s, 7 steps of size 8.12e-01. acc. prob=0.78]warmup:  24%|██▍       | 362/1500 [00:00&lt;00:01, 991.13it/s, 3 steps of size 1.11e+00. acc. prob=0.79]warmup:  32%|███▏      | 478/1500 [00:00&lt;00:00, 1045.43it/s, 15 steps of size 5.57e-01. acc. prob=0.79]sample:  39%|███▉      | 590/1500 [00:00&lt;00:00, 1069.00it/s, 7 steps of size 6.97e-01. acc. prob=0.91] sample:  47%|████▋     | 703/1500 [00:00&lt;00:00, 1088.01it/s, 7 steps of size 6.97e-01. acc. prob=0.91]sample:  54%|█████▍    | 816/1500 [00:00&lt;00:00, 1099.40it/s, 7 steps of size 6.97e-01. acc. prob=0.91]sample:  62%|██████▏   | 928/1500 [00:00&lt;00:00, 1105.19it/s, 7 steps of size 6.97e-01. acc. prob=0.91]sample:  69%|██████▉   | 1039/1500 [00:01&lt;00:00, 1099.85it/s, 7 steps of size 6.97e-01. acc. prob=0.92]sample:  77%|███████▋  | 1150/1500 [00:01&lt;00:00, 1090.59it/s, 3 steps of size 6.97e-01. acc. prob=0.92]sample:  84%|████████▍ | 1260/1500 [00:01&lt;00:00, 1090.71it/s, 7 steps of size 6.97e-01. acc. prob=0.92]sample:  91%|█████████▏| 1370/1500 [00:01&lt;00:00, 1083.97it/s, 7 steps of size 6.97e-01. acc. prob=0.92]sample:  99%|█████████▊| 1481/1500 [00:01&lt;00:00, 1091.68it/s, 7 steps of size 6.97e-01. acc. prob=0.92]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 1045.06it/s, 7 steps of size 6.97e-01. acc. prob=0.92]
+  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   6%|▌         | 84/1500 [00:00&lt;00:01, 824.28it/s, 15 steps of size 4.98e-02. acc. prob=0.77]warmup:  11%|█         | 167/1500 [00:00&lt;00:01, 763.35it/s, 3 steps of size 1.12e+00. acc. prob=0.78]warmup:  18%|█▊        | 275/1500 [00:00&lt;00:01, 895.42it/s, 15 steps of size 4.52e-01. acc. prob=0.78]warmup:  26%|██▌       | 391/1500 [00:00&lt;00:01, 994.88it/s, 7 steps of size 8.66e-01. acc. prob=0.79] warmup:  33%|███▎      | 495/1500 [00:00&lt;00:00, 1009.55it/s, 15 steps of size 5.80e-01. acc. prob=0.79]sample:  41%|████      | 612/1500 [00:00&lt;00:00, 1063.06it/s, 3 steps of size 6.78e-01. acc. prob=0.92] sample:  48%|████▊     | 727/1500 [00:00&lt;00:00, 1090.30it/s, 7 steps of size 6.78e-01. acc. prob=0.92]sample:  56%|█████▌    | 841/1500 [00:00&lt;00:00, 1103.25it/s, 7 steps of size 6.78e-01. acc. prob=0.92]sample:  64%|██████▎   | 956/1500 [00:00&lt;00:00, 1116.84it/s, 3 steps of size 6.78e-01. acc. prob=0.92]sample:  71%|███████   | 1068/1500 [00:01&lt;00:00, 1111.09it/s, 3 steps of size 6.78e-01. acc. prob=0.92]sample:  79%|███████▉  | 1184/1500 [00:01&lt;00:00, 1124.60it/s, 7 steps of size 6.78e-01. acc. prob=0.92]sample:  87%|████████▋ | 1300/1500 [00:01&lt;00:00, 1134.10it/s, 7 steps of size 6.78e-01. acc. prob=0.92]sample:  94%|█████████▍| 1414/1500 [00:01&lt;00:00, 1121.02it/s, 3 steps of size 6.78e-01. acc. prob=0.92]sample: 100%|██████████| 1500/1500 [00:01&lt;00:00, 1066.12it/s, 7 steps of size 6.78e-01. acc. prob=0.92]</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
                 mean       std    median      5.0%     95.0%     n_eff     r_hat
-   epsilon      0.26      0.02      0.26      0.23      0.29   2772.79      1.00
-     gamma      0.14      0.01      0.14      0.12      0.16   3340.20      1.00
-         p      0.40      0.01      0.40      0.38      0.42   3315.66      1.00
-       psi      0.58      0.04      0.58      0.52      0.64   3473.57      1.00
+   epsilon      0.26      0.02      0.26      0.22      0.29   3840.88      1.00
+     gamma      0.14      0.01      0.14      0.12      0.16   3676.85      1.00
+         p      0.40      0.01      0.40      0.38      0.42   3777.61      1.00
+       psi      0.58      0.04      0.58      0.52      0.64   3388.00      1.00
 
 Number of divergences: 0</code></pre>
 </div>
-<div class="cell-output cell-output-stderr">
-<pre><code></code></pre>
 </div>
-</div>
-<div id="cell-fig-trace" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>labeller <span class="op">=</span> az.labels.MapLabeller(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    var_name_map<span class="op">=</span>{<span class="st">"psi"</span>: <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">psi</span><span class="dv">$</span><span class="vs">"</span>, <span class="st">'gamma'</span>:  <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">gamma</span><span class="dv">$</span><span class="vs">"</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'epsilon'</span>: <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">epsilon</span><span class="dv">$</span><span class="vs">"</span>, <span class="st">'p'</span>:  <span class="vs">r"</span><span class="dv">$</span><span class="vs">p</span><span class="dv">$</span><span class="vs">"</span> }</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> mcmc.get_samples(group_by_chain<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>idata <span class="op">=</span> az.from_dict(samples)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    idata,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">8</span>),</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'gamma'</span>, <span class="st">'epsilon'</span>, <span class="st">'p'</span>],</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    labeller<span class="op">=</span>labeller,</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    lines<span class="op">=</span>[</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"psi"</span>, {}, [PSI_TRUE]),</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"gamma"</span>, {}, [GAMMA_TRUE]),</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"epsilon"</span>, {}, [EPSILON_TRUE]),</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"p"</span>, {}, [P_TRUE]),</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(hspace<span class="op">=</span><span class="fl">0.4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-fig-trace" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>labeller <span class="op">=</span> az.labels.MapLabeller(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    var_name_map<span class="op">=</span>{<span class="st">"psi"</span>: <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">psi</span><span class="dv">$</span><span class="vs">"</span>, <span class="st">'gamma'</span>:  <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">gamma</span><span class="dv">$</span><span class="vs">"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'epsilon'</span>: <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">epsilon</span><span class="dv">$</span><span class="vs">"</span>, <span class="st">'p'</span>:  <span class="vs">r"</span><span class="dv">$</span><span class="vs">p</span><span class="dv">$</span><span class="vs">"</span> }</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> mcmc.get_samples(group_by_chain<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>idata <span class="op">=</span> az.from_dict(samples)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    idata,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">8</span>),</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    var_names<span class="op">=</span>[<span class="st">'psi'</span>, <span class="st">'gamma'</span>, <span class="st">'epsilon'</span>, <span class="st">'p'</span>],</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    labeller<span class="op">=</span>labeller,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    lines<span class="op">=</span>[</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"psi"</span>, {}, [PSI_TRUE]),</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"gamma"</span>, {}, [GAMMA_TRUE]),</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"epsilon"</span>, {}, [EPSILON_TRUE]),</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"p"</span>, {}, [P_TRUE]),</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(hspace<span class="op">=</span><span class="fl">0.4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-trace" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="numpyro-occ_files/figure-html/fig-trace-output-1.png" width="687" height="677" class="figure-img">
+<img src="numpyro-occ_files/figure-html/fig-trace-output-1.png" width="692" height="677" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: Traceplots for the dynamic occupancy model.
@@ -691,45 +676,45 @@ Figure&nbsp;2: Traceplots for the dynamic occupancy model.
 <section id="prediction" class="level1">
 <h1>Prediction</h1>
 <p>We can recover the latent <span class="math inline">\(z_{i,j}\)</span> states with the <code>Predictive</code> class in NumPyro. This allows us to generate posterior predictive samples given the detection data. In this case, we may want to know the total number of occupied sites throughout the study.</p>
-<div id="e5cc4d11" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sample_z(model, posterior_samples, detection_history):</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Samples the posterior predictive distribution for z given the histories'''</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># initialize the posterior predictive distribution</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    predictive <span class="op">=</span> Predictive(</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        model,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        posterior_samples<span class="op">=</span>posterior_samples,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        return_sites<span class="op">=</span>[<span class="st">"z0"</span>, <span class="st">'z'</span>]</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sample z</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    rng_key <span class="op">=</span> random.PRNGKey(RANDOM_SEED)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    latent_samples <span class="op">=</span> predictive(rng_key, detection_history)</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># z has shape (chain_count * sample_count, interval_count, site_count)</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    z_state <span class="op">=</span> jnp.insert(latent_samples[<span class="st">"z"</span>], <span class="dv">0</span>, latent_samples[<span class="st">"z0"</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> z_state</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co"># generate the posterior predictive distribution for N</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> mcmc.get_samples()</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> sample_z(dynamic_occupancy, samples, detections)</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>total_occupied <span class="op">=</span> z.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="0f001fde" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sample_z(model, posterior_samples, detection_history):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Samples the posterior predictive distribution for z given the histories'''</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># initialize the posterior predictive distribution</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    predictive <span class="op">=</span> Predictive(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        model,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        posterior_samples<span class="op">=</span>posterior_samples,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        return_sites<span class="op">=</span>[<span class="st">"z0"</span>, <span class="st">'z'</span>]</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sample z</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    rng_key <span class="op">=</span> random.PRNGKey(RANDOM_SEED)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    latent_samples <span class="op">=</span> predictive(rng_key, detection_history)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># z has shape (chain_count * sample_count, interval_count, site_count)</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    z_state <span class="op">=</span> jnp.insert(latent_samples[<span class="st">"z"</span>], <span class="dv">0</span>, latent_samples[<span class="st">"z0"</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> z_state</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co"># generate the posterior predictive distribution for N</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> mcmc.get_samples()</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> sample_z(dynamic_occupancy, samples, detections)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>total_occupied <span class="op">=</span> z.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="cell-fig-prediction" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">4</span>))</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.arange(SEASON_COUNT)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>total_occupied_median <span class="op">=</span> np.median(total_occupied, axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>ax.plot(t, total_occupied_median, linestyle<span class="op">=</span><span class="st">'dotted'</span>, color<span class="op">=</span><span class="st">'lightgray'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>ax.violinplot(total_occupied, t, showmedians<span class="op">=</span><span class="va">True</span>, showextrema<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'Season'</span>)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r'Total occupied sites'</span>)</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="vs">r'Occupied area decreases over time'</span>)</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-fig-prediction" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">4</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.arange(SEASON_COUNT)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>total_occupied_median <span class="op">=</span> np.median(total_occupied, axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>ax.plot(t, total_occupied_median, linestyle<span class="op">=</span><span class="st">'dotted'</span>, color<span class="op">=</span><span class="st">'lightgray'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>ax.violinplot(total_occupied, t, showmedians<span class="op">=</span><span class="va">True</span>, showextrema<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'Season'</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r'Total occupied sites'</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="vs">r'Occupied area decreases over time'</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-prediction" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">

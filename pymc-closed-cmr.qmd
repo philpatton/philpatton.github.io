@@ -318,20 +318,11 @@ az.plot_forest(mb_idata, var_names=['Alpha'], combined=True, ess=True, figsize=(
 The forest plot indicates that there is some evidence of a weak, positive behavioral response. Although note that the 94% credible intervals between the baseline capture rate and the behavioral effect overlap considerably.
 
 ```{python}
-idata = pmx.recover_marginals(mb_marginal, mb_idata);
-N_hat = az.extract(idata).z.sum(dim='z_dim_0')
-
-# bar plot looks a little better than a histogram here imo
-N_values, N_counts = np.unique(N_hat, return_counts=True)
-N_counts
-```
-
-```{python}
 #| fig-cap: Posterior distribution of $N$ from model $M_b.$ The number voles that were detected $n$ is shown by the vertical red line.
 #| label: fig-mb_N
 
 # # simulate draws of N
-idata = pmx.recover_marginals(mb_marginal, mb_idata);
+idata = pmx.recover_marginals(mb_idata, model=mb_marginal);
 N_hat = az.extract(idata).z.sum(dim='z_dim_0')
 
 # create the plot

@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Philip T. Patton">
-<meta name="dcterms.date" content="2025-10-30">
+<meta name="dcterms.date" content="2026-01-14">
 <meta name="description" content="Estimating occurrence for a community of species in PyMC">
 
 <title>Community occupancy – Philip T. Patton</title>
@@ -97,7 +97,7 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-242a7e6346f5e2fd6d6599311e0369af.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -174,8 +174,6 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Philip T. Patton</span>
     </a>
@@ -187,7 +185,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -195,7 +193,7 @@ window.Quarto = {
 <span class="menu-text">CV</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./notebooks.html"> 
+    <a class="nav-link active" href="./notebooks.html" aria-current="page"> 
 <span class="menu-text">Code</span></a>
   </li>  
   <li class="nav-item">
@@ -237,10 +235,6 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="./index.html" class="sidebar-logo-link">
-      </a>
-      </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -335,12 +329,6 @@ window.Quarto = {
  <span class="menu-text">Cormack-Jolly-Seber</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./numpyro-scr.ipynb" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Spatial Jolly-Seber</span></a>
-  </div>
-</li>
       </ul>
   </li>
     </ul>
@@ -401,7 +389,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 30, 2025</p>
+      <p class="date">January 14, 2026</p>
     </div>
   </div>
   
@@ -417,7 +405,7 @@ window.Quarto = {
 <section id="us-breeding-bird-survey" class="level1">
 <h1>US Breeding Bird Survey</h1>
 <p>As a motivating example, I use the breeding bird survey (BBS) data used by <span class="citation" data-cites="dorazio2005">Dorazio and Royle (<a href="#ref-dorazio2005" role="doc-biblioref">2005</a>)</span> and <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span>, Chapter 12. This is a <span class="math inline">\((n, J)\)</span> matrix with the number of times each species was detected over <span class="math inline">\(K\)</span> surveys, where <span class="math inline">\(n\)</span> is the number of detected species and <span class="math inline">\(J\)</span> is the number surveyed sites. In this example, <span class="math inline">\(n=99\)</span> species were detected at the <span class="math inline">\(J=50\)</span> sites over the <span class="math inline">\(K=11\)</span> surveys in New Hampshire. The BBS occurs on routes across the US. This dataset represents one route.</p>
-<div id="cell-fig-bbs" class="cell" data-execution_count="2">
+<div id="cell-fig-bbs" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Patch</span>
@@ -471,11 +459,18 @@ window.Quarto = {
 <span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">'Detections'</span>, handles<span class="op">=</span>patches, bbox_to_anchor<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">1</span>), loc<span class="op">=</span><span class="dv">2</span>, borderaxespad<span class="op">=</span><span class="fl">0.</span>)</span>
 <span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">False</span>)</span>
 <span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Users/PattonP/miniforge3/envs/nut/lib/python3.13/site-packages/arviz/__init__.py:39: FutureWarning: 
+ArviZ is undergoing a major refactor to improve flexibility and extensibility while maintaining a user-friendly interface.
+Some upcoming changes may be backward incompatible.
+For details and migration guidance, visit: https://python.arviz.org/en/latest/user_guide/migration_guide.html
+  warn(</code></pre>
+</div>
 <div class="cell-output cell-output-display">
 <div id="fig-bbs" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-bbs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="pymc-msom_files/figure-html/fig-bbs-output-1.png" width="524" height="540" class="figure-img">
+<img src="pymc-msom_files/figure-html/fig-bbs-output-2.png" width="524" height="540" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bbs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Number of detections for each species at each site along this BBS route.
@@ -492,37 +487,37 @@ Figure&nbsp;1: Number of detections for each species at each site along this BBS
 <p>First, I fit the the known <span class="math inline">\(N\)</span> version of the model. The goal of this version is to estimate occurrence and detection for each species, without estimating species richness.</p>
 <p>This notebook makes extensive use of the <code>coords</code> feature in PyMC. <code>Coords</code> makes it easier to incorporate the species-level effects via the multivariate normal. I use a <span class="math inline">\(\text{Normal}(0, 2)\)</span> prior for both <span class="math inline">\(\mu\)</span> parameters, and a LKJ Cholesky covariance prior for <span class="math inline">\(\mathbf{\Sigma}.\)</span></p>
 <p>Throughout the notebook, I use the <a href="https://github.com/pymc-devs/nutpie">nutpie</a> sampler within PyMC. Nutpie is a NUTS sampler written in Rust, and is often <a href="https://discourse.pymc.io/t/new-sampler-library-nutpie/9765">faster than PyMC</a>.</p>
-<div id="cell-fig-known" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'process'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">'process_bis'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">'species'</span>: lookup}</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model(coords<span class="op">=</span>coords) <span class="im">as</span> known:</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for community-level means for detection and occurrence</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> pm.Normal(<span class="st">'mu'</span>, <span class="dv">0</span>, <span class="dv">2</span>, dims<span class="op">=</span><span class="st">'process'</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># prior for covariance matrix for occurrence and detection</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    chol, corr, stds <span class="op">=</span> pm.LKJCholeskyCov(</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"chol"</span>, n<span class="op">=</span><span class="dv">2</span>, eta<span class="op">=</span><span class="fl">2.0</span>, sd_dist<span class="op">=</span>pm.Exponential.dist(<span class="fl">1.0</span>, shape<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    cov <span class="op">=</span> pm.Deterministic(<span class="st">"cov"</span>, chol.dot(chol.T), dims<span class="op">=</span>(<span class="st">"process"</span>, <span class="st">"process_bis"</span>))</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># species-level occurrence and detection probabilities on logit-scale</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    ab <span class="op">=</span> pm.MvNormal(<span class="st">"ab"</span>, mu, chol<span class="op">=</span>chol, dims<span class="op">=</span>(<span class="st">"species"</span>, <span class="st">"process"</span>))</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># probability of detection. newaxis allows for broadcasting</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> ab[:, <span class="dv">0</span>][:, np.newaxis]</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.Deterministic(<span class="st">"p"</span>, pm.math.invlogit(a))</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># probability of detection. newaxis allows for broadcasting</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> ab[:, <span class="dv">1</span>][:, np.newaxis]</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    psi <span class="op">=</span> pm.Deterministic(<span class="st">"psi"</span>, pm.math.invlogit(b))</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># likelihood</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    pm.ZeroInflatedBinomial(<span class="st">'Y'</span>, p<span class="op">=</span>p, psi<span class="op">=</span>psi, n<span class="op">=</span>K, observed<span class="op">=</span>Y)</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(known)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-fig-known" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'process'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">'process_bis'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">'species'</span>: lookup}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model(coords<span class="op">=</span>coords) <span class="im">as</span> known:</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for community-level means for detection and occurrence</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> pm.Normal(<span class="st">'mu'</span>, <span class="dv">0</span>, <span class="dv">2</span>, dims<span class="op">=</span><span class="st">'process'</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># prior for covariance matrix for occurrence and detection</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    chol, corr, stds <span class="op">=</span> pm.LKJCholeskyCov(</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"chol"</span>, n<span class="op">=</span><span class="dv">2</span>, eta<span class="op">=</span><span class="fl">2.0</span>, sd_dist<span class="op">=</span>pm.Exponential.dist(<span class="fl">1.0</span>, shape<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    cov <span class="op">=</span> pm.Deterministic(<span class="st">"cov"</span>, chol.dot(chol.T), dims<span class="op">=</span>(<span class="st">"process"</span>, <span class="st">"process_bis"</span>))</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># species-level occurrence and detection probabilities on logit-scale</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    ab <span class="op">=</span> pm.MvNormal(<span class="st">"ab"</span>, mu, chol<span class="op">=</span>chol, dims<span class="op">=</span>(<span class="st">"species"</span>, <span class="st">"process"</span>))</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># probability of detection. newaxis allows for broadcasting</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> ab[:, <span class="dv">0</span>][:, np.newaxis]</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.Deterministic(<span class="st">"p"</span>, pm.math.invlogit(a))</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># probability of detection. newaxis allows for broadcasting</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> ab[:, <span class="dv">1</span>][:, np.newaxis]</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    psi <span class="op">=</span> pm.Deterministic(<span class="st">"psi"</span>, pm.math.invlogit(b))</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># likelihood</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    pm.ZeroInflatedBinomial(<span class="st">'Y'</span>, p<span class="op">=</span>p, psi<span class="op">=</span>psi, n<span class="op">=</span>K, observed<span class="op">=</span>Y)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(known)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <div id="fig-known" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -536,9 +531,9 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
 </div>
 </div>
 </div>
-<div id="a76085cd" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> known:</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    known_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="f3c4184f" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> known:</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    known_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 
 <style>
@@ -637,7 +632,7 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
         Finished Chains:
         <span id="active-chains">4</span>
     </p>
-    <p>Sampling for 27 seconds</p>
+    <p>Sampling for now</p>
     <p>
         Estimated Time to Completion:
         <span id="eta">now</span>
@@ -664,7 +659,7 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.38</td>
+                    <td>0.35</td>
                     <td>15</td>
                 </tr>
             
@@ -675,7 +670,7 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.38</td>
+                    <td>0.36</td>
                     <td>15</td>
                 </tr>
             
@@ -686,7 +681,7 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.40</td>
+                    <td>0.42</td>
                     <td>15</td>
                 </tr>
             
@@ -697,7 +692,7 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.38</td>
+                    <td>0.37</td>
                     <td>15</td>
                 </tr>
             
@@ -707,10 +702,10 @@ Figure&nbsp;2: Visual representation of the known <span class="math inline">\(N\
 </div>
 </div>
 </div>
-<div id="cell-fig-trace_known." class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mu_hat_royle <span class="op">=</span> [<span class="op">-</span><span class="fl">1.11</span>, <span class="op">-</span><span class="fl">1.7</span>]</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>az.plot_trace(known_idata, var_names<span class="op">=</span>[<span class="st">'mu'</span>], figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">2</span>),</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"mu"</span>, {}, [mu_hat_royle])])<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-fig-trace_known." class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mu_hat_royle <span class="op">=</span> [<span class="op">-</span><span class="fl">1.11</span>, <span class="op">-</span><span class="fl">1.7</span>]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>az.plot_trace(known_idata, var_names<span class="op">=</span>[<span class="st">'mu'</span>], figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">2</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"mu"</span>, {}, [mu_hat_royle])])<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-trace_known." class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -724,17 +719,17 @@ Figure&nbsp;3: Trace plots for the community level means of occupancy and abunda
 </div>
 </div>
 </div>
-<div id="cell-fig-probs" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>samps <span class="op">=</span> az.extract(known_idata, var_names<span class="op">=</span><span class="st">'ab'</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ab_mean <span class="op">=</span> samps.mean(axis<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>,<span class="dv">4</span>))</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>ax.scatter(invlogit(ab_mean[:, <span class="dv">1</span>]), invlogit(ab_mean[:, <span class="dv">0</span>]), alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>ax.set_xlim((<span class="dv">0</span>, <span class="dv">1</span>))</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Occupancy probability'</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>ax.set_ylim((<span class="dv">0</span>, <span class="fl">0.8</span>))</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Detection probability'</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-fig-probs" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>samps <span class="op">=</span> az.extract(known_idata, var_names<span class="op">=</span><span class="st">'ab'</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ab_mean <span class="op">=</span> samps.mean(axis<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>,<span class="dv">4</span>))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>ax.scatter(invlogit(ab_mean[:, <span class="dv">1</span>]), invlogit(ab_mean[:, <span class="dv">0</span>]), alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ax.set_xlim((<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Occupancy probability'</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>ax.set_ylim((<span class="dv">0</span>, <span class="fl">0.8</span>))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Detection probability'</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-probs" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -757,78 +752,78 @@ Figure&nbsp;4: Species-level probabilities of detection and occupancy.
 <h3 class="anchored" data-anchor-id="the-customdist-class">The <code>CustomDist</code> class</h3>
 <p>In the notebooks for closed models, we have relied on the <code>marginalize</code> function from <code>pymc_extras</code>. In my testing, however, this function fails with this model, perhaps because of the the double layers of zero inflation (site occupation, community inclusion). As such, we will have to marginalize the discrete latent state for inclusion, <span class="math inline">\(w,\)</span> ourselves. To do so, we have to create a custom distribution via PyMC’s <code>CustomDist</code> class.</p>
 <p><code>CustomDist</code> requires two main inputs: <code>logp</code> and <code>random</code>. The <code>logp</code> is the log probability statement, which is similar to how one might define the likelihood in Stan. In this case, the <code>logp</code> is exactly how we would marginalize the discrete latent <span class="math inline">\(w\)</span> state. In this case, we do so on the log scale with functions like <code>log1m_exp</code>, which adds numerical stability. The downside is that it can be a little harder to understand on this scale. In this case, I essentially provided a placeholder for the <code>random</code> argument, since I only ever use it for observed random variables (i.e., we never have to sample this variable). As such, it just returns zeros that are the size of <code>x</code>.</p>
-<div id="fdfcb480" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logp(x, psi, n, p, omega):</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    rv <span class="op">=</span> pm.ZeroInflatedBinomial.dist(psi<span class="op">=</span>psi, n<span class="op">=</span>n, p<span class="op">=</span>p)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    lp <span class="op">=</span> pm.logp(rv, x)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    lp_sum <span class="op">=</span> lp.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    lp_exp <span class="op">=</span> pm.math.exp(lp_sum)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> pm.math.switch(</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        x.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">&gt;</span> <span class="dv">0</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        lp_exp <span class="op">*</span> omega,</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        lp_exp <span class="op">*</span> omega <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> omega)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pm.math.log(res)</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> random(psi, n, p, omega, rng<span class="op">=</span><span class="va">None</span>, size<span class="op">=</span><span class="va">None</span>):</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.zeros(size)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="c58e2b17" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logp(x, psi, n, p, omega):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    rv <span class="op">=</span> pm.ZeroInflatedBinomial.dist(psi<span class="op">=</span>psi, n<span class="op">=</span>n, p<span class="op">=</span>p)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    lp <span class="op">=</span> pm.logp(rv, x)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    lp_sum <span class="op">=</span> lp.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    lp_exp <span class="op">=</span> pm.math.exp(lp_sum)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> pm.math.switch(</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        x.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">&gt;</span> <span class="dv">0</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        lp_exp <span class="op">*</span> omega,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        lp_exp <span class="op">*</span> omega <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> omega)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pm.math.log(res)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> random(psi, n, p, omega, rng<span class="op">=</span><span class="va">None</span>, size<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.zeros(size)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Then, we can implement <code>CustdomDist</code> as if it’s any other distribution, with the principle difference being that we provide the two keyword arguments, <code>logp</code> and <code>random</code>.</p>
-<div id="cell-fig-unknown" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">250</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>all_zero_history <span class="op">=</span> np.zeros((M <span class="op">-</span> n, J))</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>Y_augmented <span class="op">=</span> np.row_stack((Y, all_zero_history))</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>aug_names <span class="op">=</span> [<span class="ss">f'aug</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> i <span class="kw">in</span> np.arange(M <span class="op">-</span> n)]</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>spp_aug <span class="op">=</span> np.concatenate((lookup, aug_names))</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'process'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>          <span class="st">'process_bis'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>          <span class="st">'species_aug'</span>: spp_aug}</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model(coords<span class="op">=</span>coords) <span class="im">as</span> unknown:</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for inclusion</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    omega <span class="op">=</span> pm.Beta(<span class="st">'omega'</span>, <span class="fl">0.001</span>, <span class="dv">1</span>)</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for community-level means for detection and occurrence</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> pm.Normal(<span class="st">'mu'</span>, <span class="dv">0</span>, <span class="dv">2</span>, dims<span class="op">=</span><span class="st">'process'</span>)</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># prior for covariance matrix for occurrence and detection</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    chol, corr, stds <span class="op">=</span> pm.LKJCholeskyCov(</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"chol"</span>, n<span class="op">=</span><span class="dv">2</span>, eta<span class="op">=</span><span class="fl">2.0</span>, sd_dist<span class="op">=</span>pm.Exponential.dist(<span class="fl">1.0</span>, shape<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    cov <span class="op">=</span> pm.Deterministic(<span class="st">"cov"</span>, chol.dot(chol.T), dims<span class="op">=</span>(<span class="st">"process"</span>, <span class="st">"process_bis"</span>))</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># species-level occurrence and detection probabilities on logit-scale</span></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    ab <span class="op">=</span> pm.MvNormal(<span class="st">"ab"</span>, mu, chol<span class="op">=</span>chol, dims<span class="op">=</span>(<span class="st">"species_aug"</span>, <span class="st">"process"</span>))</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># probability of detection</span></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    alpha <span class="op">=</span> ab[:, <span class="dv">0</span>]</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.Deterministic(<span class="st">"p"</span>, pm.math.invlogit(alpha))</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># probability of occurrence</span></span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> ab[:, <span class="dv">1</span>]</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    psi <span class="op">=</span> pm.Deterministic(<span class="st">"psi"</span>, pm.math.invlogit(beta))</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># likelihood</span></span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    pm.CustomDist(</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Y'</span>,</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>        psi[:, np.newaxis],</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>        K,</span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>        p[:, np.newaxis],</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>        omega,</span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        logp<span class="op">=</span>logp,</span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>        random<span class="op">=</span>random,</span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>        observed<span class="op">=</span>Y_augmented</span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(unknown)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-fig-unknown" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">250</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>all_zero_history <span class="op">=</span> np.zeros((M <span class="op">-</span> n, J))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Y_augmented <span class="op">=</span> np.row_stack((Y, all_zero_history))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>aug_names <span class="op">=</span> [<span class="ss">f'aug</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">'</span> <span class="cf">for</span> i <span class="kw">in</span> np.arange(M <span class="op">-</span> n)]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>spp_aug <span class="op">=</span> np.concatenate((lookup, aug_names))</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">'process'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>          <span class="st">'process_bis'</span>: [<span class="st">'detection'</span>, <span class="st">'occurrence'</span>],</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>          <span class="st">'species_aug'</span>: spp_aug}</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model(coords<span class="op">=</span>coords) <span class="im">as</span> unknown:</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for inclusion</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    omega <span class="op">=</span> pm.Beta(<span class="st">'omega'</span>, <span class="fl">0.001</span>, <span class="dv">1</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for community-level means for detection and occurrence</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> pm.Normal(<span class="st">'mu'</span>, <span class="dv">0</span>, <span class="dv">2</span>, dims<span class="op">=</span><span class="st">'process'</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># prior for covariance matrix for occurrence and detection</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    chol, corr, stds <span class="op">=</span> pm.LKJCholeskyCov(</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"chol"</span>, n<span class="op">=</span><span class="dv">2</span>, eta<span class="op">=</span><span class="fl">2.0</span>, sd_dist<span class="op">=</span>pm.Exponential.dist(<span class="fl">1.0</span>, shape<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    cov <span class="op">=</span> pm.Deterministic(<span class="st">"cov"</span>, chol.dot(chol.T), dims<span class="op">=</span>(<span class="st">"process"</span>, <span class="st">"process_bis"</span>))</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># species-level occurrence and detection probabilities on logit-scale</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    ab <span class="op">=</span> pm.MvNormal(<span class="st">"ab"</span>, mu, chol<span class="op">=</span>chol, dims<span class="op">=</span>(<span class="st">"species_aug"</span>, <span class="st">"process"</span>))</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># probability of detection</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    alpha <span class="op">=</span> ab[:, <span class="dv">0</span>]</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    p <span class="op">=</span> pm.Deterministic(<span class="st">"p"</span>, pm.math.invlogit(alpha))</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># probability of occurrence</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> ab[:, <span class="dv">1</span>]</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    psi <span class="op">=</span> pm.Deterministic(<span class="st">"psi"</span>, pm.math.invlogit(beta))</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># likelihood</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    pm.CustomDist(</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">'Y'</span>,</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>        psi[:, np.newaxis],</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>        K,</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>        p[:, np.newaxis],</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>        omega,</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>        logp<span class="op">=</span>logp,</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>        random<span class="op">=</span>random,</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>        observed<span class="op">=</span>Y_augmented</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(unknown)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/7b/nb0vyhy90mdf30_65xwqzl300000gn/T/ipykernel_26404/577304303.py:3: DeprecationWarning: `row_stack` alias is deprecated. Use `np.vstack` directly.
+<pre><code>/var/folders/y8/cz021w550rbb072f7qhxyylh0000gq/T/ipykernel_17809/577304303.py:3: DeprecationWarning: `row_stack` alias is deprecated. Use `np.vstack` directly.
   Y_augmented = np.row_stack((Y, all_zero_history))</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="7">
@@ -844,10 +839,10 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 </div>
 </div>
 </div>
-<div id="0831bf94" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> unknown:</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    unknown_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># unknown_idata = pm.sample()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="bb4b01e7" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> unknown:</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    unknown_idata <span class="op">=</span> pm.sample(nuts_sampler<span class="op">=</span><span class="st">'nutpie'</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># unknown_idata = pm.sample()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 
 <style>
@@ -946,7 +941,7 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
         Finished Chains:
         <span id="active-chains">4</span>
     </p>
-    <p>Sampling for a minute</p>
+    <p>Sampling for 15 seconds</p>
     <p>
         Estimated Time to Completion:
         <span id="eta">now</span>
@@ -973,8 +968,8 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.26</td>
-                    <td>15</td>
+                    <td>0.25</td>
+                    <td>31</td>
                 </tr>
             
                 <tr>
@@ -995,8 +990,8 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.27</td>
-                    <td>15</td>
+                    <td>0.25</td>
+                    <td>31</td>
                 </tr>
             
                 <tr>
@@ -1006,7 +1001,7 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
                     </td>
                     <td>2000</td>
                     <td>0</td>
-                    <td>0.26</td>
+                    <td>0.29</td>
                     <td>15</td>
                 </tr>
             
@@ -1017,8 +1012,8 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 </div>
 </div>
 <p>We see some warnings about the effective sample size and the <span class="math inline">\(\hat{R}\)</span> statistic. Some of these warnings may just relate to the individual random effects.</p>
-<div id="ef5e20ab" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>az.summary(unknown_idata, var_names<span class="op">=</span>[<span class="st">'omega'</span>, <span class="st">'cov'</span>, <span class="st">'mu'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="451a17be" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>az.summary(unknown_idata, var_names<span class="op">=</span>[<span class="st">'omega'</span>, <span class="st">'cov'</span>, <span class="st">'mu'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <div>
 
@@ -1041,87 +1036,87 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 <tbody>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">omega</th>
-<td>0.532</td>
-<td>0.075</td>
-<td>0.409</td>
-<td>0.676</td>
-<td>0.006</td>
-<td>0.005</td>
-<td>146.0</td>
-<td>232.0</td>
-<td>1.02</td>
+<td>0.526</td>
+<td>0.065</td>
+<td>0.415</td>
+<td>0.651</td>
+<td>0.004</td>
+<td>0.002</td>
+<td>250.0</td>
+<td>438.0</td>
+<td>1.01</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">cov[detection, detection]</th>
-<td>1.248</td>
-<td>0.341</td>
-<td>0.689</td>
-<td>1.916</td>
-<td>0.024</td>
-<td>0.018</td>
-<td>228.0</td>
-<td>324.0</td>
-<td>1.02</td>
+<td>1.255</td>
+<td>0.312</td>
+<td>0.736</td>
+<td>1.861</td>
+<td>0.017</td>
+<td>0.010</td>
+<td>310.0</td>
+<td>851.0</td>
+<td>1.03</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">cov[detection, occurrence]</th>
-<td>1.393</td>
-<td>0.520</td>
-<td>0.521</td>
-<td>2.389</td>
-<td>0.044</td>
-<td>0.029</td>
-<td>155.0</td>
-<td>316.0</td>
+<td>1.382</td>
+<td>0.459</td>
+<td>0.582</td>
+<td>2.247</td>
+<td>0.030</td>
+<td>0.017</td>
+<td>243.0</td>
+<td>637.0</td>
 <td>1.02</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">cov[occurrence, detection]</th>
-<td>1.393</td>
-<td>0.520</td>
-<td>0.521</td>
-<td>2.389</td>
-<td>0.044</td>
-<td>0.029</td>
-<td>155.0</td>
-<td>316.0</td>
+<td>1.382</td>
+<td>0.459</td>
+<td>0.582</td>
+<td>2.247</td>
+<td>0.030</td>
+<td>0.017</td>
+<td>243.0</td>
+<td>637.0</td>
 <td>1.02</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">cov[occurrence, occurrence]</th>
-<td>5.249</td>
-<td>1.526</td>
-<td>2.896</td>
-<td>8.088</td>
-<td>0.136</td>
-<td>0.120</td>
-<td>132.0</td>
-<td>228.0</td>
-<td>1.02</td>
+<td>5.066</td>
+<td>1.333</td>
+<td>2.839</td>
+<td>7.584</td>
+<td>0.093</td>
+<td>0.051</td>
+<td>215.0</td>
+<td>628.0</td>
+<td>1.01</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">mu[detection]</th>
-<td>-1.998</td>
-<td>0.207</td>
-<td>-2.396</td>
-<td>-1.632</td>
-<td>0.017</td>
-<td>0.011</td>
-<td>166.0</td>
-<td>227.0</td>
+<td>-2.002</td>
+<td>0.187</td>
+<td>-2.370</td>
+<td>-1.679</td>
+<td>0.012</td>
+<td>0.005</td>
+<td>239.0</td>
+<td>804.0</td>
 <td>1.02</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">mu[occurrence]</th>
-<td>-2.087</td>
-<td>0.491</td>
-<td>-2.977</td>
-<td>-1.249</td>
-<td>0.045</td>
-<td>0.036</td>
-<td>127.0</td>
-<td>215.0</td>
-<td>1.03</td>
+<td>-2.044</td>
+<td>0.435</td>
+<td>-2.898</td>
+<td>-1.303</td>
+<td>0.031</td>
+<td>0.019</td>
+<td>203.0</td>
+<td>355.0</td>
+<td>1.01</td>
 </tr>
 </tbody>
 </table>
@@ -1129,10 +1124,10 @@ Figure&nbsp;5: Visual representation of the unknown <span class="math inline">\(
 </div>
 </div>
 </div>
-<div id="cell-fig-trace_unknown." class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>omega_hat_royle <span class="op">=</span> [<span class="fl">0.55</span>]</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>az.plot_trace(unknown_idata, var_names<span class="op">=</span>[<span class="st">'omega'</span>], figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">2</span>),</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"omega"</span>, {}, [omega_hat_royle])])<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-fig-trace_unknown." class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>omega_hat_royle <span class="op">=</span> [<span class="fl">0.55</span>]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>az.plot_trace(unknown_idata, var_names<span class="op">=</span>[<span class="st">'omega'</span>], figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">2</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>              lines<span class="op">=</span>[(<span class="st">"omega"</span>, {}, [omega_hat_royle])])<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-trace_unknown." class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1147,34 +1142,34 @@ Figure&nbsp;6: Trace plots for the inclusion parameter for the unknown <span cla
 </div>
 </div>
 <p>I can plot the posterior distribution of species richness <span class="math inline">\(N.\)</span> This is slightly more complicated than before sinc there is an additional level of zero-inflation (included and never detected or not-included) in this model compared to the occupancy model (present and never detection or not present).</p>
-<div id="cell-fig-postN" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># relevant posterior samples</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>post <span class="op">=</span> az.extract(unknown_idata)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>o_samps <span class="op">=</span> post.omega.to_numpy()</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># only care about the undetected species</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> post.p.to_numpy()[n:]</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># probability that the species was in the study area but wasn't detected</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>p_if_present <span class="op">=</span> o_samps <span class="op">*</span> binom.pmf(<span class="dv">0</span>, n<span class="op">=</span>K, p<span class="op">=</span>p_samps)</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>p_total <span class="op">=</span> p_if_present <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> o_samps)</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate the latent occurrence state for the undetected species</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> RNG.binomial(<span class="dv">1</span>, p_if_present <span class="op">/</span> p_total)</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate species richness</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>number_undetected <span class="op">=</span> Z.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>N_samps <span class="op">=</span> number_undetected <span class="op">+</span> n</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior distribution</span></span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>N_hat_royle <span class="op">=</span> <span class="dv">138</span></span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>ax.hist(N_samps, edgecolor<span class="op">=</span><span class="st">'white'</span>, bins<span class="op">=</span><span class="dv">20</span>)</span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Species richness $N$'</span>)</span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Posterior samples'</span>)</span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>ax.axvline(N_hat_royle, linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'C1'</span>)</span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>ax.axvline(N_samps.mean(), linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'C2'</span>)</span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-fig-postN" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># relevant posterior samples</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>post <span class="op">=</span> az.extract(unknown_idata)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>o_samps <span class="op">=</span> post.omega.to_numpy()</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># only care about the undetected species</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>p_samps <span class="op">=</span> post.p.to_numpy()[n:]</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># probability that the species was in the study area but wasn't detected</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>p_if_present <span class="op">=</span> o_samps <span class="op">*</span> binom.pmf(<span class="dv">0</span>, n<span class="op">=</span>K, p<span class="op">=</span>p_samps)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>p_total <span class="op">=</span> p_if_present <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> o_samps)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate the latent occurrence state for the undetected species</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> RNG.binomial(<span class="dv">1</span>, p_if_present <span class="op">/</span> p_total)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate species richness</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>number_undetected <span class="op">=</span> Z.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>N_samps <span class="op">=</span> number_undetected <span class="op">+</span> n</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co"># posterior distribution</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>N_hat_royle <span class="op">=</span> <span class="dv">138</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>ax.hist(N_samps, edgecolor<span class="op">=</span><span class="st">'white'</span>, bins<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Species richness $N$'</span>)</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Posterior samples'</span>)</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>ax.axvline(N_hat_royle, linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'C1'</span>)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>ax.axvline(N_samps.mean(), linestyle<span class="op">=</span><span class="st">'--'</span>, color<span class="op">=</span><span class="st">'C2'</span>)</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div id="fig-postn" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1188,24 +1183,24 @@ Figure&nbsp;7: Posterior distribution of species richness from the BBS model.
 </div>
 </div>
 </div>
-<div id="b1e0b795" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">-</span>n <span class="op">-</span>u <span class="op">-</span>v <span class="op">-</span>iv <span class="op">-</span>w</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="789cc0e2" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">-</span>n <span class="op">-</span>u <span class="op">-</span>v <span class="op">-</span>iv <span class="op">-</span>w</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Last updated: Thu Oct 16 2025
+<pre><code>Last updated: Wed Jan 14 2026
 
 Python implementation: CPython
-Python version       : 3.13.7
-IPython version      : 9.6.0
+Python version       : 3.13.9
+IPython version      : 9.9.0
 
-matplotlib: 3.10.6
-numpy     : 2.3.3
 pandas    : 2.3.3
+matplotlib: 3.10.8
+pytensor  : 2.36.3
+arviz     : 0.23.0
+pymc      : 5.27.0
 seaborn   : 0.13.2
-pytensor  : 2.31.7
-arviz     : 0.22.0
-pymc      : 5.25.1
+numpy     : 2.3.5
 
 Watermark: 2.5.0
 </code></pre>

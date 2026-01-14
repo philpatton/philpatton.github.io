@@ -59,8 +59,8 @@ website:
               text: Jolly-Seber
             - href: numpyro-cjs.qmd
               text: Cormack-Jolly-Seber
-            # - href: numpyro-scr.ipynb
-            #   text: Spatial Jolly-Seber
+            - href: numpyro-scr-temp.ipynb
+              text: Open SCR
 format:
   html:
     theme: yeti
