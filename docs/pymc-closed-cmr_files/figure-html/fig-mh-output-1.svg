@@ -71,7 +71,7 @@
 <text xml:space="preserve" text-anchor="middle" x="67.81" y="-59.61" font-family="Times,serif" font-size="14.00">Mixture</text>
 </g>
 <!-- psi&#45;&gt;y -->
-<g id="edge5" class="edge">
+<g id="edge4" class="edge">
 <title>psi&#45;&gt;y</title>
 <path fill="none" stroke="black" d="M40.1,-173.01C44.07,-159.97 48.61,-145.11 52.84,-131.24"/>
 <polygon fill="black" stroke="black" points="56.14,-132.41 55.71,-121.83 49.45,-130.37 56.14,-132.41"/>
@@ -91,7 +91,7 @@
 <polygon fill="black" stroke="black" points="88.31,-257.61 89.38,-247.07 81.97,-254.64 88.31,-257.61"/>
 </g>
 <!-- theta&#45;&gt;y -->
-<g id="edge4" class="edge">
+<g id="edge5" class="edge">
 <title>theta&#45;&gt;y</title>
 <path fill="none" stroke="black" d="M94.72,-172.66C90.88,-159.75 86.52,-145.09 82.45,-131.37"/>
 <polygon fill="black" stroke="black" points="85.89,-130.67 79.68,-122.08 79.18,-132.66 85.89,-130.67"/>

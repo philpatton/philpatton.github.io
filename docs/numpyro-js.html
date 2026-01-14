@@ -417,15 +417,15 @@ window.Quarto = {
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 284)">
 <title>js_multistate</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-284 385.36,-284 385.36,4 -4,4"></polygon>
-<g id="clust1" class="cluster">
-<title>cluster_t</title>
-<path fill="none" stroke="black" d="M20,-8C20,-8 80.86,-8 80.86,-8 86.86,-8 92.86,-14 92.86,-20 92.86,-20 92.86,-254 92.86,-254 92.86,-260 86.86,-266 80.86,-266 80.86,-266 20,-266 20,-266 14,-266 8,-260 8,-254 8,-254 8,-20 8,-20 8,-14 14,-8 20,-8"></path>
-<text text-anchor="middle" x="50.43" y="-249.4" font-family="Times,serif" font-size="14.00">Time t</text>
-</g>
 <g id="clust2" class="cluster">
 <title>cluster_t1</title>
 <path fill="none" stroke="black" d="M143.52,-14C143.52,-14 204.37,-14 204.37,-14 210.37,-14 216.37,-20 216.37,-26 216.37,-26 216.37,-260 216.37,-260 216.37,-266 210.37,-272 204.37,-272 204.37,-272 143.52,-272 143.52,-272 137.52,-272 131.52,-266 131.52,-260 131.52,-260 131.52,-26 131.52,-26 131.52,-20 137.52,-14 143.52,-14"></path>
 <text text-anchor="middle" x="173.95" y="-255.4" font-family="Times,serif" font-size="14.00">Time t+1</text>
+</g>
+<g id="clust1" class="cluster">
+<title>cluster_t</title>
+<path fill="none" stroke="black" d="M20,-8C20,-8 80.86,-8 80.86,-8 86.86,-8 92.86,-14 92.86,-20 92.86,-20 92.86,-254 92.86,-254 92.86,-260 86.86,-266 80.86,-266 80.86,-266 20,-266 20,-266 14,-266 8,-260 8,-254 8,-254 8,-20 8,-20 8,-14 14,-8 20,-8"></path>
+<text text-anchor="middle" x="50.43" y="-249.4" font-family="Times,serif" font-size="14.00">Time t</text>
 </g>
 <!-- N1 -->
 <g id="node1" class="node">
@@ -530,7 +530,7 @@ Figure&nbsp;1: Jolly-Seber multistate model: recruitment (γ), survival (φ), de
 </div>
 </div>
 <p>In this notebook, I will primarily analyze simulated data. This is helpful because, as we will see, these models are sensitive to priors on <span class="math inline">\(\gamma\)</span>. The simulation code is a direct translation of the code from <span class="citation" data-cites="kery2011">(<a href="#ref-kery2011" role="doc-biblioref">Kéry and Schaub 2011, chap. 10</a>)</span>, although I’ve vectorized the operations and leveraged some NumPy tricks, like <code>accummulate()</code>.</p>
-<div id="b2b791c6" class="cell" data-execution_count="1">
+<div id="b2b791c6" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> jax <span class="im">import</span> random</span>
@@ -705,7 +705,7 @@ Table&nbsp;1: Transition probability matrix in the NumPyro model
 <p>Parameterizing the model this way is the easiest way in NumPyro to encode the restriction that dead animals cannot re-enter the population. To match the data-generating process, I allow <span class="math inline">\(\gamma\)</span> to time vary while keeping <span class="math inline">\(\phi\)</span> and <span class="math inline">\(p\)</span> constant across animals and occasions.</p>
 <p>The model also shows how to compute derived quantities with NumPyro. Here, I generate estimates for the entry probabilities, <span class="math inline">\(\pi,\)</span> and the overall inclusion probability, <span class="math inline">\(\psi\)</span>. This helps compare with the data generating process in <code>sim_js()</code>, as well as compare with the Schwarz-Arnason (POPAN) formulation of the model.</p>
 <p>One principle difference and the multi-state version described in <span class="citation" data-cites="kery2011">(<a href="#ref-kery2011" role="doc-biblioref">Kéry and Schaub 2011, chap. 10</a>)</span> is that we do not include a dummy occasion of all zeros. This is because we can initialize the <span class="math inline">\(z_{i,0}\)</span> to be <span class="math inline">\(0\)</span> for all individuals, (see <code>z0</code> below). Then, we begin the scan starting at the first occasion in our capture history. As such, we estimate transition from this initial state to the first occasion in our capture history. Contrast this with the <a href="./numpyro-occ.html">dynamic occupancy notebook</a>, where we begin the scan at the second season in the detection data.</p>
-<div id="21351a69" class="cell" data-execution_count="2">
+<div id="21351a69" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> js_prior1(capture_history):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    super_size, occasion_count <span class="op">=</span> capture_history.shape</span>
@@ -770,7 +770,7 @@ Table&nbsp;1: Transition probability matrix in the NumPyro model
 <span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    numpyro.deterministic(<span class="st">'pi'</span>, cprob <span class="op">/</span> psi )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The downside of coding the model this way in BUGS is that it takes forever to sample. For example, it took <span class="citation" data-cites="kery2011">(<a href="#ref-kery2011" role="doc-biblioref">Kéry and Schaub 2011</a>)</span> 32 minutes to fit this model to these data with BUGS. In NumPyro, however, we totally sidestep this issue with state enumeration. In fact, this version only takes 11 seconds to sample!</p>
-<div id="1c29bcdf" class="cell" data-execution_count="3">
+<div id="1c29bcdf" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sim_results <span class="op">=</span> sim_js()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>capture_histories <span class="op">=</span> sim_results[<span class="st">'capture_history'</span>]</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -810,7 +810,7 @@ Table&nbsp;1: Transition probability matrix in the NumPyro model
 Number of divergences: 0</code></pre>
 </div>
 </div>
-<div id="cell-fig-trace-ms" class="cell" data-execution_count="4">
+<div id="cell-fig-trace-ms" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the inference data object for arviz</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> mcmc.get_samples(group_by_chain<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>idata <span class="op">=</span> az.from_dict(samples)</span>
@@ -845,7 +845,7 @@ Figure&nbsp;2: Traceplots for multi-state Jolly-Seber model
 </div>
 </div>
 <p>The model appears to recover the parameters well. While we generated abundance estimates with the <code>psi</code> parameter above, we can also generate them with the posterior predictive distribution.</p>
-<div id="cell-fig-n-prior1" class="cell" data-execution_count="5">
+<div id="cell-fig-n-prior1" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sample_z(model, posterior_samples, capture_history):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Samples the posterior predictive distribution for z given the histories'''</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -905,7 +905,7 @@ Figure&nbsp;3: Posterior distribution of <span class="math inline">\(N\)</span> 
 \end{align}
 \]</span></p>
 <p>One benefit of this approach is that it obviates the need to compute the derived quanitites. Moreover, it allows us to directly compare to the data generating processs.</p>
-<div id="4d775927" class="cell" data-execution_count="6">
+<div id="4d775927" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> js_prior2(capture_history):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    super_size, occasion_count <span class="op">=</span> capture_history.shape</span>
@@ -963,7 +963,7 @@ Figure&nbsp;3: Posterior distribution of <span class="math inline">\(N\)</span> 
 <span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>         jnp.swapaxes(capture_history, <span class="dv">0</span>, <span class="dv">1</span>)</span>
 <span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="96e78768" class="cell" data-execution_count="7">
+<div id="96e78768" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify which sampler you want to use</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>nuts_kernel <span class="op">=</span> NUTS(js_prior2)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1002,7 +1002,7 @@ Number of divergences: 0</code></pre>
 <pre><code></code></pre>
 </div>
 </div>
-<div id="cell-fig-n-prior2" class="cell" data-execution_count="8">
+<div id="cell-fig-n-prior2" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate the posterior predictive distribution for N</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> mcmc.get_samples()</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> sample_z(js_prior2, samples, capture_histories)</span>
@@ -1039,7 +1039,7 @@ Figure&nbsp;4: Posterior distribution of <span class="math inline">\(N\)</span> 
 <section id="beta-prior" class="level2">
 <h2 class="anchored" data-anchor-id="beta-prior">Beta prior</h2>
 <p>An easier alternative is to approximate the above prior. As such, we try to approximate the situation where half of all animal in <span class="math inline">\(M\)</span> are recruited, and each of these is equally likely to be recruited during <span class="math inline">\(t\)</span>. So when <span class="math inline">\(T=7\)</span>, we hope that <span class="math inline">\(1/14\)</span> of all individuals are allocated to each time step. To do so, we set a Beta prior, <span class="math inline">\(\gamma_t \sim \mathrm{Beta}(a_t, b_t),\)</span> where <span class="math inline">\(a_t = S/(14-(t-1))\)</span> and <span class="math inline">\(b_t = S - a_t.\)</span> <span class="citation" data-cites="royle2008">Royle and Dorazio (<a href="#ref-royle2008" role="doc-biblioref">2008</a>)</span> recommend setting <span class="math inline">\(S=1.5\)</span>.</p>
-<div id="88bef868" class="cell" data-execution_count="9">
+<div id="88bef868" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> js_prior3(capture_history):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    super_size, occasion_count <span class="op">=</span> capture_history.shape</span>
@@ -1093,7 +1093,7 @@ Figure&nbsp;4: Posterior distribution of <span class="math inline">\(N\)</span> 
 <span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>         jnp.swapaxes(capture_history, <span class="dv">0</span>, <span class="dv">1</span>)</span>
 <span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="90ce03f4" class="cell" data-execution_count="10">
+<div id="90ce03f4" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify which sampler you want to use</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>nuts_kernel <span class="op">=</span> NUTS(js_prior3)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1131,7 +1131,7 @@ Number of divergences: 11</code></pre>
 <pre><code></code></pre>
 </div>
 </div>
-<div id="cell-fig-n-prior3" class="cell" data-execution_count="11">
+<div id="cell-fig-n-prior3" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate the posterior predictive distribution for N</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> mcmc.get_samples()</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> sample_z(js_prior3, samples, capture_histories)</span>
@@ -1170,7 +1170,7 @@ Figure&nbsp;5: Posterior distribution of <span class="math inline">\(N\)</span> 
 <h1>Dipper dataset</h1>
 <p>Finally, I turn to the ubiquitous dipper data, analyzed in <span class="citation" data-cites="royle2008">(<a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008, chap. 10</a>)</span>. To match their analysis, I fit the full version of the model, where every parameter is time varying, i.e., <span class="math inline">\(p(t) \phi(t) \pi(t).\)</span> This model is overparameterized, meaning that not all the parameters are estimable. Following <span class="citation" data-cites="royle2008">(<a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008</a>)</span>, I skirt this issue by assuming that <span class="math inline">\(p_{0}=p_{T}=1\)</span>.Here, I use the Schwarz-Arnason-esque parameterization.</p>
 <p>The primary difference from the above models is the need to index both <code>phi</code> and <code>p</code>. Recall that <code>gamma[0]</code> controls entry into the superpopulation from the initial state to the first iteration of the scan. As such, <code>gamma[1]</code> controls entry into the population at the second occasion, and <code>phi[0]</code> controls survival from the first occasion to the second occasion. As such, the transition probability matrix contains <code>gamma[t]</code> and <code>phi[t - 1]</code>.</p>
-<div id="4d9a3a38" class="cell" data-execution_count="12">
+<div id="4d9a3a38" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> js_full(capture_history):</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    super_size, occasion_count <span class="op">=</span> capture_history.shape</span>
@@ -1232,7 +1232,7 @@ Figure&nbsp;5: Posterior distribution of <span class="math inline">\(N\)</span> 
 <span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a>    scan(transition_and_capture, (state_init, <span class="dv">0</span>),</span>
 <span id="cb20-60"><a href="#cb20-60" aria-hidden="true" tabindex="-1"></a>         jnp.swapaxes(capture_history, <span class="dv">0</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="4f10bc00" class="cell" data-execution_count="13">
+<div id="4f10bc00" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>dipper <span class="op">=</span> load_dipper_data()</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># specify which sampler you want to use</span></span>
@@ -1279,7 +1279,7 @@ p_estimable[4]      0.90      0.05      0.91      0.82      0.98   3323.84      
 Number of divergences: 0</code></pre>
 </div>
 </div>
-<div id="cell-fig-trace-full" class="cell" data-execution_count="14">
+<div id="cell-fig-trace-full" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> mcmc.get_samples(group_by_chain<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>idata <span class="op">=</span> az.from_dict(samples)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>idata.posterior[<span class="st">'N'</span>] <span class="op">=</span> idata.posterior[<span class="st">'psi'</span>] <span class="op">*</span> MAX_ABUNDANCE</span>
@@ -1317,7 +1317,7 @@ Figure&nbsp;6: Traceplots for full model of the dipper data.
 </div>
 </div>
 <p>As we can see, the parameter estimates are very similar to that of <span class="citation" data-cites="royle2008">(<a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008</a>)</span>. We can also plot survival over time, to compare with the <a href="./pymc-jssa.html">PyMC Jolly-Seber notebook</a>.</p>
-<div id="a58f93c0" class="cell" data-execution_count="15">
+<div id="a58f93c0" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> mcmc.get_samples(group_by_chain<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">4</span>))</span>

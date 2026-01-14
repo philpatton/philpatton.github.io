@@ -326,6 +326,12 @@ window.Quarto = {
  <span class="menu-text">Cormack-Jolly-Seber</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numpyro-scr-temp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Open SCR</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -397,7 +403,7 @@ window.Quarto = {
 
 <p>Before I forced myself to learn it, I found the NumPyro syntax utterly beguiling. In this notebook, I hope to introduce the library in a way that I would have found helpful. Hopefully this will be helpful for you too.</p>
 <p>As a motivating example, I will use the same occupancy dataset from the <a href="./pymc-occupancy.html">PyMC occupancy notebook</a>. These data come from <span class="citation" data-cites="henden2013">Henden et al. (<a href="#ref-henden2013" role="doc-biblioref">2013</a>)</span>, and were used as a demonstration in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 23. They represent detection/non-detection data of Willow Warblers from Finnmark, Norway. The <span class="math inline">\(J=27\)</span> sites were sampled <span class="math inline">\(K=3\)</span> times. Replicating the analysis in Box 23.7 in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, I use two covariates for site: site area (<code>Pland</code>) and willow tree height (<code>wheight</code>). Further, I use two covariates for visit: an indicator for the visit and willow tree height.</p>
-<div id="78d84b73" class="cell" data-execution_count="1">
+<div id="3bab6341" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> jax <span class="im">import</span> random</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> jax.scipy.special <span class="im">import</span> expit</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpyro.infer <span class="im">import</span> NUTS, MCMC</span>
@@ -464,7 +470,7 @@ window.Quarto = {
 <section id="defining-the-model" class="level1">
 <h1>Defining the model</h1>
 <p>We define our NumPyro model as a Python function. Let’s look at one of these functions: an occupancy model with site and visit covariates.</p>
-<div id="7f986a02" class="cell" data-execution_count="2">
+<div id="13585440" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> occupancy_model(data_dictionary):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    detection_data <span class="op">=</span> data_dictionary[<span class="st">'detection_data'</span>]</span>
@@ -515,7 +521,7 @@ window.Quarto = {
     beta[i] ~ dnorm(0, 0.5)
 }</code></pre>
 <p>In NumPyro, we can write this as,</p>
-<div id="5a322383" class="cell" data-execution_count="3">
+<div id="b10428db" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> numpyro.plate(<span class="st">'site-effects'</span>, <span class="dv">3</span>):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    beta <span class="op">=</span> numpyro.sample(<span class="st">'beta'</span>, dist.Normal(<span class="dv">0</span>, <span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -538,7 +544,7 @@ P(\mathbf{y}_j)=
 <section id="inference" class="level1">
 <h1>Inference</h1>
 <p>Inference is fairly straightforward in NumPyro, although more verbose than PyMC. First, we define which sampler we would like to use on our model. We input this <em>kernel</em> into the MCMC initializer, specifying the configuration (chains, draws, tune, etc.). Finally, we run the MCMC algorithm.</p>
-<div id="91b65742" class="cell" data-execution_count="4">
+<div id="546ad7df" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>warbler_data <span class="op">=</span> get_warbler_data()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>rng_key <span class="op">=</span> random.PRNGKey(RANDOM_SEED)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -552,12 +558,12 @@ P(\mathbf{y}_j)=
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>mcmc.run(rng_key, warbler_data)</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>mcmc.print_summary()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/y8/cz021w550rbb072f7qhxyylh0000gq/T/ipykernel_5776/1360101409.py:8: UserWarning: There are not enough devices to run parallel chains: expected 4 but got 1. Chains will be drawn sequentially. If you are running MCMC in CPU, consider using `numpyro.set_host_device_count(4)` at the beginning of your program. You can double-check how many devices are available in your system using `jax.local_device_count()`.
+<pre><code>/var/folders/y8/cz021w550rbb072f7qhxyylh0000gq/T/ipykernel_21622/1360101409.py:8: UserWarning: There are not enough devices to run parallel chains: expected 4 but got 1. Chains will be drawn sequentially. If you are running MCMC in CPU, consider using `numpyro.set_host_device_count(4)` at the beginning of your program. You can double-check how many devices are available in your system using `jax.local_device_count()`.
   mcmc = MCMC(nuts_kernel, num_warmup=500, num_samples=1000, num_chains=4)
-  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;10:17,  2.43it/s, 3 steps of size 2.34e+00. acc. prob=0.00]sample:  36%|███▌      | 533/1500 [00:00&lt;00:00, 1372.11it/s, 7 steps of size 5.44e-01. acc. prob=0.88]sample:  73%|███████▎  | 1101/1500 [00:00&lt;00:00, 2529.33it/s, 15 steps of size 5.44e-01. acc. prob=0.90]sample: 100%|██████████| 1500/1500 [00:00&lt;00:00, 2203.31it/s, 7 steps of size 5.44e-01. acc. prob=0.90] 
-  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;09:32,  2.62it/s, 1 steps of size 2.34e+00. acc. prob=0.00]sample:  35%|███▍      | 523/1500 [00:00&lt;00:00, 1422.14it/s, 7 steps of size 5.55e-01. acc. prob=0.85]sample:  74%|███████▍  | 1107/1500 [00:00&lt;00:00, 2658.43it/s, 3 steps of size 5.55e-01. acc. prob=0.88]sample: 100%|██████████| 1500/1500 [00:00&lt;00:00, 2312.51it/s, 7 steps of size 5.55e-01. acc. prob=0.88]
-  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;10:43,  2.33it/s, 1 steps of size 2.34e+00. acc. prob=0.00]sample:  35%|███▍      | 524/1500 [00:00&lt;00:00, 1307.30it/s, 15 steps of size 5.19e-01. acc. prob=0.84]sample:  73%|███████▎  | 1098/1500 [00:00&lt;00:00, 2471.19it/s, 7 steps of size 5.19e-01. acc. prob=0.88]sample: 100%|██████████| 1500/1500 [00:00&lt;00:00, 2146.70it/s, 7 steps of size 5.19e-01. acc. prob=0.88]
-  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;09:49,  2.54it/s, 3 steps of size 2.34e+00. acc. prob=0.00]sample:  36%|███▌      | 540/1500 [00:00&lt;00:00, 1437.32it/s, 7 steps of size 4.39e-01. acc. prob=0.94]sample:  72%|███████▏  | 1083/1500 [00:00&lt;00:00, 2536.85it/s, 7 steps of size 4.39e-01. acc. prob=0.93]sample: 100%|██████████| 1500/1500 [00:00&lt;00:00, 2237.85it/s, 7 steps of size 4.39e-01. acc. prob=0.93]</code></pre>
+  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;10:35,  2.36it/s, 3 steps of size 2.34e+00. acc. prob=0.00]sample:  35%|███▌      | 529/1500 [00:00&lt;00:00, 1333.18it/s, 7 steps of size 5.44e-01. acc. prob=0.88]sample:  73%|███████▎  | 1094/1500 [00:00&lt;00:00, 2476.12it/s, 7 steps of size 5.44e-01. acc. prob=0.90]sample: 100%|██████████| 1500/1500 [00:00&lt;00:00, 2156.99it/s, 7 steps of size 5.44e-01. acc. prob=0.90]
+  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;09:38,  2.59it/s, 1 steps of size 2.34e+00. acc. prob=0.00]warmup:  33%|███▎      | 494/1500 [00:00&lt;00:00, 1333.01it/s, 7 steps of size 7.65e-01. acc. prob=0.79]sample:  70%|██████▉   | 1047/1500 [00:00&lt;00:00, 2500.70it/s, 3 steps of size 5.55e-01. acc. prob=0.88]sample: 100%|██████████| 1500/1500 [00:00&lt;00:00, 2245.52it/s, 7 steps of size 5.55e-01. acc. prob=0.88]
+  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;09:51,  2.54it/s, 1 steps of size 2.34e+00. acc. prob=0.00]sample:  35%|███▍      | 521/1500 [00:00&lt;00:00, 1383.82it/s, 7 steps of size 5.19e-01. acc. prob=0.82]sample:  73%|███████▎  | 1101/1500 [00:00&lt;00:00, 2598.06it/s, 15 steps of size 5.19e-01. acc. prob=0.88]sample: 100%|██████████| 1500/1500 [00:00&lt;00:00, 2261.97it/s, 7 steps of size 5.19e-01. acc. prob=0.88] 
+  0%|          | 0/1500 [00:00&lt;?, ?it/s]warmup:   0%|          | 1/1500 [00:00&lt;10:29,  2.38it/s, 3 steps of size 2.34e+00. acc. prob=0.00]sample:  35%|███▌      | 530/1500 [00:00&lt;00:00, 1344.27it/s, 7 steps of size 4.39e-01. acc. prob=0.93]sample:  71%|███████   | 1061/1500 [00:00&lt;00:00, 2398.99it/s, 15 steps of size 4.39e-01. acc. prob=0.93]sample: 100%|██████████| 1500/1500 [00:00&lt;00:00, 2134.27it/s, 7 steps of size 4.39e-01. acc. prob=0.93] </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>

@@ -306,6 +306,12 @@ window.Quarto = {
  <span class="menu-text">Cormack-Jolly-Seber</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numpyro-scr-temp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Open SCR</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -471,7 +477,7 @@ Figure&nbsp;1: Dynamic occupancy model with latent state variable z
 </div>
 </div>
 </div>
-<div id="1523ed47" class="cell" data-execution_count="1">
+<div id="1523ed47" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> jax <span class="im">import</span> random</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpyro.contrib.control_flow <span class="im">import</span> scan</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpyro.infer <span class="im">import</span> NUTS, MCMC, Predictive</span>
@@ -533,7 +539,7 @@ Figure&nbsp;1: Dynamic occupancy model with latent state variable z
 <section id="defining-the-model" class="level1">
 <h1>Defining the model</h1>
 <p>Just like in the <a href="./numpyro-intro.html">introductory notebook to NumPyro</a>, we will define our dynamic occupancy model with a Python function, <code>dynamic_occupancy()</code>, that contains NumPyro random variables. This model, however, will contain a new character, the <code>scan()</code> function, as well as an additional function within our model <code>transition_and_detect()</code>. The <code>scan()</code> function sequentially applies the <code>transition_and_detect()</code> to our occupancy data, starting with initial values.</p>
-<div id="00d76f1c" class="cell" data-execution_count="2">
+<div id="00d76f1c" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dynamic_occupancy(detection_history):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Dynamic occupancy model in NumPyro.'''</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    site_count, season_count, survey_count <span class="op">=</span> detection_history.shape</span>
@@ -604,7 +610,7 @@ Figure&nbsp;1: Dynamic occupancy model with latent state variable z
 <p>As the name suggests, <code>transition_and_detect()</code> transitions the discrete latent states (the process model) and detects animals during the surveys (the observation model). As such, it contains our unobserved random variable <code>z</code> as well as our observed random variable <code>y</code>. <code>scan()</code> requires that our inner function, <code>transition_and_detect()</code>, return a tuple, where the first element contains the input to the next iteration of <code>transition_and_detect()</code>. The next element is anything we want to report or accumulate (in this case, <code>None</code>, since we don’t need to track anything).</p>
 <p>For the most part, the <code>transition_and_detect()</code> function is not much different than our model in the <a href="./numpyro-intro.html">NumPyro static occupancy notebook</a>. One difference is the use of <code>dist.util.clamp_probs()</code>. This is a helper function that keeps the sampler out of boundary regions, for example, by keeping <span class="math inline">\(\psi\)</span> between <span class="math inline">\([1 \times 10^{-7}, 1 - 1 \times 10^{-7}]\)</span> rather than <span class="math inline">\([0, 1]\)</span>.</p>
 <p>We begin the scan <strong>after</strong> the first occasion. The <span class="math inline">\(z_{i,j}\)</span> state at the first occasion only depends on <span class="math inline">\(\psi\)</span>. After this first occasion, we transition the states such that patches can be colonized or go extinct.</p>
-<div id="c9190378" class="cell" data-execution_count="3">
+<div id="c9190378" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>detections <span class="op">=</span> simulate_data()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>rng_key <span class="op">=</span> random.PRNGKey(RANDOM_SEED)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -636,7 +642,7 @@ Figure&nbsp;1: Dynamic occupancy model with latent state variable z
 Number of divergences: 0</code></pre>
 </div>
 </div>
-<div id="cell-fig-trace" class="cell" data-execution_count="4">
+<div id="cell-fig-trace" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>labeller <span class="op">=</span> az.labels.MapLabeller(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    var_name_map<span class="op">=</span>{<span class="st">"psi"</span>: <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">psi</span><span class="dv">$</span><span class="vs">"</span>, <span class="st">'gamma'</span>:  <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">gamma</span><span class="dv">$</span><span class="vs">"</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'epsilon'</span>: <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">epsilon</span><span class="dv">$</span><span class="vs">"</span>, <span class="st">'p'</span>:  <span class="vs">r"</span><span class="dv">$</span><span class="vs">p</span><span class="dv">$</span><span class="vs">"</span> }</span>
@@ -676,7 +682,7 @@ Figure&nbsp;2: Traceplots for the dynamic occupancy model.
 <section id="prediction" class="level1">
 <h1>Prediction</h1>
 <p>We can recover the latent <span class="math inline">\(z_{i,j}\)</span> states with the <code>Predictive</code> class in NumPyro. This allows us to generate posterior predictive samples given the detection data. In this case, we may want to know the total number of occupied sites throughout the study.</p>
-<div id="0f001fde" class="cell" data-execution_count="5">
+<div id="0f001fde" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sample_z(model, posterior_samples, detection_history):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Samples the posterior predictive distribution for z given the histories'''</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -700,7 +706,7 @@ Figure&nbsp;2: Traceplots for the dynamic occupancy model.
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> sample_z(dynamic_occupancy, samples, detections)</span>
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>total_occupied <span class="op">=</span> z.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="cell-fig-prediction" class="cell" data-execution_count="6">
+<div id="cell-fig-prediction" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">4</span>))</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.arange(SEASON_COUNT)</span>

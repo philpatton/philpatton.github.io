@@ -330,6 +330,12 @@ window.Quarto = {
  <span class="menu-text">Cormack-Jolly-Seber</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numpyro-scr-temp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Open SCR</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -415,7 +421,7 @@ window.Quarto = {
 <section id="simulated-examples" class="level1">
 <h1>Simulated examples</h1>
 <p>To start, I demonstrate how to simulate this zero-inflated model using NumPy. Throughout this section, I use hyperparameter values similar to those of <span class="citation" data-cites="kery2011">Kéry and Schaub (<a href="#ref-kery2011" role="doc-biblioref">2011</a>)</span>.</p>
-<div id="42105039" class="cell" data-execution_count="1">
+<div id="42105039" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># relevant libraries</span></span>
@@ -494,7 +500,7 @@ window.Quarto = {
 <section id="estimating-parameters-with-pymc" class="level2">
 <h2 class="anchored" data-anchor-id="estimating-parameters-with-pymc">Estimating parameters with PyMC</h2>
 <p>Next, I use PyMC to train the occupancy model with the simulated data. First, similar to JAGS and Stan, the model must be specified using the PyMC syntax. This is done using a <a href="https://peps.python.org/pep-0343/">context manager</a> in Python, essentially, a <code>with</code> statement. This creates a <code>Model</code> object.</p>
-<div id="790504dd" class="cell" data-execution_count="2">
+<div id="790504dd" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> constant:</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># priors for the detetion and occurrence probabilities\</span></span>
@@ -506,7 +512,7 @@ window.Quarto = {
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                            observed<span class="op">=</span>y_summarized)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>In JAGS, the prior for <span class="math inline">\(p\)</span> would be specified as <code>p ~ dunif(0, 1).</code> The PyMC equivalent is <code>p = pm.Uniform('p', 0, 1)</code>. This could, alternatively, be specified as <code>p = pm.Uniform('detection probability', 0, 1)</code>. For the likelihood, I use PyMC’s built-in <code>ZeroInflatedBinomial</code> distribution. We tell PyMC that this is an observed random variable by supplying data to the <code>observed</code> argument. PyMC also has handy tools for visualizing the model.</p>
-<div id="cell-fig-pdot" class="cell" data-execution_count="3">
+<div id="cell-fig-pdot" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pm.model_to_graphviz(constant)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div id="fig-pdot" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -522,7 +528,7 @@ Figure&nbsp;1: Visual representation of model <span class="math inline">\(p(\cdo
 </div>
 </div>
 <p>Now I can sample from the posterior. Again, I use the context manager, this time referring to the model by name. It’s typical to name the output with <code>idata</code> because, by default, PyMC returns an object of class <code>InferenceData</code> from the Arviz package. Arviz is similar to the coda package for R.</p>
-<div id="f2c87c4e" class="cell" data-execution_count="4">
+<div id="f2c87c4e" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> constant:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    constant_idata <span class="op">=</span> pm.sample()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
@@ -543,7 +549,7 @@ NUTS: [psi, p]</code></pre>
 </div>
 </div>
 <p>PyMC will try to use the No-U-Turn Sampler (NUTS) whenever possible. As you can see, it samples the posterior quickly. I can plot the output using the <code>az.plot_trace()</code>, supplying the true values for <span class="math inline">\(p\)</span> and <span class="math inline">\(\psi\)</span> for comparison. I can also look at a tabular summary using <code>az.summary()</code>.</p>
-<div id="cell-fig-pdot_trace" class="cell" data-execution_count="5">
+<div id="cell-fig-pdot_trace" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    constant_idata,</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    compact<span class="op">=</span><span class="va">True</span>,</span>
@@ -563,7 +569,7 @@ Figure&nbsp;2: Traceplots for the <span class="math inline">\(p(\cdot)\psi(\cdot
 </div>
 </div>
 </div>
-<div id="3242d37d" class="cell" data-execution_count="6">
+<div id="3242d37d" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>az.summary(constant_idata)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <div>
@@ -619,7 +625,7 @@ Figure&nbsp;2: Traceplots for the <span class="math inline">\(p(\cdot)\psi(\cdot
 <section id="adding-site-covariates" class="level2">
 <h2 class="anchored" data-anchor-id="adding-site-covariates">Adding site covariates</h2>
 <p>Next, I add in some realism by simulating a site-level covariate <span class="math inline">\(x\)</span> that affects the occurrence probability. I model this effect with a logit-linear model, i.e., <span class="math inline">\(\psi_j=\text{logit}^{-1}(\beta_0 + \beta_1 x_j).\)</span></p>
-<div id="346900cb" class="cell" data-execution_count="7">
+<div id="346900cb" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">## ecological model</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># true parameter values</span></span>
@@ -658,7 +664,7 @@ Figure&nbsp;2: Traceplots for the <span class="math inline">\(p(\cdot)\psi(\cdot
 </div>
 </div>
 <p>Again, I specify the model with PyMC. Like JAGS, the random variables can be manipulated, as in a linear model with <span class="math inline">\(x_j.\)</span> These behave like NumPy arrays, meaning that vectorized operations and broadcasting are available. To monitor the output of these manipulations, use the <code>pm.Deterministic</code> class. In this case, I am monitoring the site level occurrence probability <span class="math inline">\(\psi_j.\)</span></p>
-<div id="cell-fig-psix" class="cell" data-execution_count="8">
+<div id="cell-fig-psix" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> psix:</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># occurrence process</span></span>
@@ -692,7 +698,7 @@ Figure&nbsp;3: Visual representation of model <span class="math inline">\(p(\cdo
 </div>
 </div>
 </div>
-<div id="8a6aa8e3" class="cell" data-execution_count="9">
+<div id="8a6aa8e3" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> psix:</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    psix_idata <span class="op">=</span> pm.sample()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
@@ -712,7 +718,7 @@ NUTS: [beta0, beta1, p]</code></pre>
 <pre><code>Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 1 seconds.</code></pre>
 </div>
 </div>
-<div id="cell-psix_trace" class="cell" data-execution_count="10">
+<div id="cell-psix_trace" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    psix_idata,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>),</span>
@@ -729,7 +735,7 @@ NUTS: [beta0, beta1, p]</code></pre>
 </div>
 </div>
 </div>
-<div id="76219ee2" class="cell" data-execution_count="11">
+<div id="76219ee2" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>az.summary(psix_idata, var_names<span class="op">=</span>[<span class="st">'beta0'</span>, <span class="st">'beta1'</span>, <span class="st">'p'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
 <div>
@@ -797,7 +803,7 @@ NUTS: [beta0, beta1, p]</code></pre>
 <section id="adding-visit-covariates" class="level2">
 <h2 class="anchored" data-anchor-id="adding-visit-covariates">Adding visit covariates</h2>
 <p>Finally, I add in visit-level covariate <span class="math inline">\(w_{j,k}\)</span> that affects detection.</p>
-<div id="98783565" class="cell" data-execution_count="12">
+<div id="98783565" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">## ecological model</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># true parameter values</span></span>
@@ -844,7 +850,7 @@ NUTS: [beta0, beta1, p]</code></pre>
 </div>
 <p>Now that we have visit covariates, we can no longer rely on the <code>pm.ZeroInflatedBinomial</code> class for our likelihood because it assumes that all zeros might be come from either process (i.e., not there or not detected). In an occupancy model, however, this is only true at sites where the species was never detected, and we have no way of compelling <code>pm.ZeroInflatedBinomial</code> to only consider zero inflation at certain sites.</p>
 <p>As such, we will now code the model in terms of the discrete, latent <span class="math inline">\(z_i\)</span> state, where <span class="math inline">\(z_i=1\)</span> if site <span class="math inline">\(i\)</span> is occupied and <span class="math inline">\(z_i=0\)</span> otherwise. This is the canonical way to code occupancy models in WinBUGS, JAGS, and NIMBLE <span class="citation" data-cites="royle2008 kery2011">(<a href="#ref-royle2008" role="doc-biblioref">Royle and Dorazio 2008</a>; <a href="#ref-kery2011" role="doc-biblioref">Kéry and Schaub 2011</a>)</span>. The NUTS sampler, however, does not jive with discrete latent states. As such, PyMC will assign a binary Gibbs sampler to <code>z</code> by default, which works, albeit less efficiently than the NUTS sampler. That said, PyMC will assign the other continuous parameters to the NUTS sampler, which is good!</p>
-<div id="cell-fig-pw" class="cell" data-execution_count="13">
+<div id="cell-fig-pw" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> pm.Model() <span class="im">as</span> binary_gibbs:</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># occurrence process</span></span>
@@ -889,7 +895,7 @@ Figure&nbsp;4: Visual representation of the <span class="math inline">\(p(w)\psi
 </div>
 </div>
 <p>The <code>mu_y = z[:, None] * p</code> notation may look strange to an R user. This is a trick that’s related to NumPy’s <a href="https://numpy.org/doc/stable/user/basics.broadcasting.html">broadcasting rules</a>. Broadcasting allows us to multiply arrays with different dimensions. In this case, we have a vector <code>z</code> that we would like to multiply against a matrix <code>p</code>, such that the first value in <code>z</code> is multiplied against every value in the first row of <code>p</code>, and so on. R does this naturally since it has slightly different broadcasting rules than NumPy. To do this in NumPy, we need to make <code>z</code> a column vector by adding a dummy dimension, hence the <code>[:, None]</code>.</p>
-<div id="4c0f4a8e" class="cell" data-execution_count="14">
+<div id="4c0f4a8e" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> binary_gibbs:</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    binary_gibbs_idata <span class="op">=</span> pm.sample()</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>az.summary(binary_gibbs_idata, var_names<span class="op">=</span>[<span class="st">'beta0'</span>, <span class="st">'beta1'</span>, <span class="st">'alpha0'</span>, <span class="st">'alpha1'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -992,7 +998,7 @@ CompoundStep
 <h2 class="anchored" data-anchor-id="automated-marginalization">Automated Marginalization</h2>
 <p>PyMC has a handy experimental feature called <code>marginalize</code> that automatically marginalizes out discrete latent states. This means that we can sample every parameter in the model with NUTS. This is not only faster than the hybrid sampler above, it also explores the parameter space more efficiently, which can be important for complex models or challenging datasets</p>
 <p><code>marginalize</code> is an experimental feature, and as such should be treated with some caution. Nevertheless, I have had success with it in the most common closed Bayesian population models (e.g., occupancy, capture-recapture, and distance sampling). The PyMC team houses these experimental features in the <code>pymc-extras</code> package, which can be installed following the instructions <a href="https://www.pymc.io/projects/extras/en/stable/">here</a>.</p>
-<div id="28eb4fea" class="cell" data-execution_count="15">
+<div id="28eb4fea" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pymc_extras <span class="im">as</span> pmx</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>marginal <span class="op">=</span> pmx.marginalize(binary_gibbs, [<span class="st">"z"</span>])</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1090,7 +1096,7 @@ NUTS: [alpha1, alpha0, beta1, beta0]</code></pre>
 </div>
 </div>
 </div>
-<div id="cell-fig-pw_trace" class="cell" data-execution_count="16">
+<div id="cell-fig-pw_trace" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>az.plot_trace(</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    binary_gibbs_idata,</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">6</span>),</span>
@@ -1117,7 +1123,7 @@ Figure&nbsp;5: Tracepots for the <span class="math inline">\(p(w)\psi(x)\)</span
 <section id="real-data-example" class="level1">
 <h1>Real data example</h1>
 <p>Finally, I demonstrate the model using a real data example. These data come from <span class="citation" data-cites="henden2013">Henden et al. (<a href="#ref-henden2013" role="doc-biblioref">2013</a>)</span>, and were used as a demonstration in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 23. They represent detection/non-detection data of Willow Warblers from Finnmark, Norway. The <span class="math inline">\(J=27\)</span> sites were sampled <span class="math inline">\(K=3\)</span> times. Replicating the analysis in Box 23.7 in <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, I use two covariates for site: site area and willow tree height. Further, I use two covariates for visit: an indicator for the visit and willow tree height.</p>
-<div id="f6dcf1bf" class="cell" data-execution_count="17">
+<div id="f6dcf1bf" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in the data</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">'PlosOne-DataFinnmark.csv'</span>)</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1144,7 +1150,7 @@ Figure&nbsp;5: Tracepots for the <span class="math inline">\(p(w)\psi(x)\)</span
 <span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> np.stack((visit_int, visit_indicator, visit_wheight), axis<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>This example uses an extremely handy feature of PyMC: coordinates. This allows us to specify a prior for each <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> value in one line of code, using the <code>dims</code> argument in our prior distribution. The length of vector is implied by length of the list in <code>coords</code>.</p>
-<div id="cell-fig-warbler" class="cell" data-execution_count="18">
+<div id="cell-fig-warbler" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>coords <span class="op">=</span> {<span class="st">"beta_coefs"</span>: [<span class="st">"Intercept"</span>, <span class="st">"Pland"</span>, <span class="st">'Wheight'</span>],</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"alpha_coefs"</span>: [<span class="st">"Intercept"</span>, <span class="st">"Visit"</span>, <span class="st">'Wheight'</span>]}</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1188,7 +1194,7 @@ Figure&nbsp;6: Visual representation of the willow warbler occupancy model.
 </div>
 </div>
 <p>Now the dimensionality of the prior distributions is clear, with (3) different priors specified for each random variable in the vectors <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.</p>
-<div id="9cb2df2f" class="cell" data-execution_count="19">
+<div id="9cb2df2f" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>warbler_marginal <span class="op">=</span> pmx.marginalize(warbler, [<span class="st">'z'</span>])</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> warbler_marginal:</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    warbler_idata <span class="op">=</span> pm.sample()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1210,7 +1216,7 @@ NUTS: [Alpha, Beta]</code></pre>
 </div>
 </div>
 <p>I upped the number of draw iterations to 4,000 per chain, 16,000 total, since this dataset includes real-world messiness. Nevertheless, sampling the posterior took only 6 seconds!</p>
-<div id="a6d89ebb" class="cell" data-execution_count="20">
+<div id="a6d89ebb" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>az.summary(warbler_idata, var_names<span class="op">=</span>[<span class="st">'Alpha'</span>, <span class="st">'Beta'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="20">
 <div>
@@ -1311,7 +1317,7 @@ NUTS: [Alpha, Beta]</code></pre>
 </div>
 </div>
 <p>I compare the parameter estimates to the ones estimated by <span class="citation" data-cites="hooten2019">Hooten and Hefley (<a href="#ref-hooten2019" role="doc-biblioref">2019</a>)</span>, Chapter 23.</p>
-<div id="cell-fig-warbler_trace" class="cell" data-execution_count="21">
+<div id="cell-fig-warbler_trace" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>alpha_hat_hooten <span class="op">=</span>  [<span class="fl">0.04</span>, <span class="fl">0.47</span>, <span class="fl">0.68</span>]</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>beta_hat_hooten <span class="op">=</span> [<span class="fl">0.56</span>, <span class="fl">1.92</span>, <span class="fl">0.93</span>]</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1337,7 +1343,7 @@ Figure&nbsp;7: Traceplots from the willow warbler occupancy model. Estimates fro
 </div>
 <p>There is a high level of agreement between the two methods. While their algorithm was designed for teaching and interpretability, it is noteworthy that the PyMC model is 10x faster.</p>
 <p>Arviz also produces forest plots for looking at effect sizes.</p>
-<div id="cell-fig-warbler_forest" class="cell" data-execution_count="22">
+<div id="cell-fig-warbler_forest" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>az.plot_forest(warbler_idata, var_names<span class="op">=</span>[<span class="st">'Alpha'</span>, <span class="st">"Beta"</span>],</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>               figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">4</span>),</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>               hdi_prob<span class="op">=</span><span class="fl">0.95</span>, ess<span class="op">=</span><span class="va">True</span>, combined<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1354,7 +1360,7 @@ Figure&nbsp;8: Forest plots from willow warbler occupancy model. ESS refers to t
 </div>
 </div>
 </div>
-<div id="a294324e" class="cell" data-execution_count="23">
+<div id="a294324e" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">-</span>n <span class="op">-</span>u <span class="op">-</span>v <span class="op">-</span>iv <span class="op">-</span>w</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
