@@ -14,9 +14,10 @@ website:
         text: CV
       - href: notebooks.qmd
         text: Code
-      - href: defense.qmd
-        text: Defense
-
+      # - href: defense.qmd
+      #   text: Defense
+      - href: https://philpatton.github.io/pyseter
+        text: Pyseter
     right:
       - text: "{{< fa brands github>}}"
         href: https://github.com/philpatton

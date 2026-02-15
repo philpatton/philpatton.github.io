@@ -1,0 +1,159 @@
+---
+title: Binned prediction curves
+description: Evaluating predictions from count models in unmarked 
+author:
+  name: Philip T. Patton
+  affiliation:
+    - Smithsonian's National Zoo and Conservation Biology Institute
+date: today
+bibliography: refs.bib
+execute:
+  cache: false
+---
+
+
+```{r}
+library(unmarked)
+library(ggplot2)
+
+set.seed(1792)
+data(issj)
+
+truncation_distance <- 300
+bin_width <- 100
+dist_breaks <- seq(0, truncation_distance, by = bin_width)
+
+meter_sq_per_hectare <- 10000
+area_around_point <- pi * truncation_distance^2 / meter_sq_per_hectare
+
+# these will be helpful for plotting later on
+mean_elev <- mean(issj$elevation)
+sd_elev <- sd(issj$elev)
+mean_chap <- mean(issj$chaparral)
+sd_chap <- sd(issj$chaparral)
+
+# scale returns a matrix
+site_covs <- scale(issj[, c("elevation", "forest", "chaparral")])
+site_covs <- data.frame(site_covs, area = area_around_point)
+
+count_column_index <- grep("issj", colnames(issj))
+count_matrix <- as.matrix(issj[, count_column_index])
+
+umf <- unmarkedFrameDS(
+    y = count_matrix,
+    siteCovs = site_covs,
+    dist.breaks = dist_breaks,
+    unitsIn = "m",
+    survey = "point"
+)
+```
+
+```{r}
+train_proportion <- 0.7
+site_count <- nrow(count_matrix)
+train_index <- sample(site_count, train_proportion * site_count)
+
+train_umf <- umf[train_index, ]
+test_umf <- umf[-train_index, ]
+```
+
+There are `r length(train_index)` sites available for training and `r site_count - length(train_index)` available for test. 
+
+```{r}
+fit <- distsamp(
+    ~chaparral ~ chaparral + elevation + offset(log(area)),
+    train_umf,
+    keyfun = "halfnorm",
+    output = "abund"
+)
+summary(fit)
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+fit@data <- test_umf
+y_pred <- fitted(fit)
+y_true <- test_umf@y
+```
+
+```{r}
+viz_bin_count <- 6
+
+# take the mean of covariate, observations, and predictions by covariate bin
+make_plot_df <- function(covariate) {
+    values <- test_umf@siteCovs[, covariate]
+    bins <- cut(values, breaks = viz_bin_count, labels = FALSE)
+    plot_df <- data.frame(
+        x = tapply(values, bins, mean),
+        Observed = tapply(rowSums(y_true), bins, mean),
+        Predicted = tapply(rowSums(y_pred), bins, mean),
+        covariate = covariate,
+        n = tapply(values, bins, length)
+    )
+
+    return(plot_df)
+}
+
+# modify some of the values to make the plot more attractive
+elev_df <- make_plot_df("elevation")
+elev_df$x_real <- elev_df$x * sd_elev + mean_elev
+elev_df$covariate <- "Elevation (m)"
+
+chap_df <- make_plot_df("chaparral")
+chap_df$x_real <- chap_df$x * sd_chap + mean_chap
+chap_df$covariate <- "Chaparral (%)"
+
+# we're going to add a shaded area that shows the number of sites per bin
+elev_df$ribbon <- elev_df$n / max(elev_df$n) * max(elev_df$Observed) * 0.8
+chap_df$ribbon <- chap_df$n / max(chap_df$n) * max(chap_df$Observed) * 0.8
+
+# print the output
+combined_df <- rbind(elev_df, chap_df)
+knitr::kable(combined_df, digits = 2)
+```
+
+```{r}
+plot_df <- tidyr::pivot_longer(combined_df, cols = c("Observed", "Predicted"))
+
+ggplot(plot_df, aes(x = x_real, y = value, color = name)) +
+    geom_ribbon(
+        data = plot_df,
+        aes(x = x_real, ymin = 0, ymax = ribbon, fill = "Sites per bin"),
+        inherit.aes = F,
+        alpha = 0.2
+    ) +
+    geom_point() +
+    geom_line() +
+    facet_wrap(~covariate, scales = "free_x") +
+    scale_color_manual(values = c(Observed = "steelblue", Predicted = "orange")) +
+    scale_fill_manual(values = "forestgreen") +
+    theme_minimal(base_size = 18) +
+    theme(panel.grid.minor = element_blank(), legend.position = "bottom") +
+    labs(x = "", y = "Mean total count", color = NULL, fill = NULL)
+
+```
+
+```{r}
+# # Helper: bin a covariate, average pred & true per bin
+# make_plot_df <- function(covariate_vals, covariate_name) {
+#     bins <- cut(covariate_vals, breaks = viz_bin_count, labels = FALSE)
+#     # y_pred and y_true are matrices; average across all distance bins and sites per viz bin
+#     data.frame(
+#         x         = tapply(covariate_vals, bins, mean),
+#         Observed  = tapply(rowMeans(y_true), bins, mean),
+#         Predicted = tapply(rowMeans(y_pred), bins, mean),
+#         covariate = covariate_name
+#     ) |> reshape(
+#         varying = c("Observed", "Predicted"),
+#         v.names = "count", timevar = "type",
+#         times = c("Observed", "Predicted"),
+#         direction = "long"
+#     )
+# }
+
+# combined_df <- rbind(
+#     make_plot_df(test_umf@siteCovs$elevation, "Elevation"),
+#     make_plot_df(test_umf@siteCovs$chaparral, "Chaparral")
+# )
+```
